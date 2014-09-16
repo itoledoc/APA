@@ -128,7 +128,7 @@ class QueryArchive(object):
 
         return schedblocks_saos
 
-    def query_schedblocks_s_c(self):
+    def query_schedblocks_execount(self):
 
         sql_string = """
         with t1 as (SELECT PRJ_ARCHIVE_UID, CODE, PRJ_LETTER_GRADE
@@ -146,12 +146,12 @@ class QueryArchive(object):
 
         self.cursor.execute(sql_string)
 
-        schedblocks_s_c = pd.DataFrame(
+        schedblocks_execount_pt = pd.DataFrame(
             self.cursor.fetchall(),
             columns=[rec[0] for rec in self.cursor.description]
         )
 
-        return schedblocks_s_c
+        return schedblocks_execount_pt
 
 
 def filter_c1(projects, filter_file):
