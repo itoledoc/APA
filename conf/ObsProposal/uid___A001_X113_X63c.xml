@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prp:ObsProposal xmlns:prp="Alma/ObsPrep/ObsProposal" xmlns:ent="Alma/CommonEntity" xmlns:val="Alma/ValueTypes" xmlns:orv="Alma/ObsPrep/ObsReview" xmlns:ps="Alma/ObsPrep/ProjectStatus" xmlns:oat="Alma/ObsPrep/ObsAttachment" xmlns:prj="Alma/ObsPrep/ObsProject" xmlns:sbl="Alma/ObsPrep/SchedBlock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="13" revision="5" almatype="APDM::ObsProposal" xsi:type="prp:ObsProposal">
+    <prj:ScienceGoal>
+        <prj:name>PWN B0540-69.3 100GHz Continuum</prj:name>
+        <prj:note>We propose to measure the broadband spectral flux to constrain the break in spectral index between current low frequency radio and IR and optical observations. 
+This observation will be used to make a continuum image with 0.6 arsec resolution and to measure the total flux of the PWN at 100 GHz.  It will also be used with the images at 230 and 345 GHz to make a spatially resolved spectral index map.  The PWN is 5 arcsec across, so we require a max angular scale of 5.6 arcsec to ensure we recover all the flux.  The total flux density at 5 GHz is 59 mJy, and the 5-9 GHz spectral index is 0.25.  Assuming a uniform distribution of flux, extrapolating to 100 GHz, and correcting to the desired resolution, the rms flux density needed to achieve S/N = 10 is 0.04 mJy.  The Observing Tool finds that this observation can be done in 32 minutes, including overhead.  We anticipate that the UV coverage over the course of the observation will be sufficient.</prj:note>
+        <prj:estimatedTotalTime unit="s">1924.9220692778217</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_03</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="AggregateBandWidth">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">0.6</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">5.6</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="mJy" userUnit="mJy">0.04</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">104.5</prj:representativeFrequency>
+            <prj:useACA>false</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>false</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="MHz" userUnit="MHz">0.0</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">2.66760214466319E-4</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">5.469917732470937E-4</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="continuum">
+            <prj:representativeFrequency unit="GHz">104.5</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">97.5</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">104.4999999999</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">102.5000000001</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">92.4999999999</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">90.5000000001</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Unspecified" type="F_MultiplePoints">
+            <prj:sourceName>0540-69.3</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">85.0465</val:longitude>
+                <val:latitude unit="deg">-69.33163888888889</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>false</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">0.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="mJy">0.4</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="GHz" userUnit="km/s">0.0</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">104.5</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">0.0</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:SinglePoint>
+                <prj:name/>
+                <prj:centre system="J2000" type="RELATIVE">
+                    <val:longitude unit="arcsec">-1.7916286374970716E-11</val:longitude>
+                    <val:latitude unit="arcsec">-9.159997482614928E-11</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+            </prj:SinglePoint>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>This observation will be used to make a continuum image with 0.6 arsec resolution and to measure the total flux of the PWN at 100 GHz.  It will also be used with the images at 230 and 345 GHz to make a spatially resolved spectral index map.  The PWN is 5 arcsec across, so we require a max angular scale of 5.6 arcsec to ensure we recover all the flux.  The total flux density at 5 GHz is 59 mJy, and the 5-9 GHz spectral index is 0.25.  Assuming a uniform distribution of flux, extrapolating to 100 GHz, and correcting to the desired resolution, the rms flux density needed to achieve S/N = 10 is 0.04 mJy.  The Observing Tool finds that this observation can be done in 32 minutes, including overhead.  We anticipate that the UV coverage over the course of the observation will be sufficient.</prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ScienceGoal>
+        <prj:name>PWN B0540-69.3 230GHz Continuum</prj:name>
+        <prj:note>We propose to measure the broadband spectral flux to constrain the break in spectral index between current low frequency radio and IR and optical observations. 
+This observation will be used to make a continuum image with 0.6 arsec resolution and to measure the total flux of the PWN at 230 GHz.  It will also be used with the images at 100 and 345 GHz to make a spatially resolved spectral index map.  The PWN is 5 arcsec across, so we require a max angular scale of 5.6 arcsec to ensure we recover all the flux.  The total flux density at 5 GHz is 59 mJy, and the 5-9 GHz spectral index is 0.25.  Assuming a uniform distribution of flux, extrapolating to 230 GHz, and correcting to the desired resolution, the rms flux density needed to achieve S/N = 8.25 is 0.04 mJy.  The Observing Tool finds that this observation can be done in 43 minutes, including overhead.  We anticipate that the UV coverage over the course of the observation will be sufficient.</prj:note>
+        <prj:estimatedTotalTime unit="s">2556.4239396517332</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_06</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="AggregateBandWidth">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">0.6</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">5.6</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="mJy" userUnit="mJy">0.04</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">241.9999999999</prj:representativeFrequency>
+            <prj:useACA>false</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>false</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="MHz" userUnit="MHz">0.0</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">2.617827946128133E-4</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">5.469917732470937E-4</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="continuum">
+            <prj:representativeFrequency unit="GHz">241.9999999999</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">233.0</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">241.9999999999</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">240.0000000001</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">225.9999999999</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">224.0000000001</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Unspecified" type="F_MultiplePoints">
+            <prj:sourceName>0540-69.3</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">85.0465</val:longitude>
+                <val:latitude unit="deg">-69.33163888888889</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>false</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">0.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="mJy">0.33</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="GHz" userUnit="km/s">0.0</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">104.5</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">0.0</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:SinglePoint>
+                <prj:name/>
+                <prj:centre system="J2000" type="RELATIVE">
+                    <val:longitude unit="arcsec">-1.7916286374970716E-11</val:longitude>
+                    <val:latitude unit="arcsec">-9.159997482614928E-11</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+            </prj:SinglePoint>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>This observation will be used to make a continuum image with 0.6 arsec resolution and to measure the total flux of the PWN at 230 GHz.  It will also be used with the images at 100 and 345 GHz to make a spatially resolved spectral index map.  The PWN is 5 arcsec across, so we require a max angular scale of 5.6 arcsec to ensure we recover all the flux.  The total flux density at 5 GHz is 59 mJy, and the 5-9 GHz spectral index is 0.25.  Assuming a uniform distribution of flux, extrapolating to 230 GHz, and correcting to the desired resolution, the rms flux density needed to achieve S/N = 8.25 is 0.04 mJy.  The Observing Tool finds that this observation can be done in 43 minutes, including overhead.  We anticipate that the UV coverage over the course of the observation will be sufficient.</prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ScienceGoal>
+        <prj:name>PWN B0540-69.3 350GHz Continuum</prj:name>
+        <prj:note>We propose to measure the broadband spectral flux to constrain the break in spectral index between current low frequency radio and IR and optical observations. 
+This observation will be used to make a continuum image with 0.6 arsec resolution and to measure the total flux of the PWN at 345 GHz.  It will also be used with the images at 100 and 230 GHz to make a spatially resolved spectral index map.  The PWN is 5 arcsec across, so we require a max angular scale of 5.6 arcsec to ensure we recover all the flux.  The total flux density at 5 GHz is 59 mJy, and the 5-9 GHz spectral index is 0.25.  Assuming a uniform distribution of flux, extrapolating to 345 GHz, and correcting to the desired resolution, the rms flux density needed to achieve S/N = 7.25 is 0.04 mJy.  The Observing Tool finds that this observation can be done in 1.4 hr, including overhead.  We anticipate that the UV coverage over the course of the observation will be sufficient.</prj:note>
+        <prj:estimatedTotalTime unit="s">4331.101526427998</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_07</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="AggregateBandWidth">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">0.6</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">5.0</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="mJy" userUnit="mJy">0.04</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">350.4999999999</prj:representativeFrequency>
+            <prj:useACA>false</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>false</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="MHz" userUnit="MHz">0.0</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">2.5521358582123615E-4</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">5.469917732470938E-4</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="continuum">
+            <prj:representativeFrequency unit="GHz">350.4999999999</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">343.5</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">350.4999999999</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">348.5000000001</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">338.4999999999</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">336.5000000001</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Unspecified" type="F_MultiplePoints">
+            <prj:sourceName>0540-69.3</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">85.0465</val:longitude>
+                <val:latitude unit="deg">-69.33163888888889</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>false</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">0.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="mJy">0.29</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="GHz" userUnit="km/s">0.0</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">104.5</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">0.0</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:SinglePoint>
+                <prj:name/>
+                <prj:centre system="J2000" type="RELATIVE">
+                    <val:longitude unit="arcsec">-1.7916286374970716E-11</val:longitude>
+                    <val:latitude unit="arcsec">-9.159997482614928E-11</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+            </prj:SinglePoint>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>This observation will be used to make a continuum image with 0.6 arsec resolution and to measure the total flux of the PWN at 345 GHz.  It will also be used with the images at 100 and 230 GHz to make a spatially resolved spectral index map.  The PWN is 5 arcsec across, so we require a max angular scale of 5.6 arcsec to ensure we recover all the flux.  The total flux density at 5 GHz is 59 mJy, and the 5-9 GHz spectral index is 0.25.  Assuming a uniform distribution of flux, extrapolating to 345 GHz, and correcting to the desired resolution, the rms flux density needed to achieve S/N = 7.25 is 0.04 mJy.  The Observing Tool finds that this observation can be done in 1.4 hr, including overhead.  We anticipate that the UV coverage over the course of the observation will be sufficient.</prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ScienceGoal>
+        <prj:name>PWN B0540-69.3 High-Resolution 230GHz Continuum</prj:name>
+        <prj:note>We propose to detect small scale structure, including hot spots detected in optical.
+This observation, with only 1.1hrs total, has sufficient resolution to allow detection of the hot spot observed in optical with extention of 0.3arcsec. We expect a SNR of more than 65 if the optical flux continues unbroken to 230GHz. If a break occurs even as high as 10THz we still expect a SNR of 5. If the object is yet fainter, with this observation we will still be able to constrain the break between optical and radio.</prj:note>
+        <prj:estimatedTotalTime unit="s">6401.8859094776</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_06</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="AggregateBandWidth">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">0.3</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">5.6</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="mJy" userUnit="mJy">0.04</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">241.9999999999</prj:representativeFrequency>
+            <prj:useACA>false</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>false</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="MHz" userUnit="MHz">0.0</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">2.617827946128133E-4</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">5.469917732470937E-4</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="continuum">
+            <prj:representativeFrequency unit="GHz">241.9999999999</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">233.0</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">241.9999999999</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">240.0000000001</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">225.9999999999</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>Single Continuum</prj:transitionName>
+                <prj:centerFrequency unit="GHz">224.0000000001</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">15.625</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>true</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Unspecified" type="F_MultiplePoints">
+            <prj:sourceName>0540-69.3</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">85.0465</val:longitude>
+                <val:latitude unit="deg">-69.33163888888889</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>false</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">0.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="mJy">0.2</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="GHz" userUnit="km/s">0.0</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">104.5</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">0.0</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:SinglePoint>
+                <prj:name/>
+                <prj:centre system="J2000" type="RELATIVE">
+                    <val:longitude unit="arcsec">-1.7916286374970716E-11</val:longitude>
+                    <val:latitude unit="arcsec">-9.159997482614928E-11</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+            </prj:SinglePoint>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>This observation, with only 1.1hrs total, has sufficient resolution to allow detection of the hot spot observed in optical with extention of 0.3arcsec. We expect a SNR of more than 65 if the optical flux continues unbroken to 230GHz. If a break occurs even as high as 10THz we still expect a SNR of 5. If the object is yet fainter, with this observation we will still be able to constrain the break between optical and radio.</prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ObsPlan status="NewPhase2" entityPartId="X287730225" almatype="APDM::ObsUnitSet">
+        <prj:name>ObsUnitSet</prj:name>
+        <prj:note/>
+        <prj:ObsUnitControl arrayRequested="TWELVE-M">
+            <prj:maximumTime unit="min">0.0</prj:maximumTime>
+            <prj:userPriority>0</prj:userPriority>
+            <prj:estimatedExecutionTime unit="min">0.0</prj:estimatedExecutionTime>
+            <prj:tacPriority>0</prj:tacPriority>
+            <prj:aggregatedExecutionCount>0</prj:aggregatedExecutionCount>
+            <prj:CalibrationRequirements>
+                <prj:pointingAccuracy unit="arcsec">0.0</prj:pointingAccuracy>
+            </prj:CalibrationRequirements>
+        </prj:ObsUnitControl>
+        <prj:scienceProcessingScript/>
+        <prj:runSciencePipeline>false</prj:runSciencePipeline>
+    </prj:ObsPlan>
+    <prp:ObsProposalEntity entityId="uid://A001/X113/X63c" entityIdEncrypted="-- id encryption not implemented --" entityTypeName="ObsProposal" schemaVersion="13" documentVersion="1" timestamp="2013-12-05T15:06:59.809"/>
+    <prp:DocumentsRef entityId="uid://A001/X113/X63d" entityTypeName="ObsAttachment" documentVersion="1"/>
+    <prp:ObsProjectRef entityId="uid://A001/X113/X63b" entityTypeName="ObsProject" documentVersion="1"/>
+    <prp:code/>
+    <prp:abstract>We propose to use ALMA to obtain the first millimeter-wave images of the Crab nebula's "twin," the pulsar wind nebula (PWN) surrounding PSR B0540-69.3 in the LMC. The goals of the observations are to constrain the frequency of the spectral break occurring at mm wavelengths; to map changes in the spectral index across the nebula; and to identify substructures like hot spots that have been detected from the infrared to X-ray bands. Constraining the spectral break frequency at mm wavelengths may give insight into the original particle injection spectrum, and will be used to test different models of particle acceleration in PWNe. Spectral index changes trace particle diffusion across the nebula, and can be used to model this diffusion. The hot spots observed at higher frequencies are variable and/or rapidly moving, indicating that the PWN is a highly dynamic system.  Identifying similar features  at millimeter wavelengths will allow their spectra to be constrained to lower frequencies, which will help to characterize the particle acceleration process taking place in small regions within the larger nebula. We request 3.7 hours at 100, 230, and 345 GHz to achieve these science goals.</prp:abstract>
+    <prp:relatedProposals/>
+    <prp:previousProposals/>
+    <prp:dateReceived>2013-12-05T15:06:58.123Z</prp:dateReceived>
+    <prp:cycle>2013.1</prp:cycle>
+    <prp:studentProject>false</prp:studentProject>
+    <prp:continuation>false</prp:continuation>
+    <prp:recentPublications/>
+    <prp:scientificCategoryCode>50</prp:scientificCategoryCode>
+    <prp:proposalTypeCode>S</prp:proposalTypeCode>
+    <prp:scientificCategoryString>Stellar Evolution and the Sun</prp:scientificCategoryString>
+    <prp:proposalTypeString>Standard</prp:proposalTypeString>
+    <prp:keyword>Pulsars and neutron stars</prp:keyword>
+    <prp:keywordCode>50m</prp:keywordCode>
+    <prp:PrincipalInvestigator allowedExec="NA" associatedExec="NA">
+        <prp:fullName>Megan DeCesar</prp:fullName>
+        <prp:organisation>Physics, Wisconsin at Milwaukee, University of; Department of Physics</prp:organisation>
+        <prp:eMail>mdecesar@gravity.phys.uwm.edu</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>mdecesar</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>35053</prp:organisationId>
+    </prp:PrincipalInvestigator>
+    <prp:CoInvestigator allowedExec="NA" associatedExec="NA">
+        <prp:fullName>John Hewitt</prp:fullName>
+        <prp:organisation>Goddard Space Flight Center, National Aeronautics and Space Administration</prp:organisation>
+        <prp:eMail>john.w.hewitt@nasa.gov</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>jhewitt</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>22066</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="NA" associatedExec="NA">
+        <prp:fullName>Theresa Brandt</prp:fullName>
+        <prp:organisation>Goddard Space Flight Center, National Aeronautics and Space Administration</prp:organisation>
+        <prp:eMail>terri.j.brandt@gmail.com</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>tbrandt</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>22066</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:ProposalFeedback>
+        <prp:estimatedTotalIntegrationTime unit="s">15214.333444835152</prp:estimatedTotalIntegrationTime>
+        <prp:ArrayTimeBreakdown>
+            <prp:ArrayTime arrayName="ACA">
+                <prp:estimatedTime unit="s">0.0</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="SEVEN-M">
+                <prp:estimatedTime unit="s">0.0</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="TP-Array">
+                <prp:estimatedTime unit="s">0.0</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="TWELVE-M">
+                <prp:estimatedTime unit="s">15214.333444835152</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="ALMA">
+                <prp:estimatedTime unit="s">15214.333444835152</prp:estimatedTime>
+            </prp:ArrayTime>
+        </prp:ArrayTimeBreakdown>
+        <prp:DataRateBreakdown>
+            <prp:ArrayDataRates arrayName="TWELVE-M">
+                <prp:estimatedAverageDataRate unit="MB/s">2.1764740111335876</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="MB/s">2.1764740111335876</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">8.926671011190429</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+            <prp:ArrayDataRates arrayName="SEVEN-M">
+                <prp:estimatedAverageDataRate unit="MB/s">0.0</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="GB/s">0.0</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">0.0</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+            <prp:ArrayDataRates arrayName="TP-Array">
+                <prp:estimatedAverageDataRate unit="MB/s">0.0</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="GB/s">0.0</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">0.0</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+        </prp:DataRateBreakdown>
+        <prp:ReceiverTimeBreakdown>
+            <prp:ReceiverTime receiverBand="ALMA_RB_03">
+                <prp:time unit="s">1924.9220692778217</prp:time>
+            </prp:ReceiverTime>
+            <prp:ReceiverTime receiverBand="ALMA_RB_06">
+                <prp:time unit="s">8958.309849129333</prp:time>
+            </prp:ReceiverTime>
+            <prp:ReceiverTime receiverBand="ALMA_RB_07">
+                <prp:time unit="s">4331.101526427998</prp:time>
+            </prp:ReceiverTime>
+        </prp:ReceiverTimeBreakdown>
+        <prp:TimeAllocationBreakdown>
+            <prp:ExecutiveFraction name="OTHER">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="CL">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="EA">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="EU">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="NA">
+                <prp:timeFraction>1.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="NA_EA">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+        </prp:TimeAllocationBreakdown>
+    </prp:ProposalFeedback>
+</prp:ObsProposal>

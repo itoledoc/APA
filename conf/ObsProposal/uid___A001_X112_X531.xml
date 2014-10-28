@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prp:ObsProposal xmlns:prp="Alma/ObsPrep/ObsProposal" xmlns:ent="Alma/CommonEntity" xmlns:val="Alma/ValueTypes" xmlns:orv="Alma/ObsPrep/ObsReview" xmlns:ps="Alma/ObsPrep/ProjectStatus" xmlns:oat="Alma/ObsPrep/ObsAttachment" xmlns:prj="Alma/ObsPrep/ObsProject" xmlns:sbl="Alma/ObsPrep/SchedBlock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="13" revision="5" almatype="APDM::ObsProposal" xsi:type="prp:ObsProposal">
+    <prj:ScienceGoal>
+        <prj:name>Temperature, wind, H2O, and H2O2 distrubitions on Mars DURING dust storm</prj:name>
+        <prj:note>The science goals is to obtain (1) high-resolution global-map of thermal structure, (2) high-resolution global-map of wind field (3) global-map of water vapor profiles during dust storm, and (4) global-map of H2O2 abundances during a global dust storm. 
+The trigger for activating this Science-Goal is the dust opacity being thicker than tau = 2.0 and the dust-covering area is larger than half-disk size. </prj:note>
+        <prj:estimatedTotalTime unit="s">5479.992465729133</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_07</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="User">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">0.5</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">4.0</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="Jy" userUnit="K">0.005378787972407674</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">345.79599</prj:representativeFrequency>
+            <prj:useACA>false</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>false</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="MHz" userUnit="MHz">0.244</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">0.03436296058920858</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">0.07355381927368534</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="full">
+            <prj:representativeFrequency unit="GHz">345.79599</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">0.0</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>CO line-center</prj:transitionName>
+                <prj:centerFrequency unit="GHz">345.79599</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">250.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">61.03515625000001</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>3768104</prj:splatalogId>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>H2O2 + HDO</prj:transitionName>
+                <prj:centerFrequency unit="GHz">335.5603078</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">1000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.244140625</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>2</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>HDO 3(3,1)-4(2,2)</prj:transitionName>
+                <prj:centerFrequency unit="GHz">335.3955</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">500.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.1220703125</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>816649</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>CO v=0 3-2</prj:transitionName>
+                <prj:centerFrequency unit="GHz">345.79599</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">1000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.244140625</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>3768104</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Mars" type="F_MultiplePoints">
+            <prj:sourceName>Mars</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">0.0</val:longitude>
+                <val:latitude unit="deg">0.0</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>true</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">0.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="Jy">20.0</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="MHz" userUnit="MHz">10.0</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">345.79599</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">20.0</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:SinglePoint>
+                <prj:name/>
+                <prj:centre system="J2000" type="RELATIVE">
+                    <val:longitude unit="arcsec">0.0</val:longitude>
+                    <val:latitude unit="arcsec">0.0</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+            </prj:SinglePoint>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>The essential requirements to fulfill our scientific goal are as follows. 
+(1) Simultaneous observations of 12CO, HDO, and H2O2;
+(2) High spatial resolution in order to resolve the Mars-disk for global-mapping, and to resolve limb of the Martian atmosphere for wind measurements;
+(3) High sensitivity in order to retrieve temperature profile with high precision (~ 5 K), water vapor at middle altitudes from Nadir-viewing, and in order to search weak signals of H2O2;
+ALMA band-7 with its Cycle-2 specification is the only facility to satisfy all of these requirements. 
+
+This is a ToO observation: 
+The trigger of observation is the occurrence of global dust storm on Mars.  
+The observation is triggered to carry out when (1) Optical depth at visible wavelength exceeds 2.0 and (2) area of the dust storm expands over a half of Martian disk. 
+See the Science Justification for the detail of the trigger. 
+
+During the ALMA-Cycle2 period, the possible seasons to observe global dust storms correspond to the period between August/2014 and May/2015. 
+The diameter of Mars ranges between 4" and 7" during this period. 
+In order to obtain global-maps and wind velocity from limb of the atmosphere, we require a synthesis beam size smaller than 0.125 x apparent disk size (the smallest case is 0.5" for 4"-disk). 
+Note that the maximum apparent disk size of Mars is within the maximum recoverable scale of 12-m array, thus ACA array is not needed.
+
+The target lines in our observations are as follows: 12CO 345.795 GHz, HDO 335.539 GHz, and H2O2 335.560 GHz. 
+For owing to the large IF of ALMA receiver, the band-7 can measure theses lines simultaneously. 
+For CO, we propose the high resolution correlator (122 kHz) to retrieve wind velocity with precision of 12m/s. 
+For HDO and H2O2, we propose the 282 KHz resolution to resolve the narrow lines. 
+In addition, we need one broad-bandwidth (~800 MHz) to obtain the full spectral features of 12CO and HDO. 
+
+Most stringent sensititivity requirements in our science objectives is to retrieve wind velocity with a precision of 12 m/s. 
+To measure the wind with this precision, 0.22 Kelvin (244 kHz-resolution) is required for 12CO line mapping. 
+In the present proposal we estimated the observation time with the worst condition (0.5" synthesis beam), and got the total estimated observation time including calibration data acquisition as 1.56 hr. 
+
+</prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ScienceGoal>
+        <prj:name>Temperature, wind, H2O, and H2O2 distrubitions on Mars AFTER dust storm</prj:name>
+        <prj:note>The science goals is to obtain (1) high-resolution global-map of thermal structure, (2) high-resolution global-map of wind field (3) global-map of water vapor profiles during dust storm, and (4) global-map of H2O2 abundances AFTER a global dust storm.
+The trigger for activating this Science-Goal is the execution of the former Science-Goal observation. 
+This SG is triggered when +21 days passed after the former observations.</prj:note>
+        <prj:estimatedTotalTime unit="s">5479.992465729133</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_07</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="User" timingConstraintsType="MultipleVisits">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">0.5</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">4.0</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="Jy" userUnit="K">0.005378787972407674</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">345.79599</prj:representativeFrequency>
+            <prj:useACA>false</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>false</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="MHz" userUnit="MHz">0.244</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">0.03436296058920858</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">0.07355381927368534</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+            <prj:VisitConstraint>
+                <prj:startTime>2013-12-04T00:36:03.506Z</prj:startTime>
+                <prj:allowedMargin unit="d">7.0</prj:allowedMargin>
+                <prj:note/>
+                <prj:isAvoidConstraint>false</prj:isAvoidConstraint>
+                <prj:priority>0</prj:priority>
+                <prj:isFixedStart>true</prj:isFixedStart>
+                <prj:visitId>1</prj:visitId>
+                <prj:previousVisitId>0</prj:previousVisitId>
+                <prj:requiredDelay unit="d">21.0</prj:requiredDelay>
+            </prj:VisitConstraint>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="full">
+            <prj:representativeFrequency unit="GHz">345.79599</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">0.0</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>CO line-center</prj:transitionName>
+                <prj:centerFrequency unit="GHz">345.79599</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">250.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">61.03515625000001</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>3768104</prj:splatalogId>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>H2O2 + HDO</prj:transitionName>
+                <prj:centerFrequency unit="GHz">335.5603078</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">1000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.244140625</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>2</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>HDO 3(3,1)-4(2,2)</prj:transitionName>
+                <prj:centerFrequency unit="GHz">335.3955</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">500.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.1220703125</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>816649</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>CO v=0 3-2</prj:transitionName>
+                <prj:centerFrequency unit="GHz">345.79599</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">1000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.244140625</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>3768104</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Mars" type="F_MultiplePoints">
+            <prj:sourceName>Mars</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">0.0</val:longitude>
+                <val:latitude unit="deg">0.0</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>true</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">0.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="Jy">20.0</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="MHz" userUnit="MHz">10.0</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">345.79599</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">20.0</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:SinglePoint>
+                <prj:name/>
+                <prj:centre system="J2000" type="RELATIVE">
+                    <val:longitude unit="arcsec">0.0</val:longitude>
+                    <val:latitude unit="arcsec">0.0</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+            </prj:SinglePoint>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>The essential requirements to fulfill our scientific goal are as follows. 
+(1) Simultaneous observations of 12CO, HDO, and H2O2;
+(2) High spatial resolution in order to resolve the Mars-disk for global-mapping, and to resolve limb of the Martian atmosphere for wind measurements;
+(3) High sensitivity in order to retrieve temperature profile with high precision (~ 5 K), water vapor at middle altitudes from Nadir-viewing, and in order to search weak signals of H2O2;
+ALMA band-7 with its Cycle-2 specification is the only facility to satisfy all of these requirements. 
+
+This is a ToO observation: 
+This Science-Goal observations should be executed when the global dust storm is settled (or at least in the weakening stage). 
+Based on the statistics of past global dust storm events, we consider the typical duration of a global dust storm to be around 1 month. 
+Thus we define the trigger of this Science Goal as follow: +21 days later than the execution of the first Science-Goal observations. 
+
+During the ALMA-Cycle2 period, the possible seasons to observe global dust storms correspond to the period between August/2014 and May/2015. 
+The diameter of Mars ranges between 4" and 7" during this period. 
+In order to obtain global-maps and wind velocity from limb of the atmosphere, we require a synthesis beam size smaller than 0.125 x apparent disk size (the smallest case is 0.5" for 4"-disk). 
+Note that the maximum apparent disk size of Mars is within the maximum recoverable scale of 12-m array, thus ACA array is not needed.
+
+The target lines in our observations are as follows: 12CO 345.795 GHz, HDO 335.539 GHz, and H2O2 335.560 GHz. 
+For owing to the large IF of ALMA receiver, the band-7 can measure theses lines simultaneously. 
+For CO, we propose the high resolution correlator (122 kHz) to retrieve wind velocity with precision of 12m/s. 
+For HDO and H2O2, we propose the 282 KHz resolution to resolve the narrow lines. 
+In addition, we need one broad-bandwidth (~800 MHz) to obtain the full spectral features of 12CO and HDO. 
+
+Most stringent sensititivity requirements in our science objectives is to retrieve wind velocity with a precision of 12 m/s. 
+To measure the wind with this precision, 0.22 Kelvin (244 kHz-resolution) is required for 12CO line mapping. 
+In the present proposal we estimated the observation time with the worst condition (0.5" synthesis beam), and got the total estimated observation time including calibration data acquisition as 1.56 hr. 
+
+</prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ObsPlan status="NewPhase2" entityPartId="X2070002221" almatype="APDM::ObsUnitSet">
+        <prj:name>ObsUnitSet</prj:name>
+        <prj:note/>
+        <prj:ObsUnitControl arrayRequested="TWELVE-M">
+            <prj:maximumTime unit="min">0.0</prj:maximumTime>
+            <prj:userPriority>0</prj:userPriority>
+            <prj:estimatedExecutionTime unit="min">0.0</prj:estimatedExecutionTime>
+            <prj:tacPriority>0</prj:tacPriority>
+            <prj:aggregatedExecutionCount>0</prj:aggregatedExecutionCount>
+            <prj:CalibrationRequirements>
+                <prj:pointingAccuracy unit="arcsec">0.0</prj:pointingAccuracy>
+            </prj:CalibrationRequirements>
+        </prj:ObsUnitControl>
+        <prj:scienceProcessingScript/>
+        <prj:runSciencePipeline>false</prj:runSciencePipeline>
+    </prj:ObsPlan>
+    <prp:ObsProposalEntity entityId="uid://A001/X112/X531" entityIdEncrypted="-- id encryption not implemented --" entityTypeName="ObsProposal" schemaVersion="13" documentVersion="1" timestamp="2013-12-05T14:58:53.676"/>
+    <prp:DocumentsRef entityId="uid://A001/X112/X532" entityTypeName="ObsAttachment" documentVersion="1"/>
+    <prp:ObsProjectRef entityId="uid://A001/X112/X530" entityTypeName="ObsProject" documentVersion="1"/>
+    <prp:code/>
+    <prp:abstract>The most striking phenomenon on Mars is a planet-encircling storm, so-called "Global dust storm". 
+Once it occurred, dust covers the whole atmosphere, and heats the atmosphere via absorption of solar radiation for more than one month. Our simulations predict that atmospheric temperature rises more than 20 K at 10-60 km altitude over the planet under the dust storms. Such a drastic heating in the atmosphere induces water vapor to remain without condensation, and accelerates dynamics. Moreover, Atreya et al (2006) predicted the amount of H2O2 could increase due to triboelectric filed under a global dust storm. 
+The goal of this proposal is to evaluate how much change is induced in thermal structure, dynamics, water vapor abundances, and H2O2 amounts due to a global dust storm. 
+We propose simultaneous observations of CO, HDO, and H2O2 using the ALMA band-7 during/after a global dust storm as a ToO observations. Through conscious monitoring of dust opacity by Mars Express spacecraft, we can trigger to carry out the observation in real-time. A new sensitive observation of dust-covered Martian atmosphere with ALMA will provide essential understanding in the Martian meteorology/climate.
+</prp:abstract>
+    <prp:relatedProposals>None</prp:relatedProposals>
+    <prp:previousProposals>None</prp:previousProposals>
+    <prp:dateReceived>2013-12-05T14:58:52.574Z</prp:dateReceived>
+    <prp:cycle>2013.1</prp:cycle>
+    <prp:studentProject>false</prp:studentProject>
+    <prp:continuation>false</prp:continuation>
+    <prp:recentPublications/>
+    <prp:scientificCategoryCode>41</prp:scientificCategoryCode>
+    <prp:proposalTypeCode>T</prp:proposalTypeCode>
+    <prp:scientificCategoryString>Circumstellar disks, exoplanets and the solar system</prp:scientificCategoryString>
+    <prp:proposalTypeString>Target Of Opportunity</prp:proposalTypeString>
+    <prp:keyword>Solar system - Planetary atmospheres</prp:keyword>
+    <prp:keywordCode>41f</prp:keywordCode>
+    <prp:PrincipalInvestigator allowedExec="EA" associatedExec="EA">
+        <prp:fullName>Shohei Aoki</prp:fullName>
+        <prp:organisation>Graduate School of Science and Faculty of Science , Tohoku University </prp:organisation>
+        <prp:eMail>aoki@pat.gp.tohoku.ac.jp</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>saoki</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21</prp:organisationId>
+    </prp:PrincipalInvestigator>
+    <prp:CoInvestigator allowedExec="EA" associatedExec="EA">
+        <prp:fullName>Takeshi Kuroda</prp:fullName>
+        <prp:organisation>Graduate School of Science and Faculty of Science , Tohoku University </prp:organisation>
+        <prp:eMail>tkuroda@pat.gp.tohoku.ac.jp</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>tkuroda</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EA" associatedExec="EA">
+        <prp:fullName>Hideo Sagawa</prp:fullName>
+        <prp:organisation>National Institute of Information and Communications Technology</prp:organisation>
+        <prp:eMail>sagawa@nict.go.jp</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>sagawa</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21429</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EA" associatedExec="EA">
+        <prp:fullName>Hiromu Nakagawa</prp:fullName>
+        <prp:organisation>Graduate School of Science and Faculty of Science , Tohoku University </prp:organisation>
+        <prp:eMail>rom@pat.gp.tohoku.ac.jp</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>rom66</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EA" associatedExec="EA">
+        <prp:fullName>Hiroyuki Maezawa</prp:fullName>
+        <prp:organisation>Graduate School of Science, Osaka Prefecture University</prp:organisation>
+        <prp:eMail>maezawa@p.s.osakafu-u.ac.jp</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>hmaezawa</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21443</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Marco Giuranna</prp:fullName>
+        <prp:organisation>INAF; IAPS Rome</prp:organisation>
+        <prp:eMail>marco.giuranna@iaps.inaf.it</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>ippino</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>35003</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Giuseppe Sindoni</prp:fullName>
+        <prp:organisation>INAF; IAPS Rome</prp:organisation>
+        <prp:eMail>giuseppe.sindoni@iaps.inaf.it</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>gsindoni</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>35003</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Alessandro Aronica</prp:fullName>
+        <prp:organisation>INAF; IAPS Rome</prp:organisation>
+        <prp:eMail>alessandro.aronica@iaps.inaf.it</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>alessandroaronica</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>35003</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EA" associatedExec="EA">
+        <prp:fullName>Yasko KASAI</prp:fullName>
+        <prp:organisation>National Institute of Information and Communications Technology</prp:organisation>
+        <prp:eMail>ykasai@nict.go.jp</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>ykasai</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21429</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EA" associatedExec="EA">
+        <prp:fullName>Yasumasa Kasaba</prp:fullName>
+        <prp:organisation>Graduate School of Science and Faculty of Science , Tohoku University </prp:organisation>
+        <prp:eMail>kasaba@pat.gp.tohoku.ac.jp</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>kasaba</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Olivier Witasse</prp:fullName>
+        <prp:organisation>European Space Research and Technology Center (ESTEC), European Space Agency (ESA)</prp:organisation>
+        <prp:eMail>owitasse@rssd.esa.int</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>owitasse</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21206</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:ProposalFeedback>
+        <prp:estimatedTotalIntegrationTime unit="s">10959.984931458266</prp:estimatedTotalIntegrationTime>
+        <prp:ArrayTimeBreakdown>
+            <prp:ArrayTime arrayName="ACA">
+                <prp:estimatedTime unit="s">0.0</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="SEVEN-M">
+                <prp:estimatedTime unit="s">0.0</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="TP-Array">
+                <prp:estimatedTime unit="s">0.0</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="TWELVE-M">
+                <prp:estimatedTime unit="s">10959.984931458266</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="ALMA">
+                <prp:estimatedTime unit="s">10959.984931458266</prp:estimatedTime>
+            </prp:ArrayTime>
+        </prp:ArrayTimeBreakdown>
+        <prp:DataRateBreakdown>
+            <prp:ArrayDataRates arrayName="TWELVE-M">
+                <prp:estimatedAverageDataRate unit="MB/s">10.870890642600084</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="MB/s">10.870890642600084</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">55.38405534567902</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+            <prp:ArrayDataRates arrayName="SEVEN-M">
+                <prp:estimatedAverageDataRate unit="MB/s">0.0</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="GB/s">0.0</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">0.0</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+            <prp:ArrayDataRates arrayName="TP-Array">
+                <prp:estimatedAverageDataRate unit="MB/s">0.0</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="GB/s">0.0</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">0.0</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+        </prp:DataRateBreakdown>
+        <prp:ReceiverTimeBreakdown>
+            <prp:ReceiverTime receiverBand="ALMA_RB_07">
+                <prp:time unit="s">10959.984931458266</prp:time>
+            </prp:ReceiverTime>
+        </prp:ReceiverTimeBreakdown>
+        <prp:TimeAllocationBreakdown>
+            <prp:ExecutiveFraction name="OTHER">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="CL">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="EA">
+                <prp:timeFraction>1.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="EU">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="NA">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="NA_EA">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+        </prp:TimeAllocationBreakdown>
+    </prp:ProposalFeedback>
+</prp:ObsProposal>

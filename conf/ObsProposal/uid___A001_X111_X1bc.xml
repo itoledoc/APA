@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prp:ObsProposal xmlns:prp="Alma/ObsPrep/ObsProposal" xmlns:ent="Alma/CommonEntity" xmlns:val="Alma/ValueTypes" xmlns:orv="Alma/ObsPrep/ObsReview" xmlns:ps="Alma/ObsPrep/ProjectStatus" xmlns:oat="Alma/ObsPrep/ObsAttachment" xmlns:prj="Alma/ObsPrep/ObsProject" xmlns:sbl="Alma/ObsPrep/SchedBlock" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="13" revision="5" almatype="APDM::ObsProposal" xsi:type="prp:ObsProposal">
+    <prj:ScienceGoal>
+        <prj:name>Mosaic South</prj:name>
+        <prj:note>We ask for observations in Band 3 to image both the 13CO(1-0) and C18O(1-0)
+lines and the continuum emission at 3mm in the Serpens core. In order to image
+different filaments of the core, we ask for three different mosaics in different
+Science Goals.
+</prj:note>
+        <prj:estimatedTotalTime unit="s">25701.589548584605</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_03</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="User">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">3.7</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">70.0</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="Jy" userUnit="K">0.023655761438277956</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">97.99738485749364</prj:representativeFrequency>
+            <prj:useACA>true</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>true</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="GHz" userUnit="km/s">9.806522703532486E-5</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">0.1578425445287506</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">0.323487672415847</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="full">
+            <prj:representativeFrequency unit="GHz">98.0</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">0.0</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 3</prj:transitionName>
+                <prj:centerFrequency unit="GHz">98.00261521229362</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.48828125</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 2</prj:transitionName>
+                <prj:centerFrequency unit="GHz">96.00256184061416</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.48828125</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="HALF">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>13CO v=0 1-0</prj:transitionName>
+                <prj:centerFrequency unit="GHz">110.2013543</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">125.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">61.03515625000001</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>7310</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="HALF">
+                <prj:index>1</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>C18O 1-0</prj:transitionName>
+                <prj:centerFrequency unit="GHz">109.782176</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">125.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">61.03515625000001</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>3768338</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 1</prj:transitionName>
+                <prj:centerFrequency unit="GHz">108.00288207069093</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">488.28125000000006</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Unspecified" type="F_SingleRectangle">
+            <prj:sourceName>serpens</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">277.454</val:longitude>
+                <val:latitude unit="deg">1.247</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>false</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">8.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="mJy">48.0</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="GHz" userUnit="km/s">6.53768180235499E-4</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">97.99738485749364</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">0.2</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:Rectangle>
+                <prj:name/>
+                <prj:centre system="J2000" type="ABSOLUTE">
+                    <val:longitude unit="deg">279.004325</val:longitude>
+                    <val:latitude unit="deg">-0.49598333333333333</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+                <prj:pALong unit="deg">-10.0</prj:pALong>
+                <prj:long unit="arcsec">123.11934</prj:long>
+                <prj:short unit="arcsec">572.42433</prj:short>
+                <prj:spacing unit="deg" userUnit="fraction of main beam">0.008433094667030043</prj:spacing>
+                <prj:referenceFrequency unit="GHz">97.99738485749364</prj:referenceFrequency>
+            </prj:Rectangle>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>We ask for observations in Band 3 to image both the 13CO(1-0) and C18O(1-0)
+lines and the continuum emission at 3mm in the Serpens core. In order to image
+different filaments of the core, we ask for three different mosaics in different
+Science Goals.
+
+In this science goal we ask for a 93 pointings mosaic observation of the
+North-westhern filament, covering a region of 120x580arcsec. The highest required
+resolution is 3.7 arcsec, which will allow us to improve Herschel resolution by
+a factor of 2. Since we want to recover the emission from spatial scales much
+larger than the LAS offered by this (compact) configuration, we need also ACA
+and TP observations.
+
+Correlator setup: We addressed 3 baseband at continuum observations with the
+worst spectral resolution. To reduce the data rate, in these three basebands we
+used a spectral averaging factor of 4. We split the last baseband into two
+spetral windows to cover the 13CO and C18O lines at a resolution of 0.3 kms-1
+
+Requested sensitivity: To estimate the desired sensitivity, we considered the
+fluxes reported in Olmi et al 2012, where the peak flux densities range from 1K
+to 5K and from 3K to 22K respectively for C18O(1-0) and 13CO(1-0) lines. In
+order to detect the faintest structures, with a S/N at least 5, we ask for a
+sensitivity of 0.2 K in channels 0.3 km/s wide. Such sensitivity calls for about
+30 seconds per pointing.
+
+In this time we can map as well the continuum emission at 3mm, reaching a
+sensitivity (calculated in a 5.6 GHz bandwidth) of about 0.1 mJy/beam. In the 
+central part of the core there is a cluster of young stars with a 
+circumstellar disk. With this sensitivity we will be able to detect the dust 
+emission down to a mass of about 15 Mearth.</prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ScienceGoal>
+        <prj:name>Mosac West</prj:name>
+        <prj:note>We ask for observations in Band 3 to image both the 13CO(1-0) and C18O(1-0)
+lines and the continuum emission at 3mm in the Serpens core. In order to image
+different filaments of the core, we ask for three different mosaics in different
+Science Goals.
+</prj:note>
+        <prj:estimatedTotalTime unit="s">20069.606215695952</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_03</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="User">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">3.7</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">70.0</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="Jy" userUnit="K">0.02365576143827796</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">98.0</prj:representativeFrequency>
+            <prj:useACA>true</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>true</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="GHz" userUnit="km/s">9.806522703532486E-5</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">0.15784251254491782</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">0.3234876724158471</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="full">
+            <prj:representativeFrequency unit="GHz">98.00261521229362</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">0.0</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 3</prj:transitionName>
+                <prj:centerFrequency unit="GHz">98.00261521229362</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.48828125</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 2</prj:transitionName>
+                <prj:centerFrequency unit="GHz">96.00256184061416</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.48828125</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="HALF">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>13CO v=0 1-0</prj:transitionName>
+                <prj:centerFrequency unit="GHz">110.2013543</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">125.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">61.03515625000001</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>7310</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="HALF">
+                <prj:index>1</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>C18O 1-0</prj:transitionName>
+                <prj:centerFrequency unit="GHz">109.782176</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">125.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">61.03515625000001</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>3768338</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 1</prj:transitionName>
+                <prj:centerFrequency unit="GHz">108.00288207069093</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">488.28125000000006</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Unspecified" type="F_SingleRectangle">
+            <prj:sourceName>serpens</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">277.454</val:longitude>
+                <val:latitude unit="deg">1.247</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>false</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">8.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="mJy">48.0</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="GHz" userUnit="km/s">6.53768180235499E-4</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">97.99738485749364</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">0.2</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:Rectangle>
+                <prj:name/>
+                <prj:centre system="J2000" type="ABSOLUTE">
+                    <val:longitude unit="deg">279.0725123652298</val:longitude>
+                    <val:latitude unit="deg">-0.4429269656295813</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+                <prj:pALong unit="deg">-100.21745434644113</prj:pALong>
+                <prj:long unit="arcsec">113.7639898561058</prj:long>
+                <prj:short unit="arcsec">391.1220381661318</prj:short>
+                <prj:spacing unit="deg" userUnit="fraction of main beam">0.008432869628822656</prj:spacing>
+                <prj:referenceFrequency unit="GHz">98.0</prj:referenceFrequency>
+            </prj:Rectangle>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>
+In this science goal we ask for a 63 pointings mosaic observation of the
+Westhern filament, covering a region of 113x390arcsec. The highest required
+resolution is 3.7 arcsec, which will allow us to improve Herschel resolution by a
+factor of 2. Since we want to recover the emission from spatial scales much
+larger than the LAS offered by this (compact) configuration, we need also ACA
+and TP observations.
+
+Correlator setup:
+We addressed 3 baseband at continuum observations with the worst spectral
+resolution. To reduce the data rate, in these three basebands we used a spectral 
+averaging factor of 4. 
+We split the last baseband into two spetral windows to cover the 13CO and C18O 
+lines at a resolution of 0.3 kms-1
+
+Requested sensitivity:
+To estimate the desired sensitivity, we considered the fluxes reported in Olmi
+et al 2012, where the peak flux densities range from 1K to 5K and from 3K to 22K
+respectively for C18O(1-0) and 13CO(1-0) lines. In order to detect the faintest 
+structures, with a S/N at least 5, we ask for a sensitivity of 0.2 K in channels 
+0.3 km/s wide. Such sensitivity calls for about 30 seconds per pointing.
+
+In this time we can map as well the continuum emission at 3mm, reaching
+a sensitivity (calculated in a 5.6 GHz bandwidth) of about 0.1 mJy/beam.
+In the central part of the core there is a cluster of young stars with a 
+circumstellar disk. With this sensitivity we will be able to detect the dust 
+emission down to a mass of about 15 Mearth.</prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ScienceGoal>
+        <prj:name>Mosaic North-West</prj:name>
+        <prj:note>We ask for observations in Band 3 to image both the 13CO(1-0) and C18O(1-0) lines and the continuum emission at 3mm in the Serpens core. In order to image different filaments of the core, we ask for three different mosaics in different Science Goals.
+</prj:note>
+        <prj:estimatedTotalTime unit="s">14441.298631872778</prj:estimatedTotalTime>
+        <prj:userPriority>0</prj:userPriority>
+        <prj:requiredReceiverBands>ALMA_RB_03</prj:requiredReceiverBands>
+        <prj:CalibrationSetupParameters selection="system"/>
+        <prj:PerformanceParameters desiredSensitivityFrequencyMeasure="User">
+            <prj:desiredAngularResolution unit="arcsec" userUnit="arcsec">3.7</prj:desiredAngularResolution>
+            <prj:desiredLargestScale unit="arcsec">70.0</prj:desiredLargestScale>
+            <prj:desiredSensitivity unit="Jy" userUnit="K">0.02365702400284094</prj:desiredSensitivity>
+            <prj:desiredDynamicRange>1.0</prj:desiredDynamicRange>
+            <prj:representativeFrequency unit="GHz">98.0</prj:representativeFrequency>
+            <prj:useACA>true</prj:useACA>
+            <prj:isTimeConstrained>false</prj:isTimeConstrained>
+            <prj:useTP>true</prj:useTP>
+            <prj:desiredSDSensitivity unit="Jy" userUnit="Jy">0.0</prj:desiredSDSensitivity>
+            <prj:isPointSource>false</prj:isPointSource>
+            <prj:desiredSensitivityReferenceFrequencyWidth unit="GHz" userUnit="km/s">9.80678439882567E-5</prj:desiredSensitivityReferenceFrequencyWidth>
+            <prj:needsMoreTime>false</prj:needsMoreTime>
+            <prj:desiredACASensitivity unit="Jy" userUnit="Jy">0.15785093697730782</prj:desiredACASensitivity>
+            <prj:desiredTPSensitivity unit="Jy" userUnit="Jy">0.3235049377265756</prj:desiredTPSensitivity>
+            <prj:isScheduleConstrained>false</prj:isScheduleConstrained>
+            <prj:desiredTime unit="min">0.0</prj:desiredTime>
+        </prj:PerformanceParameters>
+        <prj:SpectralSetupParameters polarisation="DOUBLE" type="full">
+            <prj:representativeFrequency unit="GHz">98.00261521229362</prj:representativeFrequency>
+            <prj:userRepresentativeFrequency>false</prj:userRepresentativeFrequency>
+            <prj:singleContinuumFrequency unit="GHz">0.0</prj:singleContinuumFrequency>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 3</prj:transitionName>
+                <prj:centerFrequency unit="GHz">98.00261521229362</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.48828125</prj:spectralResolution>
+                <prj:groupIndex>3</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>true</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 2</prj:transitionName>
+                <prj:centerFrequency unit="GHz">96.00256184061416</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="MHz" userUnit="GHz">0.48828125</prj:spectralResolution>
+                <prj:groupIndex>2</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="HALF">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>13CO v=0 1-0</prj:transitionName>
+                <prj:centerFrequency unit="GHz">110.2013543</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">125.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">61.03515625000001</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>7310</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="HALF">
+                <prj:index>1</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>1</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>C18O 1-0</prj:transitionName>
+                <prj:centerFrequency unit="GHz">109.782176</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">125.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">61.03515625000001</prj:spectralResolution>
+                <prj:groupIndex>1</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:splatalogId>3768338</prj:splatalogId>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+            <prj:ScienceSpectralWindow groupResourceUse="FULL">
+                <prj:index>0</prj:index>
+                <prj:AdvancedWindowSetup smoothingFunction="HANNING">
+                    <prj:smoothingFactor>4</prj:smoothingFactor>
+                    <prj:oversampling>false</prj:oversampling>
+                    <prj:addedSensitivity>false</prj:addedSensitivity>
+                    <prj:useImage>false</prj:useImage>
+                    <prj:useThis>true</prj:useThis>
+                </prj:AdvancedWindowSetup>
+                <prj:transitionName>continuum 1</prj:transitionName>
+                <prj:centerFrequency unit="GHz">108.00288207069093</prj:centerFrequency>
+                <prj:bandWidth unit="MHz" userUnit="GHz">2000.0</prj:bandWidth>
+                <prj:spectralResolution unit="kHz" userUnit="GHz">488.28125000000006</prj:spectralResolution>
+                <prj:groupIndex>0</prj:groupIndex>
+                <prj:isSkyFrequency>false</prj:isSkyFrequency>
+                <prj:representativeWindow>false</prj:representativeWindow>
+            </prj:ScienceSpectralWindow>
+        </prj:SpectralSetupParameters>
+        <prj:TargetParameters solarSystemObject="Unspecified" type="F_SingleRectangle">
+            <prj:sourceName>serpens</prj:sourceName>
+            <prj:sourceCoordinates system="J2000" type="ABSOLUTE">
+                <val:longitude unit="deg">277.454</val:longitude>
+                <val:latitude unit="deg">1.247</val:latitude>
+                <val:fieldName>None</val:fieldName>
+            </prj:sourceCoordinates>
+            <prj:pmRA unit="mas/yr">0.0</prj:pmRA>
+            <prj:pmDec unit="mas/yr">0.0</prj:pmDec>
+            <prj:parallax unit="mas">0.0</prj:parallax>
+            <prj:nonSiderealMotion>false</prj:nonSiderealMotion>
+            <prj:sourceEphemeris/>
+            <prj:sourceVelocity referenceSystem="lsrk" dopplerCalcType="RADIO">
+                <val:centerVelocity unit="km/s">8.0</val:centerVelocity>
+            </prj:sourceVelocity>
+            <prj:index>-1</prj:index>
+            <prj:ExpectedProperties>
+                <prj:expectedPeakFluxDensity unit="Jy">48.0</prj:expectedPeakFluxDensity>
+                <prj:desiredPolarizationPercentage>0.0</prj:desiredPolarizationPercentage>
+                <prj:expectedLineWidth unit="GHz" userUnit="km/s">6.53768180235499E-4</prj:expectedLineWidth>
+                <prj:referenceFrequency unit="GHz">97.99738485749364</prj:referenceFrequency>
+                <prj:expectedPeakLineFluxDensity unit="Jy">0.2</prj:expectedPeakLineFluxDensity>
+                <prj:expectedSpectralDynamicRange>0.0</prj:expectedSpectralDynamicRange>
+                <prj:expectedImageDynamicRange>0.0</prj:expectedImageDynamicRange>
+                <prj:desiredLinePolarizationPercentage>0.0</prj:desiredLinePolarizationPercentage>
+            </prj:ExpectedProperties>
+            <prj:isMosaic>true</prj:isMosaic>
+            <prj:Rectangle>
+                <prj:name/>
+                <prj:centre system="J2000" type="ABSOLUTE">
+                    <val:longitude unit="deg">279.08047403403646</val:longitude>
+                    <val:latitude unit="deg">-0.3927516785363742</val:latitude>
+                    <val:fieldName>None</val:fieldName>
+                </prj:centre>
+                <prj:pALong unit="deg">-100.7470798668573</prj:pALong>
+                <prj:long unit="arcsec">76.33488615648022</prj:long>
+                <prj:short unit="arcsec">391.1240335901873</prj:short>
+                <prj:spacing unit="deg" userUnit="fraction of main beam">0.008432869628822656</prj:spacing>
+                <prj:referenceFrequency unit="GHz">98.0</prj:referenceFrequency>
+            </prj:Rectangle>
+        </prj:TargetParameters>
+        <prj:TechnicalJustification>
+            <prj:justificationText>
+In this science goal we ask for a 37 pointings mosaic observation of the
+North-westhern filament, covering a region of 76x390arcsec. The highest required
+resolution is 3.7 arcsec, which will allow us to improve Herschel resolution by a
+factor of 2. Since we want to recover the emission from spatial scales much
+larger than the LAS offered by this (compact) configuration, we need also ACA
+and TP observations.
+
+Correlator setup:
+We addressed 3 baseband at continuum observations with the worst spectral
+resolution. To reduce the data rate, in these three basebands we used a spectral 
+averaging factor of 4. 
+We split the last baseband into two spetral windows to cover the 13CO and C18O 
+lines at a resolution of 0.3 kms-1
+
+Requested sensitivity:
+To estimate the desired sensitivity, we considered the fluxes reported in Olmi
+et al 2012, where the peak flux densities range from 1K to 5K and from 3K to 22K
+respectively for C18O(1-0) and 13CO(1-0) lines. In order to detect the faintest 
+structures, with a S/N at least 5, we ask for a sensitivity of 0.2 K in channels 
+0.3 km/s wide. Such sensitivity calls for about 30 seconds per pointing.
+
+In this time we can map as well the continuum emission at 3mm, reaching
+a sensitivity (calculated in a 5.6 GHz bandwidth) of about 0.1 mJy/beam. 
+In the central part of the core there is a cluster of young stars with a 
+circumstellar disk. With this sensitivity we will be able to detect the dust 
+emission down to a mass of about 15 Mearth. </prj:justificationText>
+        </prj:TechnicalJustification>
+    </prj:ScienceGoal>
+    <prj:ObsPlan status="NewPhase2" entityPartId="X68725729" almatype="APDM::ObsUnitSet">
+        <prj:name>ObsUnitSet</prj:name>
+        <prj:note/>
+        <prj:ObsUnitControl arrayRequested="TWELVE-M">
+            <prj:maximumTime unit="min">0.0</prj:maximumTime>
+            <prj:userPriority>0</prj:userPriority>
+            <prj:estimatedExecutionTime unit="min">0.0</prj:estimatedExecutionTime>
+            <prj:tacPriority>0</prj:tacPriority>
+            <prj:aggregatedExecutionCount>0</prj:aggregatedExecutionCount>
+            <prj:CalibrationRequirements>
+                <prj:pointingAccuracy unit="arcsec">0.0</prj:pointingAccuracy>
+            </prj:CalibrationRequirements>
+        </prj:ObsUnitControl>
+        <prj:scienceProcessingScript/>
+        <prj:runSciencePipeline>false</prj:runSciencePipeline>
+    </prj:ObsPlan>
+    <prp:ObsProposalEntity entityId="uid://A001/X111/X1bc" entityIdEncrypted="-- id encryption not implemented --" entityTypeName="ObsProposal" schemaVersion="13" documentVersion="1" timestamp="2013-12-05T14:23:14.730"/>
+    <prp:DocumentsRef entityId="uid://A001/X111/X1bd" entityTypeName="ObsAttachment" documentVersion="1"/>
+    <prp:ObsProjectRef entityId="uid://A001/X111/X1bb" entityTypeName="ObsProject" documentVersion="1"/>
+    <prp:code/>
+    <prp:abstract>Herschel far-infrared observations of the Serpens core region revealed a network of filaments converging into the core clusters. 
+Serpens represents a unique laboratory to study all the processes of star formation, from the first stages of still in-falling gas to pre-/proto-stellar gaseous and dusty condensations, as well as already formed young stars. We aim at resolving the brightest cold material structures at 3mm of the filamentary network previously resolved at 160 micron.  
+We will also constrain the feeding mechanisms responsible for the clusters formation via kinematics observations along the most prominent filaments, observing the 13CO. The gas mass in the filaments will also be contrained using the C18O.  
+With the comparison with our simulations of cluster formation, we will understand 
+if the filaments are the main agents feeding the Serpens core, and whether this predicted mechanism is applicable the entire Serpens molecular cloud. 
+Our study will be able to connect the infall of material through the filaments to the first stages of a forming clusters. </prp:abstract>
+    <prp:relatedProposals/>
+    <prp:previousProposals/>
+    <prp:dateReceived>2013-12-05T14:23:14.081Z</prp:dateReceived>
+    <prp:cycle>2013.1</prp:cycle>
+    <prp:continuation>false</prp:continuation>
+    <prp:recentPublications/>
+    <prp:scientificCategoryCode>31</prp:scientificCategoryCode>
+    <prp:proposalTypeCode>S</prp:proposalTypeCode>
+    <prp:scientificCategoryString>ISM, star formation and astrochemistry</prp:scientificCategoryString>
+    <prp:proposalTypeString>Standard</prp:proposalTypeString>
+    <prp:keyword>Low-mass star formation</prp:keyword>
+    <prp:keywordCode>31d</prp:keywordCode>
+    <prp:PrincipalInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Veronica Roccatagliata</prp:fullName>
+        <prp:organisation>Observatory, Munich, University of</prp:organisation>
+        <prp:eMail>vrocca@usm.uni-muenchen.de</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>vrocca</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21137</prp:organisationId>
+    </prp:PrincipalInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Leonardo Testi</prp:fullName>
+        <prp:organisation>Headquarters Garching, European Southern Observatory</prp:organisation>
+        <prp:eMail>ltesti@eso.org</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>ltesti</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21111</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Aurora Sicilia-Aguilar</prp:fullName>
+        <prp:organisation>School of Physics and Astronomy, St. Andrews, University of</prp:organisation>
+        <prp:eMail>aurora.sicilia@uam.es</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>asicilia</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21318</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Arturo Mignano</prp:fullName>
+        <prp:organisation>Institute of Radioastronomy of Bologna, INAF</prp:organisation>
+        <prp:eMail>amignano@ira.inaf.it</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>amignano</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21163</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Rosita Paladino</prp:fullName>
+        <prp:organisation>Institute of Radioastronomy of Bologna, INAF</prp:organisation>
+        <prp:eMail>paladino@ira.inaf.it</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>rosita</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21163</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>James Dale</prp:fullName>
+        <prp:organisation>Observatory, Munich, University of</prp:organisation>
+        <prp:eMail>dale.james.e@gmail.com</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>jimdale</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21137</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Christine Koepferl</prp:fullName>
+        <prp:organisation>Max-Planck-Institute for Astronomy</prp:organisation>
+        <prp:eMail>koepferl@mpia.de</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>koepferlc</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21128</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Carlos Eiroa</prp:fullName>
+        <prp:organisation>Facultad de Ciencias, Universidad Autonoma de Madrid </prp:organisation>
+        <prp:eMail>carlos.eiroa@uam.es</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>ceiroa</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>24014</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Thorsten Ratzka</prp:fullName>
+        <prp:organisation>Institute for Geophysics, Astrophysics and Meteorology, Graz, University of</prp:organisation>
+        <prp:eMail>Thorsten.ratzka@uni-graz.at</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>tratzka</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21018</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:CoInvestigator allowedExec="EU" associatedExec="EU">
+        <prp:fullName>Katharine Johnston</prp:fullName>
+        <prp:organisation>Max-Planck-Institute for Astronomy</prp:organisation>
+        <prp:eMail>johnston@mpia.de</prp:eMail>
+        <prp:verfiedUser>true</prp:verfiedUser>
+        <prp:userId>kjohnston</prp:userId>
+        <prp:telephone/>
+        <prp:mobile/>
+        <prp:index>1</prp:index>
+        <prp:organisationId>21128</prp:organisationId>
+    </prp:CoInvestigator>
+    <prp:ProposalFeedback>
+        <prp:estimatedTotalIntegrationTime unit="s">12042.498879230669</prp:estimatedTotalIntegrationTime>
+        <prp:ArrayTimeBreakdown>
+            <prp:ArrayTime arrayName="ACA">
+                <prp:estimatedTime unit="s">72254.99327538401</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="SEVEN-M">
+                <prp:estimatedTime unit="s">24084.997758461337</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="TP-Array">
+                <prp:estimatedTime unit="s">48169.995516922674</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="TWELVE-M">
+                <prp:estimatedTime unit="s">12042.498879230669</prp:estimatedTime>
+            </prp:ArrayTime>
+            <prp:ArrayTime arrayName="ALMA">
+                <prp:estimatedTime unit="s">60212.494396153335</prp:estimatedTime>
+            </prp:ArrayTime>
+        </prp:ArrayTimeBreakdown>
+        <prp:DataRateBreakdown>
+            <prp:ArrayDataRates arrayName="TWELVE-M">
+                <prp:estimatedAverageDataRate unit="MB/s">9.51233679655368</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="MB/s">9.512336796553678</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">55.5598395693869</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+            <prp:ArrayDataRates arrayName="SEVEN-M">
+                <prp:estimatedAverageDataRate unit="MB/s">3.668259060572064</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="MB/s">3.668259060572064</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">50.78669752316958</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+            <prp:ArrayDataRates arrayName="TP-Array">
+                <prp:estimatedAverageDataRate unit="MB/s">0.20960020640539742</prp:estimatedAverageDataRate>
+                <prp:estimatedMaximumDataRate unit="MB/s">0.20960020640539745</prp:estimatedMaximumDataRate>
+                <prp:estimatedDataVolume unit="GB">2.901894906474997</prp:estimatedDataVolume>
+            </prp:ArrayDataRates>
+        </prp:DataRateBreakdown>
+        <prp:ReceiverTimeBreakdown>
+            <prp:ReceiverTime receiverBand="ALMA_RB_03">
+                <prp:time unit="s">12042.498879230669</prp:time>
+            </prp:ReceiverTime>
+        </prp:ReceiverTimeBreakdown>
+        <prp:TimeAllocationBreakdown>
+            <prp:ExecutiveFraction name="OTHER">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="CL">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="EA">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="EU">
+                <prp:timeFraction>1.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="NA">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+            <prp:ExecutiveFraction name="NA_EA">
+                <prp:timeFraction>0.0</prp:timeFraction>
+            </prp:ExecutiveFraction>
+        </prp:TimeAllocationBreakdown>
+    </prp:ProposalFeedback>
+</prp:ObsProposal>

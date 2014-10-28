@@ -34,10 +34,10 @@ confDf.ix['C34-7'] = ('C34-7', 0.41, 0.27, 0.18, 0.12, None, None)
 
 
 # noinspection PyPep8Naming
-class WtoDatabase(object):
+class Database(object):
 
     """
-    WtoDatabase is the class that stores the Projects and SB information in
+    Database is the class that stores the Projects and SB information in
     dataframes, and it also has the methods to connect and query the OSF
     archive for this info.
 
@@ -68,6 +68,7 @@ class WtoDatabase(object):
         self.wto_path = os.environ['APA']
         self.sbxml = self.path + 'sbxml/'
         self.obsxml = self.path + 'obsxml/'
+        self.propxml = self.path + 'propxml/'
         self.preferences = pd.Series(
             ['project.pandas', 'sciencegoals.pandas',
              'scheduling.pandas', 'special.list', 'pwvdata.pandas',
@@ -132,6 +133,7 @@ class WtoDatabase(object):
             os.mkdir(self.path)
             os.mkdir(self.sbxml)
             os.mkdir(self.obsxml)
+            os.mkdir(self.propxml)
             # Global Oracle Connection
             self.connection = cx_Oracle.connect(conx_string)
             self.cursor = self.connection.cursor()
@@ -251,6 +253,7 @@ class WtoDatabase(object):
                 self.read_obsproject(xmlfilename)
             else:
                 self.read_obsproposal(xmlfilename, r[1].CODE)
+
         self.projects.to_pickle(
             self.path + 'projects.pandas')
         self.sg_sbs.to_pickle(
@@ -272,15 +275,31 @@ class WtoDatabase(object):
         self.sg_targets.to_pickle(
             self.path + 'sg_targets')
 
+    def get_phaseone_sb(self):
+        sbp1 = os.listdir(self.wto_path + 'conf/SchedBlock/')
+        for x in sbp1:
+            xml = SchedBlock(x, self.wto_path + 'conf/SchedBlock/')
+            obs_uid = xml.data.findall(
+                './/' + prj + 'ObsProjectRef')[0].attrib['entityId']
+            if obs_uid not in self.obsproposals.OBSPROJECT_UID.values:
+                print('%s is not approved phase I' % obs_uid)
+                continue
+            print('Procesing SBs of %s' % obs_uid)
+            sb_uid = xml.data.SchedBlockEntity.attrib['entityId']
+            self.read_schedblocks_p1(sb_uid, obs_uid, xml)
+
     def process_wto(self):
         try:
             self.schedblocks = pd.read_pickle(
                 self.path + 'schedblocks.pandas')
         except IOError:
+            new = True
             for sg_sb in self.sg_sbs.iterrows():
                 self.read_schedblocks(sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID,
-                                      sg_sb[1].OUS_ID, new=True)
+                                      sg_sb[1].OUS_ID, new=new)
+                new = False
             self.schedblocks.to_pickle(self.path + 'schedblocks.pandas')
+            self.get_phaseone_sb()
 
     def get_projectxml(self, code, state, n, c):
         """
@@ -297,29 +316,33 @@ class WtoDatabase(object):
                 "WHERE ARCHIVE_UID = '%s'" % self.projects.ix[
                     code, 'OBSPROJECT_UID'])
             obsproj = True
+            try:
+                data = self.cursor.fetchall()[0]
+                xml_content = data[1].read()
+                xmlfilename = code + '.xml'
+                self.projects.loc[code, 'timestamp'] = data[0]
+                filename = self.obsxml + xmlfilename
+                io_file = open(filename, 'w')
+                io_file.write(xml_content)
+                io_file.close()
+                self.projects.loc[code, 'xmlfile'] = xmlfilename
+                return xmlfilename, obsproj
+            except IndexError:
+                print("Project %s not found on archive?" %
+                      self.projects.ix[code])
+                return 0
         else:
-            print("Downloading Project %s obsproposal.xml, status %s. (%s/%s)" %
+            print("Copying Project %s obsproposal.xml, status %s. (%s/%s)" %
                   (code, self.projects.ix[code, 'PRJ_STATUS'], c, n))
-            self.cursor.execute(
-                "SELECT TIMESTAMP, XMLTYPE.getClobVal(xml) "
-                "FROM ALMA.XML_OBSPROPOSAL_ENTITIES "
-                "WHERE ARCHIVE_UID = '%s'" % self.projects.ix[
-                    code, 'OBSPROPOSAL_UID'])
+            xmlfilename = self.projects.ix[code, 'OBSPROJECT_UID'].replace(
+                '://', '___').replace('/', '_')
+            xmlfilename += '.xml'
+            path_ori = self.wto_path + 'conf/ObsProject/' + xmlfilename
+            path_dest = self.obsxml + '.'
+            call('cp %s %s' % (path_ori, path_dest), shell=True)
             obsproj = False
-        try:
-            data = self.cursor.fetchall()[0]
-        except IndexError:
-            print "Project %s not found on archive?" % self.projects.ix[code]
-            return 0
-        xml_content = data[1].read()
-        xmlfilename = code + '.xml'
-        self.projects.loc[code, 'timestamp'] = data[0]
-        filename = self.obsxml + xmlfilename
-        io_file = open(filename, 'w')
-        io_file.write(xml_content)
-        io_file.close()
-        self.projects.loc[code, 'xmlfile'] = xmlfilename
-        return xmlfilename, obsproj
+            self.projects.loc[code, 'xmlfile'] = xmlfilename
+            return xmlfilename, obsproj
 
     def read_obsproject(self, xml):
 
@@ -363,7 +386,7 @@ class WtoDatabase(object):
     def read_obsproposal(self, xml, code):
 
         try:
-            obsparse = ObsProposal(xml, self.obsxml)
+            obsparse = ObsProject(xml, self.obsxml)
         except KeyError:
             print("Something went wrong while trying to parse %s" % xml)
             return 0
@@ -371,22 +394,31 @@ class WtoDatabase(object):
         prj_version = None
         staff_note = None
         is_calibration = None
-        obsproject_uid = obsparse.data.ObsProjectRef.attrib['entityId']
+        obsproject_uid = obsparse.ObsProjectEntity.attrib['entityId']
+        obsproposal_uid = obsparse.ObsProposalRef.attrib['entityId']
         is_ddt = None
 
         try:
             self.obsproposals.ix[code] = (
-                code, obsproject_uid, prj_version, staff_note, is_ddt,
-                is_calibration
+                code, obsproject_uid, obsproposal_uid, prj_version, staff_note,
+                is_ddt, is_calibration
             )
         except AttributeError:
             self.obsproposals = pd.DataFrame(
-                [(code, obsproject_uid, prj_version, staff_note, is_ddt,
-                  is_calibration)],
-                columns=['CODE', 'OBSPROJECT_UID', 'PRJ_VERSION', 'staffNote',
-                         'isDDT', 'isCalibration'],
+                [(code, obsproject_uid, obsproposal_uid, prj_version,
+                  staff_note, is_ddt, is_calibration)],
+                columns=['CODE', 'OBSPROJECT_UID', 'OBSPROPOSAL_UID',
+                         'PRJ_VERSION', 'staffNote', 'isDDT', 'isCalibration'],
                 index=[code]
             )
+
+        xmlfilename = obsproposal_uid.replace(
+            '://', '___').replace('/', '_')
+        xmlfilename += '.xml'
+        path_ori = self.wto_path + 'conf/ObsProposal/' + xmlfilename
+        path_dest = self.propxml + '.'
+        call('cp %s %s' % (path_ori, path_dest), shell=True)
+        obsparse = ObsProposal(xmlfilename, path=self.propxml)
 
         sg_list = obsparse.data.findall(prj + 'ScienceGoal')
         c = 0
@@ -691,6 +723,82 @@ class WtoDatabase(object):
                 ispolarization, maxpwv, type12m)
         except AttributeError:
             self.schedblocks = pd.DataFrame(
+                [(sb_uid, obs_uid, sg_id, ous_id,
+                  name, status, repfreq, band, array,
+                  ra, dec, minar_old, maxar_old, execount,
+                  ispolarization, maxpwv, type12m)],
+                columns=['SB_UID', 'OBSPROJECT_UID', 'SG_ID', 'OUS_ID',
+                         'sbName', 'sbStatusXml', 'repfreq', 'band', 'array',
+                         'RA', 'DEC', 'minAR_ot', 'maxAR_ot', 'execount',
+                         'isPolarization', 'maxPWVC', 'array12mType'],
+                index=[sb_uid])
+
+    def read_schedblocks_p1(self, sb_uid, obs_uid, xml):
+
+        # Open SB with SB parser class
+        """
+
+        :param sb_uid:
+        :param new:
+        """
+        sg_id = None
+        ous_id = None
+        # Extract root level data
+        array = xml.data.findall(
+            './/' + prj + 'ObsUnitControl')[0].attrib['arrayRequested']
+        name = xml.data.findall('.//' + prj + 'name')[0].pyval
+        type12m = 'None'
+        if name.rfind('TC') != -1:
+            type12m = 'Comp'
+        elif array == 'TWELVE-M':
+            type12m = 'Ext'
+        status = xml.data.attrib['status']
+
+        schedconstr = xml.data.SchedulingConstraints
+        schedcontrol = xml.data.SchedBlockControl
+        preconditions = xml.data.Preconditions
+        weather = preconditions.findall('.//' + prj + 'WeatherConstraints')[0]
+
+        try:
+            # noinspection PyUnusedLocal
+            polarparam = xml.data.PolarizationCalParameters
+            ispolarization = True
+        except AttributeError:
+            ispolarization = False
+
+        repfreq = schedconstr.representativeFrequency.pyval
+        ra = schedconstr.representativeCoordinates.findall(
+            val + 'longitude')[0].pyval
+        dec = schedconstr.representativeCoordinates.findall(
+            val + 'latitude')[0].pyval
+        minar_old = schedconstr.minAcceptableAngResolution.pyval
+        maxar_old = schedconstr.maxAcceptableAngResolution.pyval
+        band = schedconstr.attrib['representativeReceiverBand']
+
+        execount = schedcontrol.executionCount.pyval
+        maxpwv = weather.maxPWVC.pyval
+
+        n_fs = len(xml.data.FieldSource)
+        n_tg = len(xml.data.Target)
+        n_ss = len(xml.data.SpectralSpec)
+
+        for n in range(n_fs):
+            self.read_fieldsource(xml.data.FieldSource[n], sb_uid, array)
+
+        for n in range(n_tg):
+            self.read_target(xml.data.Target[n], sb_uid)
+
+        for n in range(n_ss):
+            self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid)
+
+        try:
+            self.schedblocks_p1.ix[sb_uid] = (
+                sb_uid, obs_uid, sg_id, ous_id,
+                name, status, repfreq, band, array,
+                ra, dec, minar_old, maxar_old, execount,
+                ispolarization, maxpwv, type12m)
+        except AttributeError:
+            self.schedblocks_p1 = pd.DataFrame(
                 [(sb_uid, obs_uid, sg_id, ous_id,
                   name, status, repfreq, band, array,
                   ra, dec, minar_old, maxar_old, execount,
