@@ -33,7 +33,7 @@ confDf.ix['C34-6'] = ('C34-6', 0.57, 0.38, 0.25, 0.16, 0.12, 0.09)
 confDf.ix['C34-7'] = ('C34-7', 0.41, 0.27, 0.18, 0.12, None, None)
 
 
-# noinspection PyPep8Naming
+# noinspection PyPep8Naming,PyAttributeOutsideInit
 class Database(object):
 
     """
@@ -106,8 +106,8 @@ class Database(object):
             try:
                 self.projects = pd.read_pickle(
                     self.path + 'projects.pandas')
-                self.sg_sbs = pd.read_pickle(
-                    self.path + 'sg_sbs.pandas')
+                self.sb_sg_p2 = pd.read_pickle(
+                    self.path + 'sb_sg_p2.pandas')
                 self.sciencegoals = pd.read_pickle(
                     self.path + 'sciencegoals.pandas')
                 self.aqua_execblock = pd.read_pickle(
@@ -258,8 +258,8 @@ class Database(object):
 
         self.projects.to_pickle(
             self.path + 'projects.pandas')
-        self.sg_sbs.to_pickle(
-            self.path + 'sg_sbs.pandas')
+        self.sb_sg_p2.to_pickle(
+            self.path + 'sb_sg_p2.pandas')
         self.sciencegoals.to_pickle(
             self.path + 'sciencegoals.pandas')
         self.aqua_execblock.to_pickle(
@@ -290,22 +290,37 @@ class Database(object):
             sb_uid = xml.data.SchedBlockEntity.attrib['entityId']
             self.read_schedblocks_p1(sb_uid, obs_uid, xml)
 
-    def process_wto(self):
+    # noinspection PyAttributeOutsideInit
+    def process_sbs(self):
         try:
-            self.schedblocks = pd.read_pickle(
-                self.path + 'schedblocks.pandas')
+            self.schedblocks_p2 = pd.read_pickle(
+                self.path + 'schedblocks_p2.pandas')
             self.schedblocks_p1 = pd.read_pickle(
                 self.path + 'schedblocks_p1.pandas')
+            self.fieldsource = pd.read_pickle(
+                self.path + 'fieldsource.pandas')
+            self.target = pd.read_pickle(
+                self.path + 'target.pandas')
+            self.spectralconf = pd.read_pickle(
+                self.path + 'spectralconf.pandas')
 
         except IOError:
             new = True
-            for sg_sb in self.sg_sbs.iterrows():
-                self.read_schedblocks(sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID,
-                                      sg_sb[1].OUS_ID, new=new)
+            for sg_sb in self.sb_sg_p2.iterrows():
+                self.read_schedblocks_p2(
+                    sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID, sg_sb[1].OUS_ID,
+                    new=new)
                 new = False
-            self.schedblocks.to_pickle(self.path + 'schedblocks.pandas')
+            self.schedblocks_p2.to_pickle(self.path + 'schedblocks_p2.pandas')
             self.get_phaseone_sb()
+            self.schedblocks_p1.loc[:, 'SG_ID'] = self.schedblocks_p1.apply(
+                lambda r: self.sb_sg_p1[
+                    self.sb_sg_p1.SB_UID == r['SB_UID']].SG_ID_y.values[0],
+                axis=1)
             self.schedblocks_p1.to_pickle(self.path + 'schedblocks_p1.pandas')
+            self.fieldsource.to_pickle(self.path + 'fieldsource.pandas')
+            self.target.to_pickle(self.path + 'target.pandas')
+            self.spectralconf.to_pickle(self.path + 'spectralconf.pandas')
 
     def get_projectxml(self, code, state, n, c):
         """
@@ -319,8 +334,8 @@ class Database(object):
             self.cursor.execute(
                 "SELECT TIMESTAMP, XMLTYPE.getClobVal(xml) "
                 "FROM ALMA.XML_OBSPROJECT_ENTITIES "
-                "WHERE ARCHIVE_UID = '%s'" % self.projects.ix[
-                    code, 'OBSPROJECT_UID'])
+                "WHERE ARCHIVE_UID = '%s'" %
+                self.projects.ix[code, 'OBSPROJECT_UID'])
             obsproj = True
             try:
                 data = self.cursor.fetchall()[0]
@@ -548,13 +563,13 @@ class Database(object):
                         if array == 'ACA':
                             array = 'SEVEN-M'
                         try:
-                            self.sg_sbs.ix[SB_UID] = (
+                            self.sb_sg_p2.ix[SB_UID] = (
                                 SB_UID, OBSPROJECT_UID, sg_id,
                                 ous_id, ous_name, gous_id,
                                 gous_name, mous_id, mous_name,
                                 array, execount, xml)
                         except AttributeError:
-                            self.sg_sbs = pd.DataFrame(
+                            self.sb_sg_p2 = pd.DataFrame(
                                 [(SB_UID, OBSPROJECT_UID, sg_id,
                                   ous_id, ous_name, gous_id,
                                   gous_name, mous_id, mous_name,
@@ -645,7 +660,7 @@ class Database(object):
             copy=False, how='inner').set_index('CODE', drop=False)
         self.projects = temp
 
-    def read_schedblocks(self, sb_uid, obs_uid, ous_id, new=False):
+    def read_schedblocks_p2(self, sb_uid, obs_uid, ous_id, new=False):
 
         # Open SB with SB parser class
         """
@@ -654,7 +669,7 @@ class Database(object):
         :param new:
         """
         print("Procesing Phase II SB %s" % sb_uid)
-        sb = self.sg_sbs.ix[sb_uid]
+        sb = self.sb_sg_p2.ix[sb_uid]
         sg_id = sb.SG_ID
         xml = SchedBlock(sb.xmlfile, self.sbxml)
         new_orig = new
@@ -723,13 +738,13 @@ class Database(object):
                 self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid)
 
         try:
-            self.schedblocks.ix[sb_uid] = (
+            self.schedblocks_p2.ix[sb_uid] = (
                 sb_uid, obs_uid, sg_id, ous_id,
                 name, status, repfreq, band, array,
                 ra, dec, minar_old, maxar_old, execount,
                 ispolarization, maxpwv, type12m)
         except AttributeError:
-            self.schedblocks = pd.DataFrame(
+            self.schedblocks_p2 = pd.DataFrame(
                 [(sb_uid, obs_uid, sg_id, ous_id,
                   name, status, repfreq, band, array,
                   ra, dec, minar_old, maxar_old, execount,
@@ -746,7 +761,6 @@ class Database(object):
         """
 
         :param sb_uid:
-        :param new:
         """
         sg_id = None
         ous_id = None
