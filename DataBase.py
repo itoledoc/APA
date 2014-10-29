@@ -294,6 +294,9 @@ class Database(object):
         try:
             self.schedblocks = pd.read_pickle(
                 self.path + 'schedblocks.pandas')
+            self.schedblocks_p1 = pd.read_pickle(
+                self.path + 'schedblocks_p1.pandas')
+
         except IOError:
             new = True
             for sg_sb in self.sg_sbs.iterrows():
@@ -302,6 +305,7 @@ class Database(object):
                 new = False
             self.schedblocks.to_pickle(self.path + 'schedblocks.pandas')
             self.get_phaseone_sb()
+            self.schedblocks_p1.to_pickle(self.path + 'schedblocks_p1.pandas')
 
     def get_projectxml(self, code, state, n, c):
         """
