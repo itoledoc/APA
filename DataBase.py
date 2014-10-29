@@ -65,7 +65,8 @@ class Database(object):
         if path[-1] != '/':
             path += '/'
         self.path = os.environ['HOME'] + path
-        self.wto_path = os.environ['APA']
+        self.apa_path = os.environ['APA']
+        self.phase1_data = os.environ['PHASEONE']
         self.sbxml = self.path + 'sbxml/'
         self.obsxml = self.path + 'obsxml/'
         self.propxml = self.path + 'propxml/'
@@ -82,7 +83,8 @@ class Database(object):
                    'spectralconf_table'])
         self.status = ["Canceled", "Rejected"]
 
-        self.grades = pd.read_table(self.wto_path + 'conf/c2grade.csv', sep=',')
+        self.grades = pd.read_table(self.apa_path + 'conf/c2grade.csv', sep=',')
+        self.sb_sg_p1 = pd.read_pickle(self.apa_path + 'conf/sb_sg_p1.pandas')
 
         # Global SQL search expressions
             # Search Project's PT information and match with PT Status
@@ -276,9 +278,9 @@ class Database(object):
             self.path + 'sg_targets')
 
     def get_phaseone_sb(self):
-        sbp1 = os.listdir(self.wto_path + 'conf/SchedBlock/')
+        sbp1 = os.listdir(self.phase1_data + 'SchedBlock/')
         for x in sbp1:
-            xml = SchedBlock(x, self.wto_path + 'conf/SchedBlock/')
+            xml = SchedBlock(x, self.phase1_data + 'SchedBlock/')
             obs_uid = xml.data.findall(
                 './/' + prj + 'ObsProjectRef')[0].attrib['entityId']
             if obs_uid not in self.obsproposals.OBSPROJECT_UID.values:
@@ -337,7 +339,7 @@ class Database(object):
             xmlfilename = self.projects.ix[code, 'OBSPROJECT_UID'].replace(
                 '://', '___').replace('/', '_')
             xmlfilename += '.xml'
-            path_ori = self.wto_path + 'conf/ObsProject/' + xmlfilename
+            path_ori = self.phase1_data + 'ObsProject/' + xmlfilename
             path_dest = self.obsxml + '.'
             call('cp %s %s' % (path_ori, path_dest), shell=True)
             obsproj = False
@@ -415,7 +417,7 @@ class Database(object):
         xmlfilename = obsproposal_uid.replace(
             '://', '___').replace('/', '_')
         xmlfilename += '.xml'
-        path_ori = self.wto_path + 'conf/ObsProposal/' + xmlfilename
+        path_ori = self.phase1_data + 'ObsProposal/' + xmlfilename
         path_dest = self.propxml + '.'
         call('cp %s %s' % (path_ori, path_dest), shell=True)
         obsparse = ObsProposal(xmlfilename, path=self.propxml)
@@ -616,7 +618,7 @@ class Database(object):
 
         """
         c1c2 = pd.read_csv(
-            self.wto_path + 'conf/c1c2.csv', sep=',', header=0,
+            self.apa_path + 'conf/c1c2.csv', sep=',', header=0,
             usecols=range(5))
         c1c2.columns = pd.Index([u'CODE', u'Region', u'ARC', u'C2', u'P2G'],
                                 dtype='object')
@@ -647,6 +649,7 @@ class Database(object):
         :param sb_uid:
         :param new:
         """
+        print("Procesing Phase II SB %s" % sb_uid)
         sb = self.sg_sbs.ix[sb_uid]
         sg_id = sb.SG_ID
         xml = SchedBlock(sb.xmlfile, self.sbxml)
@@ -931,4 +934,3 @@ class Database(object):
                 index=[partid])
         else:
             self.spectralconf.ix[partid] = (partid, sbuid, nbb, nspw)
-
