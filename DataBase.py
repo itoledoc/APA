@@ -141,7 +141,6 @@ class Database(object):
             self.cursor = self.connection.cursor()
 
             # Populate different dataframes related to projects and SBs statuses
-
             # self.scheduling_proj: data frame with projects at SCHEDULING_AOS
             # Query Projects currently on SCHEDULING_AOS
             self.sqlsched_proj = str(
@@ -952,3 +951,19 @@ class Database(object):
                 index=[partid])
         else:
             self.spectralconf.ix[partid] = (partid, sbuid, nbb, nspw)
+
+
+"""
+Finding two12m SG, p1:
+not2t = datas.schedblocks_p1[
+    datas.schedblocks_p1.duplicated(
+        ['SG_ID', 'sbName', 'repfreq', 'array', 'minAR_ot'])].SB_UID.values
+sg_p1_2TWELVE = datas.schedblocks_p1[
+    datas.schedblocks_p1.duplicated(
+        ['SG_ID', 'sbName', 'repfreq', 'array'])
+        ].query('SB_UID not in @not2t').SG_ID.values
+
+Finding two12m SG, p2:
+sg_p2_2TWELVE = datas.schedblocks_p2[
+    datas.schedblocks_p2.sbName.str.endswith('_TC')].SG_ID.values
+"""
