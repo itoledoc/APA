@@ -316,6 +316,37 @@ class Database(object):
                 lambda r: self.sb_sg_p1[
                     self.sb_sg_p1.SB_UID == r['SB_UID']].SG_ID_y.values[0],
                 axis=1)
+
+            not2t = self.schedblocks_p1[
+                self.schedblocks_p1.duplicated(
+                    ['SG_ID', 'sbName', 'repfreq', 'array', 'minAR_ot'])
+            ].SB_UID.values
+            sg_p1_2TWELVE = self.schedblocks_p1[
+                self.schedblocks_p1.duplicated(
+                    ['SG_ID', 'sbName', 'repfreq', 'array'])
+            ].query('SB_UID not in @not2t').SG_ID.values
+
+            for i in sg_p1_2TWELVE:
+                self.sciencegoals.ix[i].two_12m = True
+
+            sg_p2_2TWELVE = self.schedblocks_p2[
+                self.schedblocks_p2.sbName.str.endswith('_TC')].SG_ID.values
+            for i in sg_p2_2TWELVE:
+                self.sciencegoals.loc[i, 'two_12m'] = True
+
+            columns = ['eExt12Time', 'eComp12Time', 'eACATime', 'eTPTime']
+            self.sciencegoals.loc[:, columns] = self.sciencegoals.apply(
+                lambda r: distribute_time(
+                    r['estimatedTime'], r['two_12m'], r['useACA'], r['useTP']),
+                axis=1)
+
+            sb_comp_p1 = self.schedblocks_p1.query(
+                'SG_ID in @sg_p1_2TWELVE'
+            ).groupby('SG_ID').minAR_ot.idxmax().values
+
+            for i in sb_comp_p1:
+                self.schedblocks_p1.array12mType = 'Comp'
+
             self.schedblocks_p1.to_pickle(self.path + 'schedblocks_p1.pandas')
             self.fieldsource.to_pickle(self.path + 'fieldsource.pandas')
             self.target.to_pickle(self.path + 'target.pandas')
@@ -457,8 +488,9 @@ class Database(object):
             hasSB = False
         sg_name = sg.name.pyval
         bands = sg.findall(prj + 'requiredReceiverBands')[0].pyval
-        estimatedTime = convert_tsec(sg.estimatedTotalTime.pyval,
-                                     sg.estimatedTotalTime.attrib['unit'])
+        estimatedTime = convert_tsec(
+            sg.estimatedTotalTime.pyval,
+            sg.estimatedTotalTime.attrib['unit']) / 3600.
 
         performance = sg.PerformanceParameters
         AR = convert_sec(
@@ -486,7 +518,7 @@ class Database(object):
         ARcor = AR * repFreq / 100.
         LAScor = LAS * repFreq / 100.
 
-        two_12m = needs2(ARcor, LAScor)
+        two_12m = False
         targets = sg.findall(prj + 'TargetParameters')
         num_targets = len(targets)
         c = 1
@@ -495,8 +527,7 @@ class Database(object):
             c += 1
 
         extendedTime, compactTime, sevenTime, TPTime = distribute_time(
-            estimatedTime, two_12m, useACA, useTP
-        )
+            0., 0., 0., 0.)
 
         try:
             self.sciencegoals.ix[sg_id] = (
@@ -952,6 +983,43 @@ class Database(object):
         else:
             self.spectralconf.ix[partid] = (partid, sbuid, nbb, nspw)
 
+
+def distribute_time(tiempo, doce, siete, single):
+
+    if single and doce:
+        time_u = tiempo / (1 + 0.5 + 2 + 4)
+        return pd.Series([time_u, 0.5 * time_u, 2 * time_u, 4 * time_u],
+                         index=['eExt12Time', 'eComp12Time', 'eACATime',
+                                'eTPTime'])
+    elif single and not doce:
+        time_u = tiempo / (1 + 2 + 4.)
+        return pd.Series([time_u, 0., 2 * time_u, 4 * time_u],
+                         index=['eExt12Time', 'eComp12Time', 'eACATime',
+                                'eTPTime'])
+    elif siete and doce:
+        time_u = tiempo / (1 + 0.5 + 2.)
+        return pd.Series([time_u, 0.5 * time_u, 2 * time_u, 0.],
+                         index=['eExt12Time', 'eComp12Time', 'eACATime',
+                                'eTPTime'])
+    elif siete and not doce:
+        time_u = tiempo / (1 + 2.)
+        return pd.Series([time_u, 0., 2 * time_u, 0.],
+                         index=['eExt12Time', 'eComp12Time', 'eACATime',
+                                'eTPTime'])
+    elif doce:
+        time_u = tiempo / 1.5
+        return pd.Series([time_u, 0.5 * time_u, 0., 0.],
+                         index=['eExt12Time', 'eComp12Time', 'eACATime',
+                                'eTPTime'])
+    elif not doce:
+        return pd.Series([tiempo, 0., 0., 0.],
+                         index=['eExt12Time', 'eComp12Time', 'eACATime',
+                                'eTPTime'])
+    else:
+        print("couldn't distribute time...")
+        return pd.Series([None, None, None, None],
+                         index=['eExt12Time', 'eComp12Time', 'eACATime',
+                                'eTPTime'])
 
 """
 Finding two12m SG, p1:
