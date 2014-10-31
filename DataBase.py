@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import ephem
 import cx_Oracle
+import arrayResolution2p as ARes
 
 from subprocess import call
 from XmlProjParsers import *
@@ -286,25 +287,32 @@ class Database(object):
             obs_uid = xml.data.findall(
                 './/' + prj + 'ObsProjectRef')[0].attrib['entityId']
             if obs_uid not in self.obsproposals.OBSPROJECT_UID.values:
-                print('%s is not approved phase I' % obs_uid)
                 continue
-            print('Procesing SBs of %s' % obs_uid)
+            print('Procesing Phase I SBs of %s' % obs_uid)
             sb_uid = xml.data.SchedBlockEntity.attrib['entityId']
             self.read_schedblocks_p1(sb_uid, obs_uid, xml)
 
     # noinspection PyAttributeOutsideInit
-    def process_sbs(self):
+    def process_sbs(self, forcenew=False):
         try:
-            self.schedblocks_p2 = pd.read_pickle(
-                self.path + 'schedblocks_p2.pandas')
-            self.schedblocks_p1 = pd.read_pickle(
-                self.path + 'schedblocks_p1.pandas')
-            self.fieldsource = pd.read_pickle(
-                self.path + 'fieldsource.pandas')
-            self.target = pd.read_pickle(
-                self.path + 'target.pandas')
-            self.spectralconf = pd.read_pickle(
-                self.path + 'spectralconf.pandas')
+            if not forcenew:
+                self.schedblocks_p2 = pd.read_pickle(
+                    self.path + 'schedblocks_p2.pandas')
+                self.schedblocks_p1 = pd.read_pickle(
+                    self.path + 'schedblocks_p1.pandas')
+                self.fieldsource = pd.read_pickle(
+                    self.path + 'fieldsource.pandas')
+                self.target = pd.read_pickle(
+                    self.path + 'target.pandas')
+                self.spectralconf = pd.read_pickle(
+                    self.path + 'spectralconf.pandas')
+                self.newAR_p1_input = pd.read_pickle(
+                    self.path + 'newAR_p1_input.pandas')
+                self.newAR_p2_input = pd.read_pickle(
+                    self.path + 'newAR_p2_input.pandas')
+            else:
+                damnsolution = pd.read_pickle(
+                    self.path + 'thisfileonlytoforcerenewalIOError')
 
         except IOError:
             new = True
@@ -350,10 +358,43 @@ class Database(object):
             for i in sb_comp_p1:
                 self.schedblocks_p1.loc[i, 'array12mType'] = 'Comp'
 
+            self.newAR_p2_input = pd.merge(
+                self.schedblocks_p2.query('array == "TWELVE-M"'),
+                self.sciencegoals, on='SG_ID')[
+                    ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
+                     'useACA', 'two_12m', 'array12mType', 'minAR_ot',
+                     'maxAR_ot']].set_index('SB_UID', drop=False)
+
+            self.newAR_p1_input = pd.merge(
+                self.schedblocks_p1.query('array == "TWELVE-M"'),
+                self.sciencegoals, on='SG_ID')[
+                    ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
+                     'useACA', 'two_12m', 'array12mType', 'minAR_ot',
+                     'maxAR_ot']].set_index('SB_UID', drop=False)
+
+            ars2 = self.newAR_p2_input.apply(
+                lambda r: new_array_ar(
+                    self.apa_path, r['AR'], r['LAS'], r['repfreq'], r['useACA'],
+                    r['two_12m'], r['array12mType']),
+                axis=1)
+
+            ars1 = self.newAR_p1_input.apply(
+                lambda r: new_array_ar(
+                    self.apa_path, r['AR'], r['LAS'], r['repfreq'], r['useACA'],
+                    r['two_12m'], r['array12mType']),
+                axis=1)
+
+            self.newAR_p2_input = pd.merge(
+                self.newAR_p2_input, ars2, left_index=True, right_index=True)
+            self.newAR_p1_input = pd.merge(
+                self.newAR_p1_input, ars1, left_index=True, right_index=True)
+
             self.schedblocks_p1.to_pickle(self.path + 'schedblocks_p1.pandas')
             self.fieldsource.to_pickle(self.path + 'fieldsource.pandas')
             self.target.to_pickle(self.path + 'target.pandas')
             self.spectralconf.to_pickle(self.path + 'spectralconf.pandas')
+            self.newAR_p1_input.to_pickle(self.path + 'newAR_p1_input.pandas')
+            self.newAR_p2_input.to_pickle(self.path + 'newAR_p2_input.pandas')
 
     def get_projectxml(self, code, state, n, c):
         """
@@ -1023,3 +1064,23 @@ def distribute_time(tiempo, doce, siete, single):
         return pd.Series([None, None, None, None],
                          index=['eExt12Time', 'eComp12Time', 'eACATime',
                                 'eTPTime'])
+
+
+def new_array_ar(path, ar, las, repfreq, useaca, sbnum, type12):
+
+    if sbnum:
+        sbnum = 2
+    else:
+        sbnum = 1
+
+    new_ar = ARes.arrayRes(
+        [path, ar, las, repfreq, useaca, sbnum])
+    new_ar.silentRun()
+    minar_e, maxar_e, minar_c, maxar_c = new_ar.run()
+
+    if type12 == 'Ext':
+        return pd.Series([minar_e, maxar_e], index=['minArrayAR',
+                                                    'maxArrayAR'])
+    else:
+        return pd.Series([minar_c, maxar_c], index=['minArrayAR',
+                                                    'maxArrayAR'])
