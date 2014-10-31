@@ -1023,18 +1023,3 @@ def distribute_time(tiempo, doce, siete, single):
         return pd.Series([None, None, None, None],
                          index=['eExt12Time', 'eComp12Time', 'eACATime',
                                 'eTPTime'])
-
-"""
-Finding two12m SG, p1:
-not2t = datas.schedblocks_p1[
-    datas.schedblocks_p1.duplicated(
-        ['SG_ID', 'sbName', 'repfreq', 'array', 'minAR_ot'])].SB_UID.values
-sg_p1_2TWELVE = datas.schedblocks_p1[
-    datas.schedblocks_p1.duplicated(
-        ['SG_ID', 'sbName', 'repfreq', 'array'])
-        ].query('SB_UID not in @not2t').SG_ID.values
-
-Finding two12m SG, p2:
-sg_p2_2TWELVE = datas.schedblocks_p2[
-    datas.schedblocks_p2.sbName.str.endswith('_TC')].SG_ID.values
-"""
