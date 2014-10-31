@@ -255,6 +255,9 @@ class Database(object):
             else:
                 self.read_obsproposal(xmlfilename, r[1].CODE)
 
+        self.projects['isCycle2'] = self.projects.apply(
+            lambda r1: True if r1['CODE'].startswith('2013') else False,
+            axis=1)
         self.projects.to_pickle(
             self.path + 'projects.pandas')
         self.sb_sg_p2.to_pickle(
@@ -327,7 +330,7 @@ class Database(object):
             ].query('SB_UID not in @not2t').SG_ID.values
 
             for i in sg_p1_2TWELVE:
-                self.sciencegoals.ix[i].two_12m = True
+                self.sciencegoals.loc[i, 'two_12m'] = True
 
             sg_p2_2TWELVE = self.schedblocks_p2[
                 self.schedblocks_p2.sbName.str.endswith('_TC')].SG_ID.values
@@ -345,7 +348,7 @@ class Database(object):
             ).groupby('SG_ID').minAR_ot.idxmax().values
 
             for i in sb_comp_p1:
-                self.schedblocks_p1.array12mType = 'Comp'
+                self.schedblocks_p1.loc[i, 'array12mType'] = 'Comp'
 
             self.schedblocks_p1.to_pickle(self.path + 'schedblocks_p1.pandas')
             self.fieldsource.to_pickle(self.path + 'fieldsource.pandas')
