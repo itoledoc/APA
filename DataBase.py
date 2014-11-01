@@ -1027,6 +1027,53 @@ class Database(object):
         else:
             self.spectralconf.ix[partid] = (partid, sbuid, nbb, nspw)
 
+    def summarize_sb(self):
+        sum2 = pd.merge(
+            self.schedblocks_p2,
+            self.newAR_p2_input[
+                ['SB_UID', 'AR', 'LAS', 'minArrayAR', 'maxArrayAR']]
+        ).set_index('SB_UID', drop=False)
+        sum2.apply(
+            lambda r: correct_resolution(
+                r['AR'], r['repfreq'], r['RA'], r['DEC']),
+            axis=1)
+        for col in ['AR', 'LAS', 'minArrayAR', 'maxArrayAR', 'minAR_ot',
+                    'maxAR_ot']:
+            sum2[col + '100GHz'] = sum2.apply(
+                lambda r: correct_resolution(
+                    r[col], r['repfreq'], r['RA'], r['DEC']), axis=1)
+        for col in confDf.index.tolist():
+            sum2[col.replace('-', '_')] = sum2.apply(
+                lambda r: check_allowedconf(
+                    r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
+                axis=1)
+        for col in confDf.index.tolist():
+            sum2[col.replace('-', '_') + '_OT'] = sum2.apply(
+                lambda r: check_allowedconf(
+                    r['minAR_ot100GHz'], r['maxAR_ot100GHz'], col),
+                axis=1)
+        self.sum_sb_p2 = sum2
+
+        sum1 = pd.merge(
+            self.schedblocks_p1,
+            self.newAR_p1_input[
+                ['SB_UID', 'AR', 'LAS', 'minArrayAR', 'maxArrayAR']]
+        ).set_index('SB_UID', drop=False)
+        sum1.apply(
+            lambda r: correct_resolution(
+                r['AR'], r['repfreq'], r['RA'], r['DEC']),
+            axis=1)
+        for col in ['AR', 'LAS', 'minArrayAR', 'maxArrayAR']:
+            sum1[col + '100GHz'] = sum1.apply(
+                lambda r: correct_resolution(
+                    r[col], r['repfreq'], r['RA'], r['DEC']), axis=1)
+        for col in confDf.index.tolist():
+            sum1[col.replace('-', '_')] = sum1.apply(
+                lambda r: check_allowedconf(
+                    r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
+                axis=1)
+        self.sum_sb_p1 = sum1
+
 
 def distribute_time(tiempo, doce, siete, single):
 
@@ -1084,3 +1131,21 @@ def new_array_ar(path, ar, las, repfreq, useaca, sbnum, type12):
     else:
         return pd.Series([minar_c, maxar_c], index=['minArrayAR',
                                                     'maxArrayAR'])
+
+
+def correct_resolution(res, repfreq, ra, dec):
+    if ra == 0. and dec == 0:
+        dec = -23.0262015
+    c_bmax = 0.4001 / pd.np.cos(pd.np.radians(-23.0262015) -
+                                pd.np.radians(dec)) + 0.6103
+    c_freq = repfreq / 100.
+    corr = c_freq / c_bmax
+    return corr * res
+
+
+def check_allowedconf(min_ar, max_ar, conf, confdf=confDf):
+    conf_res = confdf.ix[conf].ALMA_RB_03
+    if min_ar <= conf_res <= max_ar:
+        return True
+    else:
+        return False
