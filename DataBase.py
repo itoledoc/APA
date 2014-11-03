@@ -306,11 +306,8 @@ class Database(object):
                     self.path + 'target.pandas')
                 self.spectralconf = pd.read_pickle(
                     self.path + 'spectralconf.pandas')
-                self.newAR_p1_input = pd.read_pickle(
-                    self.path + 'newAR_p1_input.pandas')
-                self.newAR_p2_input = pd.read_pickle(
-                    self.path + 'newAR_p2_input.pandas')
             else:
+                # noinspection PyUnusedLocal
                 damnsolution = pd.read_pickle(
                     self.path + 'thisfileonlytoforcerenewalIOError')
 
@@ -327,74 +324,72 @@ class Database(object):
                 lambda r: self.sb_sg_p1[
                     self.sb_sg_p1.SB_UID == r['SB_UID']].SG_ID_y.values[0],
                 axis=1)
-
-            not2t = self.schedblocks_p1[
-                self.schedblocks_p1.duplicated(
-                    ['SG_ID', 'sbName', 'repfreq', 'array', 'minAR_ot'])
-            ].SB_UID.values
-            sg_p1_2TWELVE = self.schedblocks_p1[
-                self.schedblocks_p1.duplicated(
-                    ['SG_ID', 'sbName', 'repfreq', 'array'])
-            ].query('SB_UID not in @not2t').SG_ID.values
-
-            for i in sg_p1_2TWELVE:
-                self.sciencegoals.loc[i, 'two_12m'] = True
-
-            sg_p2_2TWELVE = self.schedblocks_p2[
-                self.schedblocks_p2.sbName.str.endswith('_TC')].SG_ID.values
-            for i in sg_p2_2TWELVE:
-                self.sciencegoals.loc[i, 'two_12m'] = True
-
-            columns = ['eExt12Time', 'eComp12Time', 'eACATime', 'eTPTime']
-            self.sciencegoals.loc[:, columns] = self.sciencegoals.apply(
-                lambda r: distribute_time(
-                    r['estimatedTime'], r['two_12m'], r['useACA'], r['useTP']),
-                axis=1)
-
-            sb_comp_p1 = self.schedblocks_p1.query(
-                'SG_ID in @sg_p1_2TWELVE'
-            ).groupby('SG_ID').minAR_ot.idxmax().values
-
-            for i in sb_comp_p1:
-                self.schedblocks_p1.loc[i, 'array12mType'] = 'Comp'
-
-            self.newAR_p2_input = pd.merge(
-                self.schedblocks_p2.query('array == "TWELVE-M"'),
-                self.sciencegoals, on='SG_ID')[
-                    ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
-                     'useACA', 'two_12m', 'array12mType', 'minAR_ot',
-                     'maxAR_ot']].set_index('SB_UID', drop=False)
-
-            self.newAR_p1_input = pd.merge(
-                self.schedblocks_p1.query('array == "TWELVE-M"'),
-                self.sciencegoals, on='SG_ID')[
-                    ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
-                     'useACA', 'two_12m', 'array12mType', 'minAR_ot',
-                     'maxAR_ot']].set_index('SB_UID', drop=False)
-
-            ars2 = self.newAR_p2_input.apply(
-                lambda r: new_array_ar(
-                    self.apa_path, r['AR'], r['LAS'], r['repfreq'], r['useACA'],
-                    r['two_12m'], r['array12mType']),
-                axis=1)
-
-            ars1 = self.newAR_p1_input.apply(
-                lambda r: new_array_ar(
-                    self.apa_path, r['AR'], r['LAS'], r['repfreq'], r['useACA'],
-                    r['two_12m'], r['array12mType']),
-                axis=1)
-
-            self.newAR_p2_input = pd.merge(
-                self.newAR_p2_input, ars2, left_index=True, right_index=True)
-            self.newAR_p1_input = pd.merge(
-                self.newAR_p1_input, ars1, left_index=True, right_index=True)
-
             self.schedblocks_p1.to_pickle(self.path + 'schedblocks_p1.pandas')
             self.fieldsource.to_pickle(self.path + 'fieldsource.pandas')
             self.target.to_pickle(self.path + 'target.pandas')
             self.spectralconf.to_pickle(self.path + 'spectralconf.pandas')
-            self.newAR_p1_input.to_pickle(self.path + 'newAR_p1_input.pandas')
-            self.newAR_p2_input.to_pickle(self.path + 'newAR_p2_input.pandas')
+
+        # noinspection PyUnusedLocal
+        not2t = self.schedblocks_p1[
+            self.schedblocks_p1.duplicated(
+                ['SG_ID', 'sbName', 'repfreq', 'array', 'minAR_ot'])
+        ].SB_UID.values
+        sg_p1_2TWELVE = self.schedblocks_p1[
+            self.schedblocks_p1.duplicated(
+                ['SG_ID', 'sbName', 'repfreq', 'array'])
+        ].query('SB_UID not in @not2t').SG_ID.values
+
+        for i in sg_p1_2TWELVE:
+            self.sciencegoals.loc[i, 'two_12m'] = True
+        sg_p2_2TWELVE = self.schedblocks_p2[
+            self.schedblocks_p2.sbName.str.endswith('_TC')].SG_ID.values
+
+        for i in sg_p2_2TWELVE:
+            self.sciencegoals.loc[i, 'two_12m'] = True
+
+        columns = ['eExt12Time', 'eComp12Time', 'eACATime', 'eTPTime']
+        self.sciencegoals.loc[:, columns] = self.sciencegoals.apply(
+            lambda r: distribute_time(
+                r['estimatedTime'], r['two_12m'], r['useACA'], r['useTP']),
+            axis=1)
+
+        sb_comp_p1 = self.schedblocks_p1.query(
+            'SG_ID in @sg_p1_2TWELVE'
+        ).groupby('SG_ID').minAR_ot.idxmax().values
+
+        for i in sb_comp_p1:
+            self.schedblocks_p1.loc[i, 'array12mType'] = 'Comp'
+
+        self.newAR_p2_input = pd.merge(
+            self.schedblocks_p2.query('array == "TWELVE-M"'),
+            self.sciencegoals, on='SG_ID')[
+                ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
+                 'useACA', 'two_12m', 'array12mType', 'minAR_ot',
+                 'maxAR_ot']].set_index('SB_UID', drop=False)
+
+        self.newAR_p1_input = pd.merge(
+            self.schedblocks_p1.query('array == "TWELVE-M"'),
+            self.sciencegoals, on='SG_ID')[
+                ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
+                 'useACA', 'two_12m', 'array12mType', 'minAR_ot',
+                 'maxAR_ot']].set_index('SB_UID', drop=False)
+
+        ars2 = self.newAR_p2_input.apply(
+            lambda r: new_array_ar(
+                self.apa_path, r['AR'], r['LAS'], r['repfreq'], r['useACA'],
+                r['two_12m'], r['array12mType']),
+            axis=1)
+
+        ars1 = self.newAR_p1_input.apply(
+            lambda r: new_array_ar(
+                self.apa_path, r['AR'], r['LAS'], r['repfreq'], r['useACA'],
+                r['two_12m'], r['array12mType']),
+            axis=1)
+
+        self.newAR_p2_input = pd.merge(
+            self.newAR_p2_input, ars2, left_index=True, right_index=True)
+        self.newAR_p1_input = pd.merge(
+            self.newAR_p1_input, ars1, left_index=True, right_index=True)
 
     def get_projectxml(self, code, state, n, c):
         """
@@ -1027,18 +1022,15 @@ class Database(object):
         else:
             self.spectralconf.ix[partid] = (partid, sbuid, nbb, nspw)
 
-    def summarize_sb(self):
+    def do_summarize_sb(self):
         sum2 = pd.merge(
             self.schedblocks_p2,
             self.newAR_p2_input[
-                ['SB_UID', 'AR', 'LAS', 'minArrayAR', 'maxArrayAR']]
+                ['SB_UID', 'AR', 'LAS', 'minArrayAR', 'maxArrayAR']],
+            how='left'
         ).set_index('SB_UID', drop=False)
-        sum2.apply(
-            lambda r: correct_resolution(
-                r['AR'], r['repfreq'], r['RA'], r['DEC']),
-            axis=1)
-        for col in ['AR', 'LAS', 'minArrayAR', 'maxArrayAR', 'minAR_ot',
-                    'maxAR_ot']:
+
+        for col in ['AR', 'LAS', 'minArrayAR', 'maxArrayAR']:
             sum2[col + '100GHz'] = sum2.apply(
                 lambda r: correct_resolution(
                     r[col], r['repfreq'], r['RA'], r['DEC']), axis=1)
@@ -1047,22 +1039,32 @@ class Database(object):
                 lambda r: check_allowedconf(
                     r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
+
+        sum2['allowed12m'] = sum2.iloc[:,
+            [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
+        sum2.loc[:, ['minArrayAR100GHz', 'maxArrayAR100GHz']] = sum2.apply(
+            lambda r: fix_allowedconf(r['minArrayAR100GHz'],
+                                      r['maxArrayAR100GHz'],
+                                      r['allowed12m'],
+                                      r['array']),
+            axis=1).values
+
         for col in confDf.index.tolist():
-            sum2[col.replace('-', '_') + '_OT'] = sum2.apply(
+            sum2[col.replace('-', '_')] = sum2.apply(
                 lambda r: check_allowedconf(
-                    r['minAR_ot100GHz'], r['maxAR_ot100GHz'], col),
+                    r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
-        self.sum_sb_p2 = sum2
+        sum2['corr_allowed12m'] = sum2.iloc[:,
+            [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
+        sum2['phase'] = 'II'
 
         sum1 = pd.merge(
             self.schedblocks_p1,
             self.newAR_p1_input[
-                ['SB_UID', 'AR', 'LAS', 'minArrayAR', 'maxArrayAR']]
+                ['SB_UID', 'AR', 'LAS', 'minArrayAR', 'maxArrayAR']],
+            how='left'
         ).set_index('SB_UID', drop=False)
-        sum1.apply(
-            lambda r: correct_resolution(
-                r['AR'], r['repfreq'], r['RA'], r['DEC']),
-            axis=1)
+
         for col in ['AR', 'LAS', 'minArrayAR', 'maxArrayAR']:
             sum1[col + '100GHz'] = sum1.apply(
                 lambda r: correct_resolution(
@@ -1072,7 +1074,93 @@ class Database(object):
                 lambda r: check_allowedconf(
                     r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
-        self.sum_sb_p1 = sum1
+
+        sum1['allowed12m'] = sum1.iloc[:,
+            [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
+        sum1.loc[:, ['minArrayAR100GHz', 'maxArrayAR100GHz']] = sum1.apply(
+            lambda r: fix_allowedconf(r['minArrayAR100GHz'],
+                                      r['maxArrayAR100GHz'],
+                                      r['allowed12m'],
+                                      r['array']),
+            axis=1).values
+
+        for col in confDf.index.tolist():
+            sum1[col.replace('-', '_')] = sum1.apply(
+                lambda r: check_allowedconf(
+                    r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
+                axis=1)
+        sum1['corr_allowed12m'] = sum1.iloc[:,
+            [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
+        sum1['phase'] = 'I'
+
+        sum_schedblock = pd.concat([sum2, sum1])
+        todrop = sum_schedblock[
+            sum_schedblock.sbName.str.contains('Do ')].index.tolist()
+        todrop.extend(
+            sum_schedblock[
+                sum_schedblock.sbName.str.contains('do ')].index.tolist())
+        todrop.extend(
+            sum_schedblock[
+                sum_schedblock.sbName.str.contains('do_')].index.tolist())
+        todrop.extend(
+            sum_schedblock[
+                sum_schedblock.sbName.str.contains('Do_')].index.tolist())
+        todrop.extend(
+            sum_schedblock[
+                sum_schedblock.sbName.str.contains('DO_N')].index.tolist())
+        todrop.extend(
+            sum_schedblock[
+                sum_schedblock.sbName.str.contains('DO ')].index.tolist())
+        print(sum_schedblock.query('SB_UID in @todrop').sbName)
+        sum_schedblock = sum_schedblock.drop(todrop)
+
+        self.summary_sb = sum_schedblock
+        self.summary_sb.loc['SB_ETC_exec'] = self.summary_sb.apply(
+            lambda r: self.sb_eta(r['SG_ID'], r['array'], r['array12mType']),
+            axis=1)
+        self.qa0 = self.aqua_execblock.groupby(
+            ['SB_UID', 'QA0STATUS']).QA0STATUS.count().unstack().fillna(0)
+        self.qa0['observed'] = self.qa0.Pass + self.qa0.Unset
+        self.summary_sb = pd.merge(
+            self.summary_sb, self.qa0[['observed']],
+            left_on='SB_UID', right_index=True, how='left')
+        self.summary_sb.observed.fillna(0, inplace=True)
+
+        self.summary_sb = pd.merge(
+            self.projects[['OBSPROJECT_UID', 'CODE', 'PRJ_LETTER_GRADE',
+                           'PRJ_STATUS', 'isCycle2']],
+            self.summary_sb, on='OBSPROJECT_UID', how='right')
+
+        self.summary_sb['SB_ETC_total'] = self.summary_sb['SB_ETC_exec'] * \
+                                          self.summary_sb['execount']
+        self.summary_sb['SB_ETC_remain'] = self.summary_sb['SB_ETC_total'] * (
+            self.summary_sb['execount'] - self.summary_sb['observed']
+        ) / self.summary_sb['execount']
+
+        self.summary_sb['LST'] = (self.summary_sb.RA / 15.).astype(int)
+
+    def sb_eta(self, sg_id, array, arrayt):
+        if array == 'TWELVE-M' and arrayt == 'Ext':
+            time_sg = self.sciencegoals.ix[sg_id].eExt12Time
+            sb_sg = self.summary_sb.query(
+                'SG_ID == @sg_id and array == @array and '
+                'array12mType == @arrayt')
+        elif array == 'TWELVE-M' and arrayt == 'Comp':
+            time_sg = self.sciencegoals.ix[sg_id].eComp12Time
+            sb_sg = self.summary_sb.query(
+                'SG_ID == @sg_id and array == @array and '
+                'array12mType == @arrayt')
+        elif array == 'SEVEN-M':
+            time_sg = self.sciencegoals.ix[sg_id].eACATime
+            sb_sg = self.summary_sb.query(
+                'SG_ID == @sg_id and array == @array')
+        else:
+            time_sg = self.sciencegoals.ix[sg_id].eTPTime
+            sb_sg = self.summary_sb.query(
+                'SG_ID == @sg_id and array == @array')
+
+        return time_sg / sb_sg.execount.sum()
+
 
 
 def distribute_time(tiempo, doce, siete, single):
@@ -1146,6 +1234,15 @@ def correct_resolution(res, repfreq, ra, dec):
 def check_allowedconf(min_ar, max_ar, conf, confdf=confDf):
     conf_res = confdf.ix[conf].ALMA_RB_03
     if min_ar <= conf_res <= max_ar:
-        return True
+        return 1
     else:
-        return False
+        return 0
+
+
+def fix_allowedconf(min_ar, max_ar, allowed, array):
+    if allowed > 0 or array != 'TWELVE-M':
+        return pd.Series([min_ar, max_ar])
+    else:
+        return pd.Series([0.9 * min_ar, 1.1 * max_ar])
+
+
