@@ -1111,11 +1111,11 @@ class Database(object):
         todrop.extend(
             sum_schedblock[
                 sum_schedblock.sbName.str.contains('DO ')].index.tolist())
-        print(sum_schedblock.query('SB_UID in @todrop').sbName)
+        print len(sum_schedblock.query('SB_UID in @todrop').sbName)
         sum_schedblock = sum_schedblock.drop(todrop)
+        self.summary_sb = sum_schedblock.copy(deep=True)
 
-        self.summary_sb = sum_schedblock
-        self.summary_sb.loc['SB_ETC_exec'] = self.summary_sb.apply(
+        self.summary_sb.loc[:, 'SB_ETC_exec'] = self.summary_sb.apply(
             lambda r: self.sb_eta(r['SG_ID'], r['array'], r['array12mType']),
             axis=1)
         self.qa0 = self.aqua_execblock.groupby(
@@ -1125,14 +1125,13 @@ class Database(object):
             self.summary_sb, self.qa0[['observed']],
             left_on='SB_UID', right_index=True, how='left')
         self.summary_sb.observed.fillna(0, inplace=True)
-
         self.summary_sb = pd.merge(
             self.projects[['OBSPROJECT_UID', 'CODE', 'PRJ_LETTER_GRADE',
                            'PRJ_STATUS', 'isCycle2']],
             self.summary_sb, on='OBSPROJECT_UID', how='right')
 
         self.summary_sb['SB_ETC_total'] = self.summary_sb['SB_ETC_exec'] * \
-                                          self.summary_sb['execount']
+            self.summary_sb['execount']
         self.summary_sb['SB_ETC_remain'] = self.summary_sb['SB_ETC_total'] * (
             self.summary_sb['execount'] - self.summary_sb['observed']
         ) / self.summary_sb['execount']
@@ -1244,5 +1243,4 @@ def fix_allowedconf(min_ar, max_ar, allowed, array):
         return pd.Series([min_ar, max_ar])
     else:
         return pd.Series([0.9 * min_ar, 1.1 * max_ar])
-
 
