@@ -11,9 +11,6 @@ from subprocess import call
 from XmlProjParsers import *
 from converter import *
 
-
-conx_string = 'almasu/alma4dba@ALMA_ONLINE.OSF.CL'
-conx_string_sco = 'almasu/alma4dba@ALMA_ONLINE.SCO.CL'
 prj = '{Alma/ObsPrep/ObsProject}'
 val = '{Alma/ValueTypes}'
 sbl = '{Alma/ObsPrep/SchedBlock}'
@@ -138,6 +135,7 @@ class Database(object):
             os.mkdir(self.obsxml)
             os.mkdir(self.propxml)
             # Global Oracle Connection
+            conx_string = os.environ['CON_STR']
             self.connection = cx_Oracle.connect(conx_string)
             self.cursor = self.connection.cursor()
 
