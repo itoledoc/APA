@@ -185,7 +185,8 @@ class Database(object):
             # self.qa0: QAO flags for observed SBs
             # Query QA0 flags from AQUA tables
             self.sqlqa0 = str(
-                "SELECT SCHEDBLOCKUID as SB_UID,QA0STATUS "
+                "SELECT SCHEDBLOCKUID as SB_UID,QA0STATUS,STARTTIME,ENDTIME,"
+                "EXECBLOCKUID,EXECFRACTION "
                 "FROM ALMA.AQUA_EXECBLOCK "
                 "WHERE regexp_like (OBSPROJECTCODE, '^201[23].*\.[AST]')")
 
@@ -1111,7 +1112,10 @@ class Database(object):
         todrop.extend(
             sum_schedblock[
                 sum_schedblock.sbName.str.contains('DO ')].index.tolist())
-        print len(sum_schedblock.query('SB_UID in @todrop').sbName)
+
+        # print len(sum_schedblock.query('SB_UID in @todrop').sbName)
+        print('42')
+
         sum_schedblock = sum_schedblock.drop(todrop)
         self.summary_sb = sum_schedblock.copy(deep=True)
 
@@ -1165,12 +1169,12 @@ class Database(object):
 
 def distribute_time(tiempo, doce, siete, single):
 
-    if single and doce:
+    if doce and siete and single:
         time_u = tiempo / (1 + 0.5 + 2 + 4)
         return pd.Series([time_u, 0.5 * time_u, 2 * time_u, 4 * time_u],
                          index=['eExt12Time', 'eComp12Time', 'eACATime',
                                 'eTPTime'])
-    elif single and not doce:
+    elif single and siete and not doce:
         time_u = tiempo / (1 + 2 + 4.)
         return pd.Series([time_u, 0., 2 * time_u, 4 * time_u],
                          index=['eExt12Time', 'eComp12Time', 'eACATime',
