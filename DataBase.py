@@ -31,7 +31,7 @@ confDf.ix['C34-6'] = ('C34-6', 0.57, 0.38, 0.25, 0.16, 0.12, 0.09)
 confDf.ix['C34-7'] = ('C34-7', 0.41, 0.27, 0.18, 0.12, None, None)
 
 
-# noinspection PyPep8Naming,PyAttributeOutsideInit
+# noinspection PyPep8Naming,PyAttributeOutsideInit,PyUnresolvedReferences
 class Database(object):
 
     """
@@ -85,7 +85,7 @@ class Database(object):
         self.sb_sg_p1 = pd.read_pickle(self.apa_path + 'conf/sb_sg_p1.pandas')
 
         # Global SQL search expressions
-            # Search Project's PT information and match with PT Status
+        # Search Project's PT information and match with PT Status
         self.sql1 = str(
             "SELECT PRJ_ARCHIVE_UID as OBSPROJECT_UID,PI,PRJ_NAME,"
             "CODE,PRJ_SCIENTIFIC_RANK,PRJ_VERSION,"
@@ -1038,8 +1038,8 @@ class Database(object):
                     r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
 
-        sum2['allowed12m'] = sum2.iloc[:,
-            [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
+        sum2['allowed12m'] = sum2.iloc[
+            :, [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
         sum2.loc[:, ['minArrayAR100GHz', 'maxArrayAR100GHz']] = sum2.apply(
             lambda r: fix_allowedconf(r['minArrayAR100GHz'],
                                       r['maxArrayAR100GHz'],
@@ -1052,8 +1052,8 @@ class Database(object):
                 lambda r: check_allowedconf(
                     r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
-        sum2['corr_allowed12m'] = sum2.iloc[:,
-            [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
+        sum2['corr_allowed12m'] = sum2.iloc[
+            :, [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
         sum2['phase'] = 'II'
 
         sum1 = pd.merge(
@@ -1073,8 +1073,8 @@ class Database(object):
                     r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
 
-        sum1['allowed12m'] = sum1.iloc[:,
-            [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
+        sum1['allowed12m'] = sum1.iloc[
+            :, [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
         sum1.loc[:, ['minArrayAR100GHz', 'maxArrayAR100GHz']] = sum1.apply(
             lambda r: fix_allowedconf(r['minArrayAR100GHz'],
                                       r['maxArrayAR100GHz'],
@@ -1087,8 +1087,8 @@ class Database(object):
                 lambda r: check_allowedconf(
                     r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
-        sum1['corr_allowed12m'] = sum1.iloc[:,
-            [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
+        sum1['corr_allowed12m'] = sum1.iloc[
+            :, [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
         sum1['phase'] = 'I'
 
         sum_schedblock = pd.concat([sum2, sum1])
@@ -1134,6 +1134,7 @@ class Database(object):
             self.summary_sb['execount'] - self.summary_sb['observed']
         ) / self.summary_sb['execount']
 
+        # noinspection PyUnresolvedReferences
         self.summary_sb['LST'] = (self.summary_sb.RA / 15.).astype(int)
 
     def sb_eta(self, sg_id, array, arrayt):
@@ -1218,6 +1219,7 @@ def new_array_ar(path, ar, las, repfreq, useaca, sbnum, type12):
                                                     'maxArrayAR'])
 
 
+# noinspection PyUnresolvedReferences
 def correct_resolution(res, repfreq, ra, dec):
     if ra == 0. and dec == 0:
         dec = -23.0262015
