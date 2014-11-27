@@ -519,19 +519,46 @@ class Database(object):
 
     def read_sciencegoals(self, sg, obsproject_uid, idnum, isObsproj, obsprog):
 
+        """
+        Read ONE science goal from ObsProject, gets all relevant information,
+        and finds children SchedBlocks.
+
+        Inputs are
+
+        :param sg: lxml.objectify parser instance, starting at
+            <prj:ObsProject>:<prj:ObsProgram><prj:ScienceGoal>
+            You pass only one of the possible multiple Science Golas a project
+            can have.
+        :param obsproject_uid: string, is the OBSPROJECT_UID
+        :param idnum: int, Science Goal ordinal number within the ObsProgram
+            list of Science Goals.
+        :param isObsproj: boolean, default=True, only change for phase I
+            projects
+        :param obsprog: lxml.objectify parser instance, starting at
+            <prj:ObsProject>:<prj:ObsProgram>. Parent level of sg
+        """
+
+        # creates a dummy id for the Science Goal to be unique within the tables
         sg_id = obsproject_uid + '_' + str(idnum)
+
+        # Handle exceptions of Science Goals without ObsUnitSets or SchedBlocks
         try:
+            # ous_id = the id of associated ObsUnitSet at the ObsProgram level.
             ous_id = sg.ObsUnitSetRef.attrib['partId']
             hasSB = True
         except AttributeError:
             ous_id = None
             hasSB = False
+
+        # get SG name, bands and estimated time
         sg_name = sg.name.pyval
         bands = sg.findall(prj + 'requiredReceiverBands')[0].pyval
         estimatedTime = convert_tsec(
             sg.estimatedTotalTime.pyval,
             sg.estimatedTotalTime.attrib['unit']) / 3600.
 
+        # get SG's AR (in arcsec), LAS (arcsec), sensitivity (Jy), useACA and
+        # useTP
         performance = sg.PerformanceParameters
         AR = convert_sec(
             performance.desiredAngularResolution.pyval,
@@ -545,18 +572,27 @@ class Database(object):
         useACA = performance.useACA.pyval
         useTP = performance.useTP.pyval
         isPointSource = performance.isPointSource.pyval
+
+        # Check if it is a TimeConstrained SG
         try:
             isTimeConstrained = performance.isTimeConstrained.pyval
         except AttributeError:
             isTimeConstrained = None
+
+        # Get SG representative Frequency, polarization configuration.
         spectral = sg.SpectralSetupParameters
         repFreq = convert_ghz(
             performance.representativeFrequency.pyval,
             performance.representativeFrequency.attrib['unit'])
         polarization = spectral.attrib['polarisation']
         type_pol = spectral.attrib['type']
+
+        # Correct AR and LAS to equivalent resolutions at 100GHz
         ARcor = AR * repFreq / 100.
         LAScor = LAS * repFreq / 100.
+
+        # set variables that will be filled later. The relevant variable to
+        # calculate new minAR and maxAR is two_12m, False if needs one 12m conf.
 
         two_12m = False
         targets = sg.findall(prj + 'TargetParameters')
@@ -569,6 +605,7 @@ class Database(object):
         extendedTime, compactTime, sevenTime, TPTime = distribute_time(
             0., 0., 0., 0.)
 
+        # Stores Science Goal parameters in a data frame instance
         try:
             self.sciencegoals.ix[sg_id] = (
                 sg_id, obsproject_uid, ous_id, sg_name, bands, estimatedTime,
@@ -593,15 +630,27 @@ class Database(object):
                 index=[sg_id]
             )
 
+
         if isObsproj:
+            # Now to look for the children Scheduling blocks of the phaseII SGs
+
+            # create list of first children OUS of ObsProgram, and select the
+            # OUS associated to the SG that is being read
             oussg_list = obsprog.ObsPlan.findall(prj + 'ObsUnitSet')
             for oussg in oussg_list:
                 groupous_list = oussg.findall(prj + 'ObsUnitSet')
                 OUS_ID = oussg.attrib['entityPartId']
                 if OUS_ID != ous_id:
+                    # Do not continue if the parsed OUS is not related to the
+                    # SG we are reading
                     continue
+
                 ous_name = oussg.name.pyval
                 OBSPROJECT_UID = oussg.ObsProjectRef.attrib['entityId']
+
+                # Now we iterate over all the children OUS (group ous and member
+                # ous) until we find "SchedBlockRef" tags at the member ous
+                # level.
                 for groupous in groupous_list:
                     gous_id = groupous.attrib['entityPartId']
                     mous_list = groupous.findall(prj + 'ObsUnitSet')
@@ -610,6 +659,9 @@ class Database(object):
                         mous_id = mous.attrib['entityPartId']
                         mous_name = mous.name.pyval
                         try:
+                            # TODO: WARNING, we are assuming that all mous have
+                            # only one SchedBlockRef. For Cycle 1 and 2 this is
+                            # Ok, but is not a correct assumption for future
                             SB_UID = mous.SchedBlockRef.attrib['entityId']
                         except AttributeError:
                             continue
@@ -632,6 +684,10 @@ class Database(object):
 
                         if array == 'ACA':
                             array = 'SEVEN-M'
+
+                        # For the SchedBlock identified as child of the
+                        # currently read SG, whe paste this information in a
+                        # table that relates SB_UID with SG_ID.
                         try:
                             self.sb_sg_p2.ix[SB_UID] = (
                                 SB_UID, OBSPROJECT_UID, sg_id,
