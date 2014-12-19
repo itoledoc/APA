@@ -32,6 +32,14 @@ confDf.ix['C34-5'] = ('C34-5', 0.75, 0.50, 0.33, 0.22, 0.16, 0.12)
 confDf.ix['C34-6'] = ('C34-6', 0.57, 0.38, 0.25, 0.16, 0.12, 0.09)
 confDf.ix['C34-7'] = ('C34-7', 0.41, 0.27, 0.18, 0.12, None, None)
 
+conflim = pd.Series({'C34-1': 2.8849999999999998,
+                     'C34-2': 1.72,
+                     'C34-3': 1.2549999999999999,
+                     'C34-4': 0.93000000000000005,
+                     'C34-5': 0.65999999999999992,
+                     'C34-6': 0.48999999999999999,
+                     'C34-7': 0.20499999999999999})
+
 
 # noinspection PyPep8Naming,PyAttributeOutsideInit,PyUnresolvedReferences
 class Database(object):
@@ -1199,6 +1207,10 @@ class Database(object):
         # noinspection PyUnresolvedReferences
         self.summary_sb['LST'] = (self.summary_sb.RA / 15.).astype(int)
 
+        self.summary_sb['bestconf'] = self.summary_sb.apply(
+            lambda r: bestconf(r['AR100GHz'], r['minArrayAR100GHz'],
+                               r['maxArrayAR100GHz']), axis=1)
+
     def sb_eta(self, sg_id, array, arrayt):
         if array == 'TWELVE-M' and arrayt == 'Ext':
             time_sg = self.sciencegoals.ix[sg_id].eExt12Time
@@ -1306,3 +1318,45 @@ def fix_allowedconf(min_ar, max_ar, allowed, array):
     else:
         return pd.Series([0.9 * min_ar, 1.1 * max_ar])
 
+
+def bestconf(ar, minar, maxar):
+    if ar < minar or ar > maxar:
+        ar = 0.9 * maxar
+
+    if ar >= conflim['C34-1']:
+        if maxar < confDf['ALMA_RB_03']['C34-1']:
+            return 'C34-2'
+        else:
+            return 'C34-1'
+    elif ar >= conflim['C34-2']:
+        if maxar < confDf['ALMA_RB_03']['C34-2']:
+            return 'C34-3'
+        else:
+            return 'C34-2'
+    elif ar >= conflim['C34-3']:
+        if maxar < confDf['ALMA_RB_03']['C34-3']:
+            return 'C34-4'
+        else:
+            return 'C34-3'
+    elif ar >= conflim['C34-4']:
+        if maxar < confDf['ALMA_RB_03']['C34-4']:
+            return 'C34-5'
+        else:
+            return 'C34-4'
+    elif ar >= conflim['C34-5']:
+        if maxar < confDf['ALMA_RB_03']['C34-5']:
+            return 'C34-6'
+        else:
+            return 'C34-5'
+    elif ar >= conflim['C34-6']:
+        if maxar < confDf['ALMA_RB_03']['C34-6']:
+            return 'C34-7'
+        else:
+            return 'C34-6'
+    elif ar >= conflim['C34-7']:
+        if minar > confDf['ALMA_RB_03']['C34-7']:
+            return 'C34-6'
+        else:
+            return 'C34-7'
+    else:
+        return None
