@@ -1,5 +1,3 @@
-# Add initial comments
-
 __author__ = 'itoledo'
 __metaclass__ = type
 
@@ -7,6 +5,7 @@ import os
 import pandas as pd
 import ephem
 import cx_Oracle
+import timeit
 import arrayResolution2p as ARes
 
 from subprocess import call
@@ -109,6 +108,8 @@ class Database(object):
             "AND obs2.OBS_PROJECT_ID = obs1.PRJ_ARCHIVE_UID AND "
             "obs1.PRJ_ARCHIVE_UID = obs3.PROJECTUID")
 
+        self.performance = {}  # added by Freddy
+        
         # Initialize with saved data and update, Default behavior.
         if not self.new:
             try:
@@ -291,15 +292,22 @@ class Database(object):
 
     def get_phaseone_sb(self):
         sbp1 = os.listdir(self.phase1_data + 'SchedBlock/')
+        n = len(sbp1)
+        i = 0
+        delta = len(self.performance)
         for x in sbp1:
+            i += 1
             xml = SchedBlock(x, self.phase1_data + 'SchedBlock/')
             obs_uid = xml.data.findall(
                 './/' + prj + 'ObsProjectRef')[0].attrib['entityId']
             if obs_uid not in self.obsproposals.OBSPROJECT_UID.values:
                 continue
-            print('Procesing Phase I SBs of %s' % obs_uid)
+            print('Processing Phase I SBs of %s (%d/%d)' % (obs_uid, i, n))
             sb_uid = xml.data.SchedBlockEntity.attrib['entityId']
+            delta += 1
+            start = timeit.default_timer()
             self.read_schedblocks_p1(sb_uid, obs_uid, xml)
+            self.performance[delta] = timeit.default_timer() - start
 
     # noinspection PyAttributeOutsideInit
     def process_sbs(self, forcenew=False):
@@ -322,10 +330,15 @@ class Database(object):
 
         except IOError:
             new = True
+            n = len(self.sb_sg_p2)
+            i = 0
             for sg_sb in self.sb_sg_p2.iterrows():
+                i += 1
+                start = timeit.default_timer()
                 self.read_schedblocks_p2(
                     sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID, sg_sb[1].OUS_ID,
-                    new=new)
+                    n, i, new=new)
+                self.performance[i] = (timeit.default_timer() - start)
                 new = False
             self.schedblocks_p2.to_pickle(self.path + 'schedblocks_p2.pandas')
             self.get_phaseone_sb()
@@ -638,7 +651,6 @@ class Database(object):
                 index=[sg_id]
             )
 
-
         if isObsproj:
             # Now to look for the children Scheduling blocks of the phaseII SGs
 
@@ -794,7 +806,7 @@ class Database(object):
             copy=False, how='inner').set_index('CODE', drop=False)
         self.projects = temp
 
-    def read_schedblocks_p2(self, sb_uid, obs_uid, ous_id, new=False):
+    def read_schedblocks_p2(self, sb_uid, obs_uid, ous_id, n, i, new=False):
 
         # Open SB with SB parser class
         """
@@ -802,7 +814,7 @@ class Database(object):
         :param sb_uid:
         :param new:
         """
-        print("Procesing Phase II SB %s" % sb_uid)
+        print("Processing Phase II SB %s (%d/%d)" % (sb_uid, i, n))
         sb = self.sb_sg_p2.ix[sb_uid]
         sg_id = sb.SG_ID
         xml = SchedBlock(sb.xmlfile, self.sbxml)
@@ -1064,9 +1076,14 @@ class Database(object):
         :param sbuid:
         :param new:
         """
+
+        name = ss.name.pyval  # added by Freddy
         partid = ss.attrib['entityPartId']
+        freqconf = ss.FrequencySetup
+        self.read_baseband(partid, freqconf, sbuid, new)
         try:
             corrconf = ss.BLCorrelatorConfiguration
+            self.read_spectralwindow(corrconf, sbuid, new)
             nbb = len(corrconf.BLBaseBandConfig)
             nspw = 0
             for n in range(nbb):
@@ -1074,6 +1091,7 @@ class Database(object):
                 nspw += len(bbconf.BLSpectralWindow)
         except AttributeError:
             corrconf = ss.ACACorrelatorConfiguration
+            self.read_spectralwindow(corrconf, sbuid, new)
             nbb = len(corrconf.ACABaseBandConfig)
             nspw = 0
             for n in range(nbb):
@@ -1081,11 +1099,111 @@ class Database(object):
                 nspw += len(bbconf.ACASpectralWindow)
         if new:
             self.spectralconf = pd.DataFrame(
-                [(partid, sbuid, nbb, nspw)],
-                columns=['specRef', 'SB_UID', 'BaseBands', 'SPWs'],
+                [(partid, sbuid, name, nbb, nspw)],
+                columns=['specRef', 'SB_UID', 'Name', 'BaseBands', 'SPWs'],
                 index=[partid])
         else:
-            self.spectralconf.ix[partid] = (partid, sbuid, nbb, nspw)
+            self.spectralconf.ix[partid] = (partid, sbuid, name, nbb, nspw)
+
+    def read_baseband(self, spectconf, freqconf, sbuid, new=False):
+        for baseband in range(len(freqconf.BaseBandSpecification)):
+            bb = freqconf.BaseBandSpecification[baseband]
+            partid = bb.attrib['entityPartId']
+            name = bb.attrib['baseBandName']
+            centerFreq_unit = bb.centerFrequency.attrib['unit']
+            centerFreq = convert_ghz(bb.centerFrequency.pyval, centerFreq_unit)
+            freqSwitching = bb.frequencySwitching.pyval
+            l02Freq_unit = bb.lO2Frequency.attrib['unit']
+            l02Freq = convert_ghz(bb.lO2Frequency.pyval, l02Freq_unit)
+            weighting = bb.weighting.pyval
+            useUSB = bb.useUSB.pyval
+            if new:
+                self.baseband = pd.DataFrame(
+                    [(partid, spectconf, sbuid, name, centerFreq, freqSwitching,
+                      l02Freq, weighting, useUSB)],
+                    columns=['basebandRef', 'spectralConf', 'SB_UID', 'Name',
+                             'CenterFreq', 'FreqSwitching', 'l02Freq',
+                             'Weighting', 'useUDB'],
+                    index=[partid])
+                new = False
+            else:
+                self.baseband.ix[partid] = (
+                    partid, spectconf, sbuid, name, centerFreq, freqSwitching,
+                    l02Freq, weighting, useUSB)
+
+    def read_spectralwindow(self, correconf, sbuid, new=False):
+        try:
+            for baseband in range(len(correconf.BLBaseBandConfig)):
+                bb = correconf.BLBaseBandConfig[baseband]
+                bbRef = bb.BaseBandSpecificationRef.attrib['partId']
+                for sw in range(len(bb.BLSpectralWindow)):
+                    spw = bb.BLSpectralWindow[sw]
+                    sideBand = spw.attrib['sideBand']
+                    windowsFunction = spw.attrib['windowFunction']
+                    name = spw.name.pyval                    
+                    centerFreq_unit = spw.centerFrequency.attrib['unit']
+                    centerFreq = convert_ghz(
+                        spw.centerFrequency.pyval, centerFreq_unit)
+                    averagingFactor = spw.spectralAveragingFactor.pyval
+                    effectiveBandwidth_unit = spw.effectiveBandwidth.attrib[
+                        'unit']
+                    effectiveBandwidth = convert_ghz(
+                        spw.effectiveBandwidth.pyval, effectiveBandwidth_unit)
+                    effectiveChannels = spw.effectiveNumberOfChannels.pyval
+                    use = spw.useThisSpectralWindow.pyval
+                    if new:
+                        self.spectralwindow = pd.DataFrame(
+                            [(bbRef, sbuid, name, sideBand, windowsFunction,
+                              centerFreq, averagingFactor, effectiveBandwidth,
+                              effectiveChannels, use)],
+                            columns=['basebandRef', 'SB_UID', 'Name',
+                                     'SideBand', 'WindowsFunction',
+                                     'CenterFreq', 'AveragingFactor',
+                                     'EffectiveBandwidth', 'EffectiveChannels',
+                                     'Use'],
+                            index=[bbRef + '_' + name])
+                        new = False
+                    else:
+                        self.spectralwindow.ix[bbRef + '_' + name] = (
+                            bbRef, sbuid, name, sideBand, windowsFunction,
+                            centerFreq, averagingFactor, effectiveBandwidth,
+                            effectiveChannels, use)
+        except AttributeError:
+            for baseband in range(len(correconf.ACABaseBandConfig)):
+                bb = correconf.ACABaseBandConfig[baseband]
+                bbRef = bb.BaseBandSpecificationRef.attrib['partId']
+                for sw in range(len(bb.ACASpectralWindow)):
+                    spw = bb.ACASpectralWindow[sw]
+                    sideBand = spw.attrib['sideBand']
+                    windowsFunction = spw.attrib['windowFunction']
+                    name = spw.name.pyval
+                    centerFreq_unit = spw.centerFrequency.attrib['unit']
+                    centerFreq = convert_ghz(
+                        spw.centerFrequency.pyval, centerFreq_unit)
+                    averagingFactor = spw.spectralAveragingFactor.pyval
+                    effectiveBandwidth_unit = spw.effectiveBandwidth.attrib[
+                        'unit']
+                    effectiveBandwidth = convert_ghz(
+                        spw.effectiveBandwidth.pyval, effectiveBandwidth_unit)
+                    effectiveChannels = spw.effectiveNumberOfChannels.pyval
+                    use = spw.useThisSpectralWindow.pyval
+                    if new:
+                        self.spectralwindow = pd.DataFrame(
+                            [(bbRef, sbuid, name, sideBand, windowsFunction,
+                              centerFreq, averagingFactor, effectiveBandwidth,
+                              effectiveChannels, use)],
+                            columns=['basebandRef', 'SB_UID', 'Name',
+                                     'SideBand', 'WindowsFunction',
+                                     'CenterFreq', 'AveragingFactor',
+                                     'EffectiveBandwidth', 'EffectiveChannels',
+                                     'Use'],
+                            index=[bbRef + '_' + name])
+                        new = False
+                    else:
+                        self.spectralwindow.ix[bbRef + '_' + name] = (
+                            bbRef, sbuid, name, sideBand, windowsFunction,
+                            centerFreq, averagingFactor, effectiveBandwidth,
+                            effectiveChannels, use)
 
     def do_summarize_sb(self):
         sum2 = pd.merge(
