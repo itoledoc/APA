@@ -175,7 +175,7 @@ class arrayRes:
     def read_cycle2(self):
 
 
-        directory = os.environ['WTO'] + 'conf/'
+        directory = os.environ['APA'] + 'conf/'
 
         self.data = []
 
