@@ -323,6 +323,10 @@ class Database(object):
                     self.path + 'target.pandas')
                 self.spectralconf = pd.read_pickle(
                     self.path + 'spectralconf.pandas')
+                self.baseband = pd.read_pickle(
+                    self.path + 'baseband.pandas')
+                self.spectralwindow = pd.read_pickle(
+                    self.path + 'spectralwindow.pandas')
             else:
                 # noinspection PyUnusedLocal
                 damnsolution = pd.read_pickle(
@@ -350,6 +354,8 @@ class Database(object):
             self.fieldsource.to_pickle(self.path + 'fieldsource.pandas')
             self.target.to_pickle(self.path + 'target.pandas')
             self.spectralconf.to_pickle(self.path + 'spectralconf.pandas')
+            self.baseband.to_pickle(self.path + 'baseband.pandas')
+            self.spectralwindow.to_pickle(self.path + 'spectralwindow.pandas')
 
         # noinspection PyUnusedLocal
         not2t = self.schedblocks_p1[
