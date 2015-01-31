@@ -108,7 +108,12 @@ class Database(object):
             "AND obs2.OBS_PROJECT_ID = obs1.PRJ_ARCHIVE_UID AND "
             "obs1.PRJ_ARCHIVE_UID = obs3.PROJECTUID")
 
+
         self.performance = {}  # added by Freddy
+
+        conx_string = os.environ['CON_STR']
+        self.connection = cx_Oracle.connect(conx_string)
+        self.cursor = self.connection.cursor()
         
         # Initialize with saved data and update, Default behavior.
         if not self.new:
@@ -146,9 +151,7 @@ class Database(object):
             os.mkdir(self.obsxml)
             os.mkdir(self.propxml)
             # Global Oracle Connection
-            conx_string = os.environ['CON_STR']
-            self.connection = cx_Oracle.connect(conx_string)
-            self.cursor = self.connection.cursor()
+
 
             # Populate different dataframes related to projects and SBs statuses
             # self.scheduling_proj: data frame with projects at SCHEDULING_AOS
@@ -215,6 +218,16 @@ class Database(object):
                 self.cursor.fetchall(), columns=['OBSPROJECT_UID', 'EXEC'])
 
             self.start_wto()
+
+        self.sqlstates = str(
+                "SELECT DOMAIN_ENTITY_STATE as SB_STATE,"
+                "DOMAIN_ENTITY_ID as SB_UID,OBS_PROJECT_ID as OBSPROJECT_UID "
+                "FROM ALMA.SCHED_BLOCK_STATUS")
+        self.cursor.execute(self.sqlstates)
+        self.sb_status = pd.DataFrame(
+            self.cursor.fetchall(),
+            columns=[rec[0] for rec in self.cursor.description]
+        ).set_index('SB_UID', drop=False)
 
     def start_wto(self):
 
