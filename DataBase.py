@@ -2,10 +2,10 @@ __author__ = 'itoledo'
 __metaclass__ = type
 
 import os
+import sys
 import pandas as pd
 import ephem
 import cx_Oracle
-import timeit
 import arrayResolution2p as ARes
 
 from subprocess import call
@@ -40,7 +40,7 @@ conflim = pd.Series({'C34-1': 2.8849999999999998,
                      'C34-7': 0.20499999999999999})
 
 
-# noinspection PyPep8Naming,PyAttributeOutsideInit,PyUnresolvedReferences
+# noinspection PyPep8Naming,PyAttributeOutsideInit
 class Database(object):
 
     """
@@ -67,6 +67,7 @@ class Database(object):
 
 
         """
+
         self.new = forcenew
         # Default Paths and Preferences
         if path[-1] != '/':
@@ -107,9 +108,6 @@ class Database(object):
             "OR PRJ_LETTER_GRADE='C') AND PRJ_SCIENTIFIC_RANK < 9999 "
             "AND obs2.OBS_PROJECT_ID = obs1.PRJ_ARCHIVE_UID AND "
             "obs1.PRJ_ARCHIVE_UID = obs3.PROJECTUID")
-
-
-        self.performance = {}  # added by Freddy
 
         conx_string = os.environ['CON_STR']
         self.connection = cx_Oracle.connect(conx_string)
@@ -220,9 +218,9 @@ class Database(object):
             self.start_wto()
 
         self.sqlstates = str(
-                "SELECT DOMAIN_ENTITY_STATE as SB_STATE,"
-                "DOMAIN_ENTITY_ID as SB_UID,OBS_PROJECT_ID as OBSPROJECT_UID "
-                "FROM ALMA.SCHED_BLOCK_STATUS")
+            "SELECT DOMAIN_ENTITY_STATE as SB_STATE,"
+            "DOMAIN_ENTITY_ID as SB_UID,OBS_PROJECT_ID as OBSPROJECT_UID "
+            "FROM ALMA.SCHED_BLOCK_STATUS")
         self.cursor.execute(self.sqlstates)
         self.sb_status = pd.DataFrame(
             self.cursor.fetchall(),
@@ -307,7 +305,6 @@ class Database(object):
         sbp1 = os.listdir(self.phase1_data + 'SchedBlock/')
         n = len(sbp1)
         i = 0
-        delta = len(self.performance)
         rst = []
         rft = []
         tart = []
@@ -315,6 +312,9 @@ class Database(object):
         bbt = []
         spct = []
 
+        sys.stdout.write("Processing Phase I SBs ")
+        sys.stdout.flush()
+        c = 10
         for x in sbp1:
             i += 1
             xml = SchedBlock(x, self.phase1_data + 'SchedBlock/')
@@ -322,10 +322,11 @@ class Database(object):
                 './/' + prj + 'ObsProjectRef')[0].attrib['entityId']
             if obs_uid not in self.obsproposals.OBSPROJECT_UID.values:
                 continue
-            print('Processing Phase I SBs of %s (%d/%d)' % (obs_uid, i, n))
+            if 100. * i / n > c:
+                sys.stdout.write('.')
+                sys.stdout.flush()
+                c += 10
             sb_uid = xml.data.SchedBlockEntity.attrib['entityId']
-            delta += 1
-            start = timeit.default_timer()
             rs, rf, tar, spc, bb, spw = self.read_schedblocks_p1(
                 sb_uid, obs_uid, xml)
             rst.append(rs)
@@ -335,8 +336,8 @@ class Database(object):
             bbt.extend(bb)
             spwt.extend(spw)
 
-            self.performance[delta] = timeit.default_timer() - start
-        return rst,rft,tart,spct,bbt,spwt
+        print '  Done!'
+        return rst, rft, tart, spct, bbt, spwt
 
     # noinspection PyAttributeOutsideInit
     def process_sbs(self, forcenew=False):
@@ -371,20 +372,27 @@ class Database(object):
             spwt = []
             bbt = []
             spct = []
+            sys.stdout.write("Processing Phase II SBs ")
+            sys.stdout.flush()
+            c = 10
             for sg_sb in self.sb_sg_p2.iterrows():
                 i += 1
-                start = timeit.default_timer()
                 rs, rf, tar, spc, bb, spw = self.read_schedblocks_p2(
                     sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID, sg_sb[1].OUS_ID,
-                    n, i, new=new)
+                    new=new)
+
+                if (100. * i / n) > c:
+                    sys.stdout.write('.')
+                    sys.stdout.flush()
+                    c += 10
                 rst.append(rs)
                 rft.extend(rf)
                 tart.extend(tar)
                 spct.extend(spc)
                 bbt.extend(bb)
                 spwt.extend(spw)
-                self.performance[i] = (timeit.default_timer() - start)
                 new = False
+            print ' Done!'
 
             resp1 = self.get_phaseone_sb()
             rst1_arr = np.array(resp1[0])
@@ -394,8 +402,6 @@ class Database(object):
             spct.extend(resp1[3])
             bbt.extend(resp1[4])
             spwt.extend(resp1[5])
-
-
 
             rst_arr = np.array(rst)
             rft_arr = np.array(rft)
@@ -418,7 +424,15 @@ class Database(object):
                          'sbName', 'sbStatusXml', 'repfreq', 'band', 'array',
                          'RA', 'DEC', 'minAR_ot', 'maxAR_ot', 'execount',
                          'isPolarization', 'maxPWVC', 'array12mType'],
-                ).set_index('SB_UID', drop=False)
+            ).set_index('SB_UID', drop=False)
+
+            tof = ['repfreq', 'RA', 'DEC', 'minAR_ot', 'maxAR_ot', 'maxPWVC']
+            self.schedblocks_p2[tof] = self.schedblocks_p2[tof].astype(float)
+            self.schedblocks_p2[['isPolarization']] = self.schedblocks_p2[
+                ['isPolarization']].astype(bool)
+            self.schedblocks_p2[['execount']] = self.schedblocks_p2[
+                ['execount']].astype(int)
+
             self.fieldsource = pd.DataFrame(
                 rft_arr,
                 columns=['fieldRef', 'SB_UID', 'solarSystem', 'sourcename',
@@ -437,12 +451,25 @@ class Database(object):
                 columns=['specRef', 'SB_UID', 'Name', 'BaseBands', 'SPWs']
             ).set_index('specRef', drop=False)
 
+            self.spectralconf[['BaseBands', 'SPWs']] = self.spectralconf[
+                ['BaseBands', 'SPWs']].astype(int)
+
             self.baseband = pd.DataFrame(
                 bbt_arr,
                 columns=['basebandRef', 'spectralConf', 'SB_UID', 'Name',
                          'CenterFreq', 'FreqSwitching', 'l02Freq',
                          'Weighting', 'useUDB']
             ).set_index('basebandRef', drop=False)
+
+            tof = ['CenterFreq', 'l02Freq', 'Weighting']
+            tob = ['FreqSwitching', 'useUDB']
+
+            self.baseband[tof] = self.baseband[tof].astype(float)
+            self.baseband[tob] = self.baseband[tob].astype(bool)
+
+            tof = ['CenterFreq', 'EffectiveBandwidth']
+            toi = ['AveragingFactor', 'EffectiveChannels']
+            tob = ['Use']
 
             self.spectralwindow = pd.DataFrame(
                 spwt_arr,
@@ -452,6 +479,10 @@ class Database(object):
                          'EffectiveBandwidth', 'EffectiveChannels',
                          'Use'],
             ).set_index('basebandRef', drop=False)
+
+            self.spectralwindow[tof] = self.spectralwindow[tof].astype(float)
+            self.spectralwindow[toi] = self.spectralwindow[toi].astype(int)
+            self.spectralwindow[tob] = self.spectralwindow[tob].astype(bool)
 
             self.schedblocks_p1.loc[:, 'SG_ID'] = self.schedblocks_p1.apply(
                 lambda r: self.sb_sg_p1[
@@ -467,17 +498,17 @@ class Database(object):
             self.spectralwindow.to_pickle(self.path + 'spectralwindow.pandas')
 
         # noinspection PyUnusedLocal
-        # not2t = self.schedblocks_p1[
-        #     self.schedblocks_p1.duplicated(
-        #         ['SG_ID', 'sbName', 'repfreq', 'array', 'minAR_ot'])
-        # ].SB_UID.values
-        # sg_p1_2TWELVE = self.schedblocks_p1[
-        #     self.schedblocks_p1.duplicated(
-        #         ['SG_ID', 'sbName', 'repfreq', 'array'])
-        # ].query('SB_UID not in @not2t').SG_ID.values
-        #
-        # for i in sg_p1_2TWELVE:
-        #     self.sciencegoals.loc[i, 'two_12m'] = True
+        not2t = self.schedblocks_p1[
+            self.schedblocks_p1.duplicated(
+                ['SG_ID', 'sbName', 'repfreq', 'array', 'minAR_ot'])
+        ].SB_UID.values
+        sg_p1_2TWELVE = self.schedblocks_p1[
+            self.schedblocks_p1.duplicated(
+                ['SG_ID', 'sbName', 'repfreq', 'array'])
+        ].query('SB_UID not in @not2t').SG_ID.values
+
+        for i in sg_p1_2TWELVE:
+            self.sciencegoals.loc[i, 'two_12m'] = True
 
         sg_p2_2TWELVE = self.schedblocks_p2[
             self.schedblocks_p2.sbName.str.endswith('_TC')].SG_ID.values
@@ -491,12 +522,12 @@ class Database(object):
                 r['estimatedTime'], r['two_12m'], r['useACA'], r['useTP']),
             axis=1)
 
-        # sb_comp_p1 = self.schedblocks_p1.query(
-        #     'SG_ID in @sg_p1_2TWELVE'
-        # ).groupby('SG_ID').minAR_ot.idxmax().values
-        #
-        # for i in sb_comp_p1:
-        #     self.schedblocks_p1.loc[i, 'array12mType'] = 'Comp'
+        sb_comp_p1 = self.schedblocks_p1.query(
+            'SG_ID in @sg_p1_2TWELVE'
+        ).groupby('SG_ID').minAR_ot.idxmax().values
+
+        for i in sb_comp_p1:
+            self.schedblocks_p1.loc[i, 'array12mType'] = 'Comp'
 
         self.newAR_p2_input = pd.merge(
             self.schedblocks_p2.query('array == "TWELVE-M"'),
@@ -505,12 +536,12 @@ class Database(object):
                  'useACA', 'two_12m', 'array12mType', 'minAR_ot',
                  'maxAR_ot']].set_index('SB_UID', drop=False)
 
-        # self.newAR_p1_input = pd.merge(
-        #     self.schedblocks_p1.query('array == "TWELVE-M"'),
-        #     self.sciencegoals, on='SG_ID')[
-        #         ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
-        #          'useACA', 'two_12m', 'array12mType', 'minAR_ot',
-        #          'maxAR_ot']].set_index('SB_UID', drop=False)
+        self.newAR_p1_input = pd.merge(
+            self.schedblocks_p1.query('array == "TWELVE-M"'),
+            self.sciencegoals, on='SG_ID')[
+                ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
+                 'useACA', 'two_12m', 'array12mType', 'minAR_ot',
+                 'maxAR_ot']].set_index('SB_UID', drop=False)
 
         ars2 = self.newAR_p2_input.apply(
             lambda r: new_array_ar(
@@ -518,16 +549,16 @@ class Database(object):
                 r['two_12m'], r['array12mType']),
             axis=1)
 
-        # ars1 = self.newAR_p1_input.apply(
-        #     lambda r: new_array_ar(
-        #         self.apa_path, r['AR'], r['LAS'], r['repfreq'], r['useACA'],
-        #         r['two_12m'], r['array12mType']),
-        #     axis=1)
+        ars1 = self.newAR_p1_input.apply(
+            lambda r: new_array_ar(
+                self.apa_path, r['AR'], r['LAS'], r['repfreq'], r['useACA'],
+                r['two_12m'], r['array12mType']),
+            axis=1)
 
         self.newAR_p2_input = pd.merge(
             self.newAR_p2_input, ars2, left_index=True, right_index=True)
-        # self.newAR_p1_input = pd.merge(
-        #     self.newAR_p1_input, ars1, left_index=True, right_index=True)
+        self.newAR_p1_input = pd.merge(
+            self.newAR_p1_input, ars1, left_index=True, right_index=True)
 
     def get_projectxml(self, code, state, n, c):
         """
@@ -917,12 +948,13 @@ class Database(object):
             grades, check_c2, on='CODE', how='left').set_index(
                 'CODE', drop=False)[['CODE']]
         checked = pd.concat([check_c1, check_c2_g])
+        # noinspection PyArgumentEqualDefault
         temp = pd.merge(
             self.projects, checked, on='CODE',
             copy=False, how='inner').set_index('CODE', drop=False)
         self.projects = temp
 
-    def read_schedblocks_p2(self, sb_uid, obs_uid, ous_id, n, i, new=False):
+    def read_schedblocks_p2(self, sb_uid, obs_uid, ous_id, new=False):
 
         # Open SB with SB parser class
         """
@@ -930,7 +962,7 @@ class Database(object):
         :param sb_uid:
         :param new:
         """
-        print("Processing Phase II SB %s (%d/%d)" % (sb_uid, i, n))
+
         sb = self.sb_sg_p2.ix[sb_uid]
         sg_id = sb.SG_ID
         xml = SchedBlock(sb.xmlfile, self.sbxml)
@@ -977,17 +1009,19 @@ class Database(object):
         rf = []
         for n in range(n_fs):
             if new:
-                rf.append(self.read_fieldsource(xml.data.FieldSource[n], sb_uid, array,
-                                      new=new))
+                rf.append(self.read_fieldsource(
+                    xml.data.FieldSource[n], sb_uid, array))
                 new = False
             else:
-                rf.append(self.read_fieldsource(xml.data.FieldSource[n], sb_uid, array))
+                rf.append(self.read_fieldsource(
+                    xml.data.FieldSource[n], sb_uid, array))
 
         new = new_orig
         tar = []
         for n in range(n_tg):
             if new:
-                tar.append(self.read_target(xml.data.Target[n], sb_uid, new=new))
+                tar.append(
+                    self.read_target(xml.data.Target[n], sb_uid))
                 new = False
             else:
                 tar.append(self.read_target(xml.data.Target[n], sb_uid))
@@ -998,41 +1032,23 @@ class Database(object):
         spw = []
         for n in range(n_ss):
             if new:
-                r = self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid,
-                                           new=new)
+                r = self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid)
                 spc.append(r[0])
                 bb.extend(r[1])
                 spw.extend(r[2])
                 new = False
             else:
-                r = self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid,
-                                           new=new)
+                r = self.read_spectralconf(
+                    xml.data.SpectralSpec[n], sb_uid)
                 spc.append(r[0])
                 bb.extend(r[1])
                 spw.extend(r[2])
 
         return (sb_uid, obs_uid, sg_id, ous_id,
-                  name, status, repfreq, band, array,
-                  ra, dec, minar_old, maxar_old, execount,
-                  ispolarization, maxpwv, type12m), rf, tar, spc, bb, spw
-
-        # try:
-        #     self.schedblocks_p2.ix[sb_uid] = (
-        #         sb_uid, obs_uid, sg_id, ous_id,
-        #         name, status, repfreq, band, array,
-        #         ra, dec, minar_old, maxar_old, execount,
-        #         ispolarization, maxpwv, type12m)
-        # except AttributeError:
-        #     self.schedblocks_p2 = pd.DataFrame(
-        #         [(sb_uid, obs_uid, sg_id, ous_id,
-        #           name, status, repfreq, band, array,
-        #           ra, dec, minar_old, maxar_old, execount,
-        #           ispolarization, maxpwv, type12m)],
-        #         columns=['SB_UID', 'OBSPROJECT_UID', 'SG_ID', 'OUS_ID',
-        #                  'sbName', 'sbStatusXml', 'repfreq', 'band', 'array',
-        #                  'RA', 'DEC', 'minAR_ot', 'maxAR_ot', 'execount',
-        #                  'isPolarization', 'maxPWVC', 'array12mType'],
-        #         index=[sb_uid])
+                name, status, float(repfreq), band, array,
+                float(ra), float(dec), float(minar_old), float(maxar_old),
+                int(execount), ispolarization, float(maxpwv),
+                type12m), rf, tar, spc, bb, spw
 
     def read_schedblocks_p1(self, sb_uid, obs_uid, xml):
 
@@ -1084,7 +1100,8 @@ class Database(object):
 
         rf = []
         for n in range(n_fs):
-            rf.append(self.read_fieldsource(xml.data.FieldSource[n], sb_uid, array))
+            rf.append(self.read_fieldsource(xml.data.FieldSource[n], sb_uid,
+                                            array))
 
         tar = []
         for n in range(n_tg):
@@ -1094,51 +1111,22 @@ class Database(object):
         bb = []
         spw = []
         for n in range(n_ss):
-            r = self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid,
-                                           new=False)
+            r = self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid)
             spc.append(r[0])
             bb.extend(r[1])
             spw.extend(r[2])
 
         return (sb_uid, obs_uid, sg_id, ous_id,
-            name, status, repfreq, band, array,
-            ra, dec, minar_old, maxar_old, execount,
-            ispolarization, maxpwv, type12m), rf, tar, spc, bb, spw
+                name, status, repfreq, band, array,
+                ra, dec, minar_old, maxar_old, execount,
+                ispolarization, maxpwv, type12m), rf, tar, spc, bb, spw
 
-
-        # for n in range(n_fs):
-        #     self.read_fieldsource(xml.data.FieldSource[n], sb_uid, array)
-        #
-        # for n in range(n_tg):
-        #     self.read_target(xml.data.Target[n], sb_uid)
-        #
-        # for n in range(n_ss):
-        #     self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid)
-        #
-        # try:
-        #     self.schedblocks_p1.ix[sb_uid] = (
-        #         sb_uid, obs_uid, sg_id, ous_id,
-        #         name, status, repfreq, band, array,
-        #         ra, dec, minar_old, maxar_old, execount,
-        #         ispolarization, maxpwv, type12m)
-        # except AttributeError:
-        #     self.schedblocks_p1 = pd.DataFrame(
-        #         [(sb_uid, obs_uid, sg_id, ous_id,
-        #           name, status, repfreq, band, array,
-        #           ra, dec, minar_old, maxar_old, execount,
-        #           ispolarization, maxpwv, type12m)],
-        #         columns=['SB_UID', 'OBSPROJECT_UID', 'SG_ID', 'OUS_ID',
-        #                  'sbName', 'sbStatusXml', 'repfreq', 'band', 'array',
-        #                  'RA', 'DEC', 'minAR_ot', 'maxAR_ot', 'execount',
-        #                  'isPolarization', 'maxPWVC', 'array12mType'],
-        #         index=[sb_uid])
-
-    def read_fieldsource(self, fs, sbuid, array, new=False):
+    @staticmethod
+    def read_fieldsource(fs, sbuid, array):
         """
 
         :param fs:
         :param sbuid:
-        :param new:
         """
         partid = fs.attrib['entityPartId']
         coord = fs.sourceCoordinates
@@ -1189,33 +1177,18 @@ class Database(object):
             ephemeris = fs.sourceEphemeris.pyval
         else:
             ephemeris = None
-        # if new:
-        #     self.fieldsource = pd.DataFrame(
-        #         [(partid, sbuid, solarsystem, sourcename, name, ra, dec,
-        #           isquery, qc_intendeduse, qc_ra, qc_dec, qc_use, qc_radius,
-        #           qc_radius_unit, ephemeris, pointings, ismosaic, array)],
-        #         columns=['fieldRef', 'SB_UID', 'solarSystem', 'sourcename',
-        #                  'name', 'RA', 'DEC', 'isQuery', 'intendedUse', 'qRA',
-        #                  'qDEC', 'use', 'search_radius', 'rad_unit',
-        #                  'ephemeris', 'pointings', 'isMosaic', 'arraySB'],
-        #         index=[partid]
-        #     )
-        # self.fieldsource.ix[partid] = (
-        #     partid, sbuid, solarsystem, sourcename, name, ra, dec, isquery,
-        #     qc_intendeduse, qc_ra, qc_dec, qc_use, qc_radius, qc_radius_unit,
-        #     ephemeris, pointings, ismosaic, array)
 
         return(
             partid, sbuid, solarsystem, sourcename, name, ra, dec, isquery,
             qc_intendeduse, qc_ra, qc_dec, qc_use, qc_radius, qc_radius_unit,
             ephemeris, pointings, ismosaic, array)
 
-    def read_target(self, tg, sbuid, new=False):
+    @staticmethod
+    def read_target(tg, sbuid):
         """
 
         :param tg:
         :param sbuid:
-        :param new:
         """
         partid = tg.attrib['entityPartId']
         specref = tg.AbstractInstrumentSpecRef.attrib['partId']
@@ -1224,32 +1197,22 @@ class Database(object):
 
         return (
             partid, sbuid, specref, fieldref, paramref)
-        # if new:
-        #     self.target = pd.DataFrame(
-        #         [(partid, sbuid, specref, fieldref, paramref)],
-        #         columns=['targetId', 'SB_UID', 'specRef', 'fieldRef',
-        #                  'paramRef'],
-        #         index=[partid])
-        # else:
-        #     self.target.ix[partid] = (partid, sbuid, specref, fieldref,
-        #                               paramref)
 
-    def read_spectralconf(self, ss, sbuid, new=False):
+    def read_spectralconf(self, ss, sbuid):
         """
 
         :param ss:
         :param sbuid:
-        :param new:
         """
 
         name = ss.name.pyval  # added by Freddy
         partid = ss.attrib['entityPartId']
         freqconf = ss.FrequencySetup
-        bb = self.read_baseband(partid, freqconf, sbuid, new)
+        bb = self.read_baseband(partid, freqconf, sbuid)
 
         try:
             corrconf = ss.BLCorrelatorConfiguration
-            spw = self.read_spectralwindow(corrconf, sbuid, new)
+            spw = self.read_spectralwindow(corrconf, sbuid)
             nbb = len(corrconf.BLBaseBandConfig)
             nspw = 0
             for n in range(nbb):
@@ -1257,7 +1220,7 @@ class Database(object):
                 nspw += len(bbconf.BLSpectralWindow)
         except AttributeError:
             corrconf = ss.ACACorrelatorConfiguration
-            spw = self.read_spectralwindow(corrconf, sbuid, new)
+            spw = self.read_spectralwindow(corrconf, sbuid)
             nbb = len(corrconf.ACABaseBandConfig)
             nspw = 0
             for n in range(nbb):
@@ -1267,15 +1230,9 @@ class Database(object):
         spc = (partid, sbuid, name, nbb, nspw)
 
         return spc, bb, spw
-        # if new:
-        #     self.spectralconf = pd.DataFrame(
-        #         [(partid, sbuid, name, nbb, nspw)],
-        #         columns=['specRef', 'SB_UID', 'Name', 'BaseBands', 'SPWs'],
-        #         index=[partid])
-        # else:
-        #     self.spectralconf.ix[partid] = (partid, sbuid, name, nbb, nspw)
 
-    def read_baseband(self, spectconf, freqconf, sbuid, new=False):
+    @staticmethod
+    def read_baseband(spectconf, freqconf, sbuid):
         bbl = []
         for baseband in range(len(freqconf.BaseBandSpecification)):
             bb = freqconf.BaseBandSpecification[baseband]
@@ -1288,26 +1245,13 @@ class Database(object):
             l02Freq = convert_ghz(bb.lO2Frequency.pyval, l02Freq_unit)
             weighting = bb.weighting.pyval
             useUSB = bb.useUSB.pyval
-            bbl.append((partid, spectconf, sbuid, name, centerFreq, freqSwitching,
-                      l02Freq, weighting, useUSB))
+            bbl.append((partid, spectconf, sbuid, name, centerFreq,
+                        freqSwitching, l02Freq, weighting, useUSB))
 
         return bbl
 
-            # if new:
-            #     self.baseband = pd.DataFrame(
-            #         [(partid, spectconf, sbuid, name, centerFreq, freqSwitching,
-            #           l02Freq, weighting, useUSB)],
-            #         columns=['basebandRef', 'spectralConf', 'SB_UID', 'Name',
-            #                  'CenterFreq', 'FreqSwitching', 'l02Freq',
-            #                  'Weighting', 'useUDB'],
-            #         index=[partid])
-            #     new = False
-            # else:
-            #     self.baseband.ix[partid] = (
-            #         partid, spectconf, sbuid, name, centerFreq, freqSwitching,
-            #         l02Freq, weighting, useUSB)
-
-    def read_spectralwindow(self, correconf, sbuid, new=False):
+    @staticmethod
+    def read_spectralwindow(correconf, sbuid):
         spwl = []
         try:
             for baseband in range(len(correconf.BLBaseBandConfig)):
@@ -1329,26 +1273,11 @@ class Database(object):
                     effectiveChannels = spw.effectiveNumberOfChannels.pyval
                     use = spw.useThisSpectralWindow.pyval
 
-                    spwl.append((bbRef, sbuid, name, sideBand, windowsFunction,
-                              centerFreq, averagingFactor, effectiveBandwidth,
-                              effectiveChannels, use))
-                    # if new:
-                    #     self.spectralwindow = pd.DataFrame(
-                    #         [(bbRef, sbuid, name, sideBand, windowsFunction,
-                    #           centerFreq, averagingFactor, effectiveBandwidth,
-                    #           effectiveChannels, use)],
-                    #         columns=['basebandRef', 'SB_UID', 'Name',
-                    #                  'SideBand', 'WindowsFunction',
-                    #                  'CenterFreq', 'AveragingFactor',
-                    #                  'EffectiveBandwidth', 'EffectiveChannels',
-                    #                  'Use'],
-                    #         index=[bbRef + '_' + name])
-                    #     new = False
-                    # else:
-                    #     self.spectralwindow.ix[bbRef + '_' + name] = (
-                    #         bbRef, sbuid, name, sideBand, windowsFunction,
-                    #         centerFreq, averagingFactor, effectiveBandwidth,
-                    #         effectiveChannels, use)
+                    spwl.append(
+                        (bbRef, sbuid, name, sideBand, windowsFunction,
+                         centerFreq, averagingFactor, effectiveBandwidth,
+                         effectiveChannels, use))
+
         except AttributeError:
             for baseband in range(len(correconf.ACABaseBandConfig)):
                 bb = correconf.ACABaseBandConfig[baseband]
@@ -1368,26 +1297,10 @@ class Database(object):
                         spw.effectiveBandwidth.pyval, effectiveBandwidth_unit)
                     effectiveChannels = spw.effectiveNumberOfChannels.pyval
                     use = spw.useThisSpectralWindow.pyval
-                    spwl.append((bbRef, sbuid, name, sideBand, windowsFunction,
-                              centerFreq, averagingFactor, effectiveBandwidth,
-                              effectiveChannels, use))
-                    # if new:
-                    #     self.spectralwindow = pd.DataFrame(
-                    #         [(bbRef, sbuid, name, sideBand, windowsFunction,
-                    #           centerFreq, averagingFactor, effectiveBandwidth,
-                    #           effectiveChannels, use)],
-                    #         columns=['basebandRef', 'SB_UID', 'Name',
-                    #                  'SideBand', 'WindowsFunction',
-                    #                  'CenterFreq', 'AveragingFactor',
-                    #                  'EffectiveBandwidth', 'EffectiveChannels',
-                    #                  'Use'],
-                    #         index=[bbRef + '_' + name])
-                    #     new = False
-                    # else:
-                    #     self.spectralwindow.ix[bbRef + '_' + name] = (
-                    #         bbRef, sbuid, name, sideBand, windowsFunction,
-                    #         centerFreq, averagingFactor, effectiveBandwidth,
-                    #         effectiveChannels, use)
+                    spwl.append(
+                        (bbRef, sbuid, name, sideBand, windowsFunction,
+                         centerFreq, averagingFactor, effectiveBandwidth,
+                         effectiveChannels, use))
         return spwl
 
     def do_summarize_sb(self):
@@ -1480,7 +1393,6 @@ class Database(object):
             sum_schedblock[
                 sum_schedblock.sbName.str.contains('DO ')].index.tolist())
 
-        # print len(sum_schedblock.query('SB_UID in @todrop').sbName)
         print('42')
 
         sum_schedblock = sum_schedblock.drop(todrop)
@@ -1513,6 +1425,9 @@ class Database(object):
         self.summary_sb['bestconf'] = self.summary_sb.apply(
             lambda r: bestconf(r['AR100GHz'], r['minArrayAR100GHz'],
                                r['maxArrayAR100GHz']), axis=1)
+        self.summary_sb = pd.merge(
+            self.summary_sb, self.sb_status[['SB_UID', 'SB_STATE']],
+            on='SB_UID')
 
     def sb_eta(self, sg_id, array, arrayt):
         if array == 'TWELVE-M' and arrayt == 'Ext':
@@ -1601,7 +1516,7 @@ def correct_resolution(res, repfreq, ra, dec):
     if ra == 0. and dec == 0:
         dec = -23.0262015
     c_bmax = 0.4001 / pd.np.cos(pd.np.radians(-23.0262015) -
-                                pd.np.radians(dec)) + 0.6103
+                                pd.np.radians(float(dec))) + 0.6103
     c_freq = repfreq / 100.
     corr = c_freq / c_bmax
     return corr * res
