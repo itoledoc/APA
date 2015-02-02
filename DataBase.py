@@ -62,7 +62,7 @@ class Database(object):
     :type forcenew: boolean, default False
     """
 
-    def __init__(self, path='/.apa/', forcenew=False):
+    def __init__(self, path='/.apa/', forcenew=False, verbose=True):
         """
 
 
@@ -90,6 +90,7 @@ class Database(object):
                    'newar_table', 'fieldsource_table', 'target_table',
                    'spectralconf_table'])
         self.status = ["Canceled", "Rejected"]
+        self.verbose = verbose
 
         self.grades = pd.read_table(self.apa_path + 'conf/c2grade.csv', sep=',')
         self.sb_sg_p1 = pd.read_pickle(self.apa_path + 'conf/sb_sg_p1.pandas')
@@ -270,7 +271,7 @@ class Database(object):
         c = 1
         for r in self.projects.iterrows():
             xmlfilename, obsproj = self.get_projectxml(
-                r[1].CODE, r[1].PRJ_STATUS, number, c)
+                r[1].CODE, r[1].PRJ_STATUS, number, c, verbose=self.verbose)
             c += 1
             if obsproj:
                 self.read_obsproject(xmlfilename)
@@ -560,15 +561,18 @@ class Database(object):
         self.newAR_p1_input = pd.merge(
             self.newAR_p1_input, ars1, left_index=True, right_index=True)
 
-    def get_projectxml(self, code, state, n, c):
+    def get_projectxml(self, code, state, n, c, verbose=True):
         """
 
         :param code:
         """
 
         if state not in ['Approved', 'PhaseISubmitted']:
-            print("Downloading Project %s obsproject.xml, status %s. (%s/%s)" %
-                  (code, self.projects.ix[code, 'PRJ_STATUS'], c, n))
+            if verbose:
+                print(
+                    "Downloading Project %s obsproject.xml, status %s. "
+                    "(%s/%s)" %
+                    (code, self.projects.ix[code, 'PRJ_STATUS'], c, n))
             self.cursor.execute(
                 "SELECT TIMESTAMP, XMLTYPE.getClobVal(xml) "
                 "FROM ALMA.XML_OBSPROJECT_ENTITIES "
@@ -587,12 +591,14 @@ class Database(object):
                 self.projects.loc[code, 'xmlfile'] = xmlfilename
                 return xmlfilename, obsproj
             except IndexError:
-                print("Project %s not found on archive?" %
-                      self.projects.ix[code])
+                if verbose:
+                    print("Project %s not found on archive?" %
+                          self.projects.ix[code])
                 return 0
         else:
-            print("Copying Project %s obsproposal.xml, status %s. (%s/%s)" %
-                  (code, self.projects.ix[code, 'PRJ_STATUS'], c, n))
+            if verbose:
+                print("Copying Project %s obsproposal.xml, status %s. (%s/%s)" %
+                      (code, self.projects.ix[code, 'PRJ_STATUS'], c, n))
             xmlfilename = self.projects.ix[code, 'OBSPROJECT_UID'].replace(
                 '://', '___').replace('/', '_')
             xmlfilename += '.xml'
