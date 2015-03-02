@@ -361,6 +361,12 @@ class Database(object):
                     self.path + 'spectralwindow.pandas')
                 self.scienceparam = pd.read_pickle(
                     self.path + 'scienceparam.pandas')
+                self.ampcalparam = pd.read_pickle(
+                    self.path + 'ampcalparam.pandas')
+                self.bbandcalparam = pd.read_pickle(
+                    self.path + 'bbandcalparam.pandas')
+                self.phasecalparam = pd.read_pickle(
+                    self.path + 'phasecalparam.pandas')
             else:
                 # noinspection PyUnusedLocal
                 damnsolution = pd.read_pickle(
@@ -377,14 +383,18 @@ class Database(object):
             bbt = []
             spct = []
             scpart = []
+            acpart = []
+            bcpart = []
+            pcpart = []
             sys.stdout.write("Processing Phase II SBs ")
             sys.stdout.flush()
             c = 10
             for sg_sb in self.sb_sg_p2.iterrows():
                 i += 1
-                rs, rf, tar, spc, bb, spw, scpar = self.read_schedblocks_p2(
-                    sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID, sg_sb[1].OUS_ID,
-                    new=new)
+                rs, rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar = \
+                    self.read_schedblocks_p2(
+                        sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID,
+                        sg_sb[1].OUS_ID, new=new)
 
                 if (100. * i / n) > c:
                     sys.stdout.write('.')
@@ -397,6 +407,9 @@ class Database(object):
                 bbt.extend(bb)
                 spwt.extend(spw)
                 scpart.extend(scpar)
+                acpart.extend(acpar)
+                bcpart.extend(bcpar)
+                pcpart.extend(pcpar)
                 new = False
             print ' Done!'
 
@@ -416,6 +429,9 @@ class Database(object):
             bbt_arr = np.array(bbt)
             spwt_arr = np.array(spwt)
             scpart_arr = np.array(scpart)
+            acpart_arr = np.array(acpart)
+            bcpart_arr = np.array(bcpart)
+            pcpart_arr = np.array(pcpart)
 
             self.schedblocks_p1 = pd.DataFrame(
                 rst1_arr,
@@ -443,7 +459,25 @@ class Database(object):
             self.scienceparam = pd.DataFrame(
                 scpart_arr,
                 columns=['paramRef', 'SB_UID', 'parName', 'representative_bw',
-                         'sensitivy', 'intTime', 'subScanDur']
+                         'sensitivy', 'sensUnit', 'intTime', 'subScanDur']
+            ).set_index('paramRef', drop=False)
+
+            self.ampcalparam = pd.DataFrame(
+                acpart_arr,
+                columns=['paramRef', 'SB_UID', 'parName', 'intTime',
+                         'subScanDur']
+            ).set_index('paramRef', drop=False)
+
+            self.bbandcalparam = pd.DataFrame(
+                bcpart_arr,
+                columns=['paramRef', 'SB_UID', 'parName', 'intTime',
+                         'subScanDur']
+            ).set_index('paramRef', drop=False)
+
+            self.phasecalparam = pd.DataFrame(
+                pcpart_arr,
+                columns=['paramRef', 'SB_UID', 'parName', 'intTime',
+                         'subScanDur']
             ).set_index('paramRef', drop=False)
 
             self.fieldsource = pd.DataFrame(
@@ -510,6 +544,10 @@ class Database(object):
             self.baseband.to_pickle(self.path + 'baseband.pandas')
             self.spectralwindow.to_pickle(self.path + 'spectralwindow.pandas')
             self.scienceparam.to_pickle(self.path + 'scienceparam.pandas')
+            self.ampcalparam.to_pickle(self.path + 'ampcalparam.pandas')
+            self.bbandcalparam.to_pickle(self.path + 'bbandcalparam.pandas')
+            self.phasecalparam.to_pickle(self.path + 'phasecalparam.pandas')
+
 
         # noinspection PyUnusedLocal
         not2t = self.schedblocks_p1[
@@ -1025,6 +1063,20 @@ class Database(object):
         n_tg = len(xml.data.Target)
         n_ss = len(xml.data.SpectralSpec)
         n_sp = len(xml.data.ScienceParameters)
+        try:
+            n_acp = len(xml.data.AmplitudeCalParameters)
+        except AttributeError:
+            n_acp = 0
+
+        try:
+            n_bcp = len(xml.data.BandpassCalParameters)
+        except AttributeError:
+            n_bcp = 0
+
+        try:
+            n_pcp = len(xml.data.PhaseCalParameters)
+        except AttributeError:
+            n_pcp = 0
 
         rf = []
         for n in range(n_fs):
@@ -1068,19 +1120,61 @@ class Database(object):
             sp = xml.data.ScienceParameters[n]
             en_id = sp.attrib['entityPartId']
             namep = sp.name.pyval
-            rep_bw = sp.representativeBandwidth.pyval
+            rep_bw = convert_ghz(sp.representativeBandwidth.pyval,
+                                 sp.representativeBandwidth.attrib['unit'])
             sen_goal = sp.sensitivityGoal.pyval
-            int_time = sp.integrationTime.pyval
-            subs_dur = sp.subScanDuration.pyval
-            scpar.append([en_id, sb_uid, namep, rep_bw, sen_goal, int_time,
-                          subs_dur])
+            sen_goal_u = sp.sensitivityGoal.attrib['unit']
+            int_time = convert_tsec(sp.integrationTime.pyval,
+                                    sp.integrationTime.attrib['unit'])
+            subs_dur = convert_tsec(sp.subScanDuration.pyval,
+                                    sp.subScanDuration.attrib['unit'])
+            scpar.append([en_id, sb_uid, namep, rep_bw, sen_goal, sen_goal_u,
+                          int_time, subs_dur])
 
+        acpar = []
+        if n_acp > 0:
+            for n in range(n_acp):
+                sp = xml.data.AmplitudeCalParameters[n]
+                en_id = sp.attrib['entityPartId']
+                namep = sp.name.pyval
+                int_time = convert_tsec(
+                    sp.defaultIntegrationTime.pyval,
+                    sp.defaultIntegrationTime.attrib['unit'])
+                subs_dur = convert_tsec(sp.subScanDuration.pyval,
+                                        sp.subScanDuration.attrib['unit'])
+                acpar.append([en_id, sb_uid, namep, int_time, subs_dur])
+
+        bcpar = []
+        if n_bcp > 0:
+            for n in range(n_bcp):
+                sp = xml.data.BandpassCalParameters[n]
+                en_id = sp.attrib['entityPartId']
+                namep = sp.name.pyval
+                int_time = convert_tsec(
+                    sp.defaultIntegrationTime.pyval,
+                    sp.defaultIntegrationTime.attrib['unit'])
+                subs_dur = convert_tsec(sp.subScanDuration.pyval,
+                                        sp.subScanDuration.attrib['unit'])
+                bcpar.append([en_id, sb_uid, namep, int_time, subs_dur])
+
+        pcpar = []
+        if n_pcp > 0:
+            for n in range(n_pcp):
+                sp = xml.data.PhaseCalParameters[n]
+                en_id = sp.attrib['entityPartId']
+                namep = sp.name.pyval
+                int_time = convert_tsec(
+                    sp.defaultIntegrationTime.pyval,
+                    sp.defaultIntegrationTime.attrib['unit'])
+                subs_dur = convert_tsec(sp.subScanDuration.pyval,
+                                        sp.subScanDuration.attrib['unit'])
+                pcpar.append([en_id, sb_uid, namep, int_time, subs_dur])
 
         return (sb_uid, obs_uid, sg_id, ous_id,
                 name, status, float(repfreq), band, array,
                 float(ra), float(dec), float(minar_old), float(maxar_old),
                 int(execount), ispolarization, float(maxpwv),
-                type12m), rf, tar, spc, bb, spw, scpar
+                type12m), rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar
 
     def read_schedblocks_p1(self, sb_uid, obs_uid, xml):
 
