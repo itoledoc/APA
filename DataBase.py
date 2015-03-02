@@ -342,6 +342,7 @@ class Database(object):
 
     # noinspection PyAttributeOutsideInit
     def process_sbs(self, forcenew=False):
+
         try:
             if not forcenew:
                 self.schedblocks_p2 = pd.read_pickle(
@@ -358,6 +359,8 @@ class Database(object):
                     self.path + 'baseband.pandas')
                 self.spectralwindow = pd.read_pickle(
                     self.path + 'spectralwindow.pandas')
+                self.scienceparam = pd.read_pickle(
+                    self.path + 'scienceparam.pandas')
             else:
                 # noinspection PyUnusedLocal
                 damnsolution = pd.read_pickle(
@@ -373,12 +376,13 @@ class Database(object):
             spwt = []
             bbt = []
             spct = []
+            scpart = []
             sys.stdout.write("Processing Phase II SBs ")
             sys.stdout.flush()
             c = 10
             for sg_sb in self.sb_sg_p2.iterrows():
                 i += 1
-                rs, rf, tar, spc, bb, spw = self.read_schedblocks_p2(
+                rs, rf, tar, spc, bb, spw, scpar = self.read_schedblocks_p2(
                     sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID, sg_sb[1].OUS_ID,
                     new=new)
 
@@ -392,6 +396,7 @@ class Database(object):
                 spct.extend(spc)
                 bbt.extend(bb)
                 spwt.extend(spw)
+                scpart.extend(scpar)
                 new = False
             print ' Done!'
 
@@ -410,6 +415,7 @@ class Database(object):
             spct_arr = np.array(spct)
             bbt_arr = np.array(bbt)
             spwt_arr = np.array(spwt)
+            scpart_arr = np.array(scpart)
 
             self.schedblocks_p1 = pd.DataFrame(
                 rst1_arr,
@@ -434,13 +440,19 @@ class Database(object):
             self.schedblocks_p2[['execount']] = self.schedblocks_p2[
                 ['execount']].astype(int)
 
+            self.scienceparam = pd.DataFrame(
+                scpart_arr,
+                columns=['paramRef', 'SB_UID', 'parName', 'representative_bw',
+                         'sensitivy', 'intTime', 'subScanDur']
+            ).set_index('paramRef', drop=False)
+
             self.fieldsource = pd.DataFrame(
                 rft_arr,
                 columns=['fieldRef', 'SB_UID', 'solarSystem', 'sourcename',
                          'name', 'RA', 'DEC', 'isQuery', 'intendedUse', 'qRA',
                          'qDEC', 'use', 'search_radius', 'rad_unit',
                          'ephemeris', 'pointings', 'isMosaic', 'arraySB']
-            ).set_index('fieldRef')
+            ).set_index('fieldRef', drop=False)
 
             self.target = pd.DataFrame(
                 tart_arr,
@@ -497,6 +509,7 @@ class Database(object):
             self.spectralconf.to_pickle(self.path + 'spectralconf.pandas')
             self.baseband.to_pickle(self.path + 'baseband.pandas')
             self.spectralwindow.to_pickle(self.path + 'spectralwindow.pandas')
+            self.scienceparam.to_pickle(self.path + 'scienceparam.pandas')
 
         # noinspection PyUnusedLocal
         not2t = self.schedblocks_p1[
@@ -1011,6 +1024,7 @@ class Database(object):
         n_fs = len(xml.data.FieldSource)
         n_tg = len(xml.data.Target)
         n_ss = len(xml.data.SpectralSpec)
+        n_sp = len(xml.data.ScienceParameters)
 
         rf = []
         for n in range(n_fs):
@@ -1044,17 +1058,29 @@ class Database(object):
                 spw.extend(r[2])
                 new = False
             else:
-                r = self.read_spectralconf(
-                    xml.data.SpectralSpec[n], sb_uid)
+                r = self.read_spectralconf(xml.data.SpectralSpec[n], sb_uid)
                 spc.append(r[0])
                 bb.extend(r[1])
                 spw.extend(r[2])
+
+        scpar = []
+        for n in range(n_sp):
+            sp = xml.data.ScienceParameters[n]
+            en_id = sp.attrib['entityPartId']
+            namep = sp.name.pyval
+            rep_bw = sp.representativeBandwidth.pyval
+            sen_goal = sp.sensitivityGoal.pyval
+            int_time = sp.integrationTime.pyval
+            subs_dur = sp.subScanDuration.pyval
+            scpar.append([en_id, sb_uid, namep, rep_bw, sen_goal, int_time,
+                          subs_dur])
+
 
         return (sb_uid, obs_uid, sg_id, ous_id,
                 name, status, float(repfreq), band, array,
                 float(ra), float(dec), float(minar_old), float(maxar_old),
                 int(execount), ispolarization, float(maxpwv),
-                type12m), rf, tar, spc, bb, spw
+                type12m), rf, tar, spc, bb, spw, scpar
 
     def read_schedblocks_p1(self, sb_uid, obs_uid, xml):
 
