@@ -20,7 +20,7 @@ val = '{Alma/ValueTypes}'
 sbl = '{Alma/ObsPrep/SchedBlock}'
 
 pd.options.display.width = 200
-pd.options.display.max_columns = 55
+pd.options.display.max_columns = 100
 
 confDf = pd.DataFrame(
     [('C34-1', 3.73, 2.49, 1.62, 1.08, 0.81, 0.57)],
@@ -1804,14 +1804,17 @@ def day_night(sdate, edate, alma):
                      index=['lst_start', 'lst_dusk', 'lst_end', 'lst_dawn'])
 
 
-def hours(orise, oset, conf1, conf2, conf3, conf4, conf5, conf6, conf7, up,
-          band, datedf):
+def avail_calc(orise, oset, conf1, conf2, conf3, conf4, conf5, conf6, conf7, up,
+               band, datedf):
 
     # First, is observable?
     confnames_df = ['C34_1', 'C34_2', 'C34_3', 'C34_4', 'C34_5', 'C34_6',
                     'C34_7']
     cf = np.array([conf1, conf2, conf3, conf4, conf5, conf6, conf7])
     hup = 0.
+    safe = 0
+    crit = 0
+    wend = 0
     based = dt.datetime(2015, 1, 1)
     if orise < oset:
         b1 = based + dt.timedelta(hours=orise)
@@ -1835,41 +1838,70 @@ def hours(orise, oset, conf1, conf2, conf3, conf4, conf5, conf6, conf7, up,
                     band in ['ALMA_RB_08', 'ALMA_RB_09']):
                 continue
 
-        if (l.end - l.start >= dt.timedelta(1) and
-                band not in ['ALMA_RB_07', 'ALMA_RB_08', 'ALMA_RB_09']):
-            hup += up
-            continue
+        # if ((l.end - l.start) >= dt.timedelta(1) and
+        #         band not in ['ALMA_RB_07', 'ALMA_RB_08', 'ALMA_RB_09']):
+        #     hup += up
+        #     safe += 1
+        #     wend += 1
+        #     continue
 
         if band in ['ALMA_RB_07', 'ALMA_RB_08', 'ALMA_RB_09']:
             dstart = l.lst_dusk
             dend = l.lst_dawn
+            check_not24 = True
         else:
             dstart = l.lst_start
-            dend = l.lst_end - 1.5
+            dend = l.lst_end
+            check_not24 = False
+            if l.start.weekday() not in [4, 5]:
+                dend = l.lst_end - 1.5
+                if dend < 0:
+                    dend += 24
+                check_not24 = True
 
-        if dstart < dend:
+        if dstart < dend and check_not24:
             dstart = based + dt.timedelta(hours=dstart)
             dend = based + dt.timedelta(hours=dend)
         else:
             dstart = based + dt.timedelta(hours=dstart)
             dend = based + dt.timedelta(days=1, hours=dend)
 
+        critt = 0
+        wendt = 0
+        safet = 0
+
         for r in [[b1, b2], [b3, b4]]:
-            if r[1] < dstart or r[0] > dend:
+
+            if (r[1] < dstart) or (r[0] > dend):
                 hup += 0
-            elif r[0] < dstart and r[1] > dend:
+            elif (r[0] < dstart) and (r[1] > dend):
                 hup += (dend - dstart).total_seconds() / 3600.
-            elif r[0] > dstart and r[1] < dend:
+                safet += 1
+            elif (r[0] > dstart) and (r[1] < dend):
                 hup += (r[1] - r[0]).total_seconds() / 3600.
+                safet += 1
             else:
                 tl = [r[1], r[0], dstart, dend]
                 tl.sort()
                 # print tl
                 delta = ((tl[2] - tl[1]).total_seconds() / 3600.)
                 if 0 < delta < 2.:
-                    hup += 2.
+                    hup += delta
+                    critt += 1
                 else:
-                    hup += (tl[2] - tl[1]).total_seconds() / 3600.
+                    hup += delta
+                    safe += 1
 
-    print hup
-    return hup
+            if ((critt > 0) or (safet > 0)) and (l.start.weekday() in [4, 5]):
+                wendt += 1
+        if critt > 0:
+            crit += 1
+        if wendt > 0:
+            wend += 1
+        if safet > 0:
+            safe += 1
+
+
+
+    return pd.Series([hup, safe, crit, wend],
+                     index=['available_hours', 'days', 'days_crit', 'weekend'])
