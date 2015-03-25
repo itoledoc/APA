@@ -4,6 +4,7 @@ import pandas as pd
 import datetime as dt
 import ephem
 import numpy as np
+import copy
 
 alma1 = ephem.Observer()
 alma1.lat = '-23.0262015'
@@ -12,30 +13,54 @@ alma1.elev = 5060
 alma1.horizon = ephem.degrees(str('20'))
 
 
-def create_dates(start, end, block, conf, data_arin=list()):
+es_cycle2 = [
+    ['2015-03-31', '2015-04-06', 'block17', [1, 2]],
+    ['2015-04-07', '2015-04-13', 'block18', [1, 2]],
+    ['2015-04-21', '2015-04-27', 'block19', [1, 2]],
+    ['2015-04-28', '2015-05-04', 'block20', [1, 2]],
+    ['2015-05-12', '2015-05-18', 'block21', [3, 4]],
+    ['2015-05-19', '2015-05-25', 'block22', [3, 4]],
+    ['2015-06-02', '2015-06-08', 'block23', [5]],
+    ['2015-06-09', '2015-06-15', 'block24', [5]],
+    ['2015-06-23', '2015-06-29', 'block25', [7]],
+    ['2015-06-30', '2015-07-06', 'block26', [7]],
+    ['2015-07-14', '2015-07-20', 'block27', [7]],
+    ['2015-07-21', '2015-07-27', 'block28', [7]],
+    ['2015-08-04', '2015-08-10', 'block29', [6]],
+    ['2015-08-11', '2015-08-17', 'block30', [6]],
+    ['2015-08-25', '2015-08-31', 'block31', [7, 6]],
+    ['2015-09-01', '2015-09-07', 'block32', [7, 6]],
+    ['2015-09-15', '2015-09-21', 'block33', [7, 6]],
+    ['2015-09-22', '2015-09-28', 'block34', [7, 6]]
+]
 
-    data_ar = data_arin
-    startd = dt.datetime.strptime(start, '%Y-%m-%d')
-    endd = dt.datetime.strptime(end, '%Y-%m-%d')
-    confs = [0, 0, 0, 0, 0, 0, 0]
-    for c in conf:
-        confs[c - 1] = 1
-    while startd <= endd:
-        if startd.isoweekday() not in [5, 6]:
-            dr = [
-                startd + dt.timedelta(hours=20),
-                startd + dt.timedelta(hours=20 + 16),
-                block]
-            dr.extend(confs)
-            data_ar.append(dr)
-        else:
-            dr = [
-                startd + dt.timedelta(hours=20),
-                startd + dt.timedelta(hours=20 + 24),
-                block]
-            dr.extend(confs)
-            data_ar.append(dr)
-        startd += dt.timedelta(1)
+
+def create_dates(data_arin):
+    data_ar = []
+
+    for e in data_arin:
+
+        startd = dt.datetime.strptime(e[0], '%Y-%m-%d')
+        endd = dt.datetime.strptime(e[1], '%Y-%m-%d')
+        confs = [0, 0, 0, 0, 0, 0, 0]
+        for c in e[3]:
+            confs[c - 1] = 1
+        while startd <= endd:
+            if startd.isoweekday() not in [5, 6]:
+                dr = [
+                    startd + dt.timedelta(hours=20),
+                    startd + dt.timedelta(hours=20 + 16),
+                    e[2]]
+                dr.extend(confs)
+                data_ar.append(dr)
+            else:
+                dr = [
+                    startd + dt.timedelta(hours=20),
+                    startd + dt.timedelta(hours=20 + 24),
+                    e[2]]
+                dr.extend(confs)
+                data_ar.append(dr)
+            startd += dt.timedelta(1)
 
     return data_ar
 
@@ -130,7 +155,7 @@ def avail_calc(orise, oset, conf1, conf2, conf3, conf4, conf5, conf6, conf7, up,
         if 1 not in cf * confs:
             continue
         else:
-            if ((l.start < dt.datetime(2015, 5, 1)) and
+            if ((l.start < dt.datetime(2015, 5, 5)) and
                     band in ['ALMA_RB_08', 'ALMA_RB_09']):
                 continue
 
@@ -192,3 +217,134 @@ def avail_calc(orise, oset, conf1, conf2, conf3, conf4, conf5, conf6, conf7, up,
 
     return pd.Series([hup, safe, crit, wend],
                      index=['available_hours', 'days', 'days_crit', 'weekend'])
+
+
+def sim(lst, limit_bands, sb):
+
+    conv_f = 24 / 23.9344699
+
+    ha = lst - sb['RA']
+    if ha > 12:
+        ha = 24 - ha
+    elif ha < -12:
+        ha += 24
+
+    clo = abs(-1 - ha)
+
+    if sb['band'] in limit_bands:
+        obs = False
+        return pd.Series([obs, ha, clo], index=['obs', 'HA', 'clo'])
+
+    obs = False
+    if sb['rise'] < sb['set']:
+        if sb['rise'] < lst < (sb['set'] - sb['SB_ETC2_exec'] * 1.1 * conv_f):
+            obs = True
+    else:
+        if sb['rise'] < lst < 24:
+            obs = True
+        elif lst < sb['set']:
+            obs = True
+
+    if (ha <= -4) or (ha >= 4):
+        obs = False
+
+    return pd.Series([sb['SB_UID'], obs, ha, clo],
+                     index=['SB_UID', 'obs', 'HA', 'clo'])
+
+
+def sel(df, lst, limitbands, array, out):
+
+    df1 = df.copy()
+    selec = ''
+    for a in array:
+        if len(selec) == 0:
+            selec = a + ' == 1'
+        else:
+            selec = selec + ' or ' + a + ' == 1'
+
+    df1 = df1.query(selec)
+
+    df1 = df1.query('SBremExec > 0')
+
+    df2 = df1.query('observed > 0 and PRJ_LETTER_GRADE in ["A", "B"]')
+
+    r = df2.apply(
+        lambda row: sim(lst, limitbands, row), axis=1)
+    try:
+        SB_UID = r.query('obs == True').sort('clo').SB_UID.values[0]
+    except IndexError:
+        SB_UID = None
+
+    if SB_UID is None:
+
+        df2 = df1.query('PRJ_LETTER_GRADE in ["A", "B"]')
+        r = df2.apply(lambda row: sim(lst, limitbands, row), axis=1)
+        try:
+            SB_UID = r.query('obs == True').sort('clo').SB_UID.values[0]
+        except IndexError:
+            SB_UID = None
+
+    if SB_UID is None:
+
+        r = df1.apply(lambda row: sim(lst, limitbands, row), axis=1)
+        try:
+            SB_UID = r.query('obs == True').sort('clo').SB_UID.values[0]
+        except IndexError:
+            SB_UID = None
+
+    if SB_UID:
+        df.loc[SB_UID, 'SBremExec'] -= 1
+
+    out.append(SB_UID)
+
+    return out, SB_UID
+
+
+def runsim(date_df, df, alma):
+
+    dft = df.copy()
+    out = []
+    out1 = []
+    obj = ephem.Sun()
+    for r in date_df.index:
+        ti = date_df.loc[r, 'start'] + dt.timedelta(hours=1)
+        end = date_df.loc[r, 'end'] - dt.timedelta(hours=1)
+        array = []
+        for a in ['C34_1', 'C34_2', 'C34_3', 'C34_4', 'C34_5', 'C34_6',
+                  'C34_7']:
+            if date_df.loc[r, a] == 1:
+                array.append(a)
+        print date_df.loc[r, 'block']
+        while ti < end:
+            alma.date = ti
+            obj.compute(alma)
+            day = True
+            if obj.alt <= ephem.degrees('-20'):
+                day = False
+
+            if ti <= dt.datetime(2015, 5, 6):
+                limit_b = ['ALMA_RB_08', 'ALMA_RB_09']
+            else:
+                limit_b = []
+            if day:
+                limit_b = (['ALMA_RB_07', 'ALMA_RB_08', 'ALMA_RB_09'])
+
+            lst = np.rad2deg(alma.sidereal_time()) / 15.
+            out, sb = sel(dft, lst, limit_b, array, out)
+            try:
+                sbr = int(dft.loc[sb, 'SBremExec'])
+                gr = dft.loc[sb, 'PRJ_LETTER_GRADE']
+                ra = dft.loc[sb, 'RA']
+                out1.append(
+                    [ti, lst, day, len(limit_b), array, sb, sbr, ra, gr])
+            except ValueError:
+                out1.append(
+                    [ti, lst, day, len(limit_b), array, sb, None, None, None])
+
+            if sb:
+                dur = dft.loc[sb, 'SB_ETC2_exec'] * 1.1
+                ti += dt.timedelta(hours=dur)
+            else:
+                ti += dt.timedelta(minutes=10)
+
+    return dft, out1
