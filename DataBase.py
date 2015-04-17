@@ -1065,7 +1065,11 @@ class Database(object):
         n_fs = len(xml.data.FieldSource)
         n_tg = len(xml.data.Target)
         n_ss = len(xml.data.SpectralSpec)
-        n_sp = len(xml.data.ScienceParameters)
+        try:
+            n_sp = len(xml.data.ScienceParameters)
+        except AttributeError:
+            n_sp = 0
+            print "\nWarning, %s is corrupt" % sb_uid
         try:
             n_acp = len(xml.data.AmplitudeCalParameters)
         except AttributeError:
