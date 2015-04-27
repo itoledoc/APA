@@ -1338,7 +1338,7 @@ class Database(object):
         :param sbuid:
         """
 
-        name = ss.name.pyval  # added by Freddy
+        name = ss.name.pyval
         partid = ss.attrib['entityPartId']
         freqconf = ss.FrequencySetup
         bb = self.read_baseband(partid, freqconf, sbuid)
@@ -1367,19 +1367,26 @@ class Database(object):
     @staticmethod
     def read_baseband(spectconf, freqconf, sbuid):
         bbl = []
+        rest_freq = convert_ghz(freqconf.restFrequency.pyval,
+                                freqconf.restFrequency.attrib['unit'])
+        trans_name = freqconf.transitionName.pyval
+        lo1_freq = convert_ghz(freqconf.lO1Frequency.pyval,
+                               freqconf.lO1Frequency.attrib['unit'])
+        band = freqconf.attrib['receiverBand']
+        doppler_ref = freqconf.attrib['dopplerReference']
         for baseband in range(len(freqconf.BaseBandSpecification)):
             bb = freqconf.BaseBandSpecification[baseband]
             partid = bb.attrib['entityPartId']
             name = bb.attrib['baseBandName']
-            centerFreq_unit = bb.centerFrequency.attrib['unit']
-            centerFreq = convert_ghz(bb.centerFrequency.pyval, centerFreq_unit)
-            freqSwitching = bb.frequencySwitching.pyval
-            l02Freq_unit = bb.lO2Frequency.attrib['unit']
-            l02Freq = convert_ghz(bb.lO2Frequency.pyval, l02Freq_unit)
+            center_freq_unit = bb.centerFrequency.attrib['unit']
+            center_freq = convert_ghz(bb.centerFrequency.pyval, center_freq_unit)
+            freq_switching = bb.frequencySwitching.pyval
+            lo2_freq_unit = bb.lO2Frequency.attrib['unit']
+            lo2_freq = convert_ghz(bb.lO2Frequency.pyval, lo2_freq_unit)
             weighting = bb.weighting.pyval
-            useUSB = bb.useUSB.pyval
-            bbl.append((partid, spectconf, sbuid, name, centerFreq,
-                        freqSwitching, l02Freq, weighting, useUSB))
+            use_usb = bb.useUSB.pyval
+            bbl.append((partid, spectconf, sbuid, name, center_freq,
+                        freq_switching, lo2_freq, weighting, use_usb))
 
         return bbl
 
@@ -1392,6 +1399,7 @@ class Database(object):
                 bbRef = bb.BaseBandSpecificationRef.attrib['partId']
                 for sw in range(len(bb.BLSpectralWindow)):
                     spw = bb.BLSpectralWindow[sw]
+                    poln_prod = spw.attrib['polnProducts']
                     sideBand = spw.attrib['sideBand']
                     windowsFunction = spw.attrib['windowFunction']
                     name = spw.name.pyval                    
