@@ -7,10 +7,8 @@ import pandas as pd
 import ephem
 import cx_Oracle
 import arrayResolution2p as ARes
-import datetime as dt
-from collections import namedtuple
-Range = namedtuple('Range', ['start', 'end'])
 
+from collections import namedtuple
 from subprocess import call
 from XmlProjParsers import *
 from converter import *
@@ -33,6 +31,7 @@ confDf.ix['C34-4'] = ('C34-4', 1.11, 0.74, 0.48, 0.32, 0.24, 0.17)
 confDf.ix['C34-5'] = ('C34-5', 0.75, 0.50, 0.33, 0.22, 0.16, 0.12)
 confDf.ix['C34-6'] = ('C34-6', 0.57, 0.38, 0.25, 0.16, 0.12, 0.09)
 confDf.ix['C34-7'] = ('C34-7', 0.41, 0.27, 0.18, 0.12, None, None)
+Range = namedtuple('Range', ['start', 'end'])
 
 conflim = pd.Series({'C34-1': 2.8849999999999998,
                      'C34-2': 1.72,
@@ -1379,7 +1378,8 @@ class Database(object):
             partid = bb.attrib['entityPartId']
             name = bb.attrib['baseBandName']
             center_freq_unit = bb.centerFrequency.attrib['unit']
-            center_freq = convert_ghz(bb.centerFrequency.pyval, center_freq_unit)
+            center_freq = convert_ghz(bb.centerFrequency.pyval,
+                                      center_freq_unit)
             freq_switching = bb.frequencySwitching.pyval
             lo2_freq_unit = bb.lO2Frequency.attrib['unit']
             lo2_freq = convert_ghz(bb.lO2Frequency.pyval, lo2_freq_unit)
