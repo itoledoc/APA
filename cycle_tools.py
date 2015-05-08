@@ -268,8 +268,6 @@ def sel(df, lst, limitbands, array, out):
     r = df2.apply(
         lambda row: sim(lst, limitbands, row), axis=1)
     try:
-        print selec
-        print r.head()
         SB_UID = r.query('obs == True').sort('clo').SB_UID.values[0]
     except IndexError:
         SB_UID = None
