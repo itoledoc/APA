@@ -268,7 +268,7 @@ def sel(df, lst, limitbands, array, out):
         lambda row: sim(lst, limitbands, row), axis=1)
     try:
         SB_UID = r.query('obs == True').sort('clo').SB_UID.values[0]
-    except IndexError:
+    except IndexError or AttributeError:
         SB_UID = None
 
     if SB_UID is None:
