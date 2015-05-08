@@ -273,7 +273,7 @@ def sel(df, lst, limitbands, array, out):
         SB_UID = r.query('obs == True').sort('clo').SB_UID.values[0]
     except IndexError:
         SB_UID = None
-    except Exception:
+    except Exception, e:
         print e
         SB_UID = None
 
