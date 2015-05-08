@@ -229,7 +229,8 @@ def sim(lst, limit_bands, sb):
 
     if sb['band'] in limit_bands:
         obs = False
-        return pd.Series([obs, ha, clo], index=['obs', 'HA', 'clo'])
+        return pd.Series([sb['SB_UID'], obs, ha, clo],
+                         index=['SB_UID', 'obs', 'HA', 'clo'])
 
     obs = False
     if sb['rise'] < sb['set']:
@@ -272,7 +273,8 @@ def sel(df, lst, limitbands, array, out):
         SB_UID = r.query('obs == True').sort('clo').SB_UID.values[0]
     except IndexError:
         SB_UID = None
-    except AttributeError:
+    except Exception:
+        print e
         SB_UID = None
 
     if SB_UID is None:
