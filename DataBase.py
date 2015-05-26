@@ -369,6 +369,8 @@ class Database(object):
                     self.path + 'bbandcalparam.pandas')
                 self.phasecalparam = pd.read_pickle(
                     self.path + 'phasecalparam.pandas')
+                self.orederedtar = pd.read_pickle(
+                    self.path + 'orederedtar.pandas')
             else:
                 # noinspection PyUnusedLocal
                 damnsolution = pd.read_pickle(
@@ -388,12 +390,13 @@ class Database(object):
             acpart = []
             bcpart = []
             pcpart = []
+            ordtart = []
             sys.stdout.write("Processing Phase II SBs ")
             sys.stdout.flush()
             c = 10
             for sg_sb in self.sb_sg_p2.iterrows():
                 i += 1
-                rs, rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar = \
+                rs, rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar, ordtar = \
                     self.read_schedblocks_p2(
                         sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID,
                         sg_sb[1].OUS_ID, new=new)
@@ -412,6 +415,7 @@ class Database(object):
                 acpart.extend(acpar)
                 bcpart.extend(bcpar)
                 pcpart.extend(pcpar)
+                ordtart.extend(ordtar)
                 new = False
             print ' Done!'
 
@@ -434,6 +438,7 @@ class Database(object):
             acpart_arr = np.array(acpart, dtype=object)
             bcpart_arr = np.array(bcpart, dtype=object)
             pcpart_arr = np.array(pcpart, dtype=object)
+            ordtart_arr = np.array(ordtart, dtype=object)
 
             self.schedblocks_p1 = pd.DataFrame(
                 rst1_arr,
@@ -481,6 +486,11 @@ class Database(object):
                 columns=['paramRef', 'SB_UID', 'parName', 'intTime',
                          'subScanDur']
             ).set_index('paramRef', drop=False)
+
+            self.orederedtar = pd.DataFrame(
+                ordtart_arr,
+                columns=['targetId', 'SB_UID', 'indObs', 'name']
+            ).set_index('targetId', drop=False)
 
             self.fieldsource = pd.DataFrame(
                 rft_arr,
@@ -549,6 +559,7 @@ class Database(object):
             self.ampcalparam.to_pickle(self.path + 'ampcalparam.pandas')
             self.bbandcalparam.to_pickle(self.path + 'bbandcalparam.pandas')
             self.phasecalparam.to_pickle(self.path + 'phasecalparam.pandas')
+            self.orederedtar.to_pickle(self.path + 'orederedtar.pandas')
 
 
         # noinspection PyUnusedLocal
@@ -888,6 +899,7 @@ class Database(object):
                             # TODO: WARNING, we are assuming that all mous have
                             # only one SchedBlockRef. For Cycle 1 and 2 this is
                             # Ok, but is not a correct assumption for future
+                            sblist = mous.findall(prj + 'ObsUnitSet')
                             SB_UID = mous.SchedBlockRef.attrib['entityId']
                         except AttributeError:
                             continue
@@ -1084,6 +1096,11 @@ class Database(object):
         except AttributeError:
             n_pcp = 0
 
+        try:
+            n_ogroup = len(xml.data.ObservingGroup)
+        except AttributeError:
+            n_ogroup = 0
+
         rf = []
         for n in range(n_fs):
             if new:
@@ -1176,11 +1193,26 @@ class Database(object):
                                         sp.subScanDuration.attrib['unit'])
                 pcpar.append([en_id, sb_uid, namep, int_time, subs_dur])
 
+        ordtar = []
+        if n_ogroup > 0:
+            for n in range(n_ogroup):
+                ogroup = xml.data.ObservingGroup[n]
+                name = ogroup.name.pyval
+                n_otar = len(ogroup.OrderedTarget)
+                if n_otar > 0:
+                    for o in range(n_otar):
+                        otar = ogroup.OrderedTarget[o]
+                        index = otar.index.pyval
+                        tar_ref = otar.TargetRef.attrib['partId']
+                        ordtar.append([tar_ref, sb_uid, index, name])
+                else:
+                    continue
+
         return (sb_uid, obs_uid, sg_id, ous_id,
                 name, status, float(repfreq), band, array,
                 float(ra), float(dec), float(minar_old), float(maxar_old),
                 int(execount), ispolarization, float(maxpwv),
-                type12m), rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar
+                type12m), rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar, ordtar
 
     def read_schedblocks_p1(self, sb_uid, obs_uid, xml):
 
@@ -1719,5 +1751,3 @@ def bestconf(ar, minar, maxar):
             return 'C34-7'
     else:
         return None
-
-
