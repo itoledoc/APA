@@ -1202,8 +1202,7 @@ class Database(object):
                 if n_otar > 0:
                     for o in range(n_otar):
                         otar = ogroup.OrderedTarget[o]
-                        print otar
-                        index = otar.index.pyval
+                        index = 0
                         tar_ref = otar.TargetRef.attrib['partId']
                         ordtar.append([tar_ref, sb_uid, index, name])
                 else:
