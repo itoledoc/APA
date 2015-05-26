@@ -1198,7 +1198,10 @@ class Database(object):
             for n in range(n_ogroup):
                 ogroup = xml.data.ObservingGroup[n]
                 name = ogroup.name.pyval
-                n_otar = len(ogroup.OrderedTarget)
+                try:
+                    n_otar = len(ogroup.OrderedTarget)
+                except AttributeError:
+                    continue
                 if n_otar > 0:
                     for o in range(n_otar):
                         otar = ogroup.OrderedTarget[o]
