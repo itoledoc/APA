@@ -1080,7 +1080,7 @@ class Database(object):
             n_sp = len(xml.data.ScienceParameters)
         except AttributeError:
             n_sp = 0
-            print "\nWarning, %s is corrupt" % sb_uid
+            print "\nWarning, %s is malformed" % sb_uid
         try:
             n_acp = len(xml.data.AmplitudeCalParameters)
         except AttributeError:
