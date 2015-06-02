@@ -1197,7 +1197,7 @@ class Database(object):
         if n_ogroup > 0:
             for n in range(n_ogroup):
                 ogroup = xml.data.ObservingGroup[n]
-                name = ogroup.name.pyval
+                nameo = ogroup.name.pyval
                 try:
                     n_otar = len(ogroup.OrderedTarget)
                 except AttributeError:
@@ -1207,7 +1207,7 @@ class Database(object):
                         otar = ogroup.OrderedTarget[o]
                         index = 0
                         tar_ref = otar.TargetRef.attrib['partId']
-                        ordtar.append([tar_ref, sb_uid, index, name])
+                        ordtar.append([tar_ref, sb_uid, index, nameo])
                 else:
                     continue
 
