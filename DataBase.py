@@ -1005,11 +1005,16 @@ class Database(object):
             usecols=range(5))
         c1c2.columns = pd.Index([u'CODE', u'Region', u'ARC', u'C2', u'P2G'],
                                 dtype='object')
-        toc2 = c1c2[c1c2.fillna('no').C2.str.startswith('Yes')]
-        check_c1 = pd.merge(
-            self.projects[self.projects.CODE.str.startswith('2012')],
-            toc2, on='CODE', how='right').set_index(
-                'CODE', drop=False)[['CODE']]
+
+        self.toc2 = c1c2[c1c2.fillna('no').C2.str.startswith('Yes')]
+
+        # check_c1 = pd.merge(
+        #     self.projects[self.projects.CODE.str.startswith('2012')],
+        #     self.toc2, on='CODE', how='right').set_index(
+        #         'CODE', drop=False)[['CODE']]
+
+        check_c1 = self.projects[self.projects.CODE.str.startswith('2012')][['CODE']]
+
         check_c2 = self.projects[
             self.projects.CODE.str.startswith('2013')][['CODE']]
         grades = self.grades[
