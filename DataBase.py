@@ -278,6 +278,7 @@ class Database(object):
             if obsproj:
                 self.read_obsproject(xmlfilename)
             else:
+                print r[1].CODE
                 self.read_obsproposal(xmlfilename, r[1].CODE)
 
         self.projects['isCycle2'] = self.projects.apply(
