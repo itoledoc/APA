@@ -331,15 +331,17 @@ def runsim(date_df, df, alma):
 
             lst = np.rad2deg(alma.sidereal_time()) / 15.
             out, sb = sel(dft, lst, limit_b, array, out)
+            if sb:
+                dur = dft.loc[sb, 'SB_ETC2_exec']
             try:
                 sbr = int(dft.loc[sb, 'SBremExec'])
                 gr = dft.loc[sb, 'PRJ_LETTER_GRADE']
                 ra = dft.loc[sb, 'RA']
                 out1.append(
-                    [ti, lst, day, len(limit_b), array, sb, sbr, ra, gr])
+                    [ti, lst, day, len(limit_b), array, sb, sbr, ra, gr, dur])
             except ValueError:
                 out1.append(
-                    [ti, lst, day, len(limit_b), array, sb, None, None, None])
+                    [ti, lst, day, len(limit_b), array, sb, None, None, None, 0])
 
             if sb:
                 dur = dft.loc[sb, 'SB_ETC2_exec'] * 1.1
