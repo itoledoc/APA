@@ -115,6 +115,13 @@ class Database(object):
         conx_string = os.environ['CON_STR']
         self.connection = cx_Oracle.connect(conx_string)
         self.cursor = self.connection.cursor()
+
+        c1c2 = pd.read_csv(
+            self.apa_path + 'conf/c1c2.csv', sep=',', header=0,
+            usecols=range(5))
+        c1c2.columns = pd.Index([u'CODE', u'Region', u'ARC', u'C2', u'P2G'],
+                                dtype='object')
+        self.toc2 = c1c2[c1c2.fillna('no').C2.str.startswith('Yes')]
         
         # Initialize with saved data and update, Default behavior.
         if not self.new:
@@ -397,15 +404,15 @@ class Database(object):
             c = 10
             for sg_sb in self.sb_sg_p2.iterrows():
                 i += 1
-                rs, rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar, ordtar = \
-                    self.read_schedblocks_p2(
-                        sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID,
-                        sg_sb[1].OUS_ID, new=new)
-
                 if (100. * i / n) > c:
                     sys.stdout.write('.')
                     sys.stdout.flush()
                     c += 10
+
+                rs, rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar, ordtar = \
+                    self.read_schedblocks_p2(
+                        sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID,
+                        sg_sb[1].OUS_ID, new=new)
                 rst.append(rs)
                 rft.extend(rf)
                 tart.extend(tar)
