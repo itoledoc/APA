@@ -1593,7 +1593,10 @@ class Database(object):
             axis=1)
         self.qa0 = self.aqua_execblock.groupby(
             ['SB_UID', 'QA0STATUS']).QA0STATUS.count().unstack().fillna(0)
-        self.qa0['observed'] = self.qa0.Pass + self.qa0.Unset
+        try:
+            self.qa0['observed'] = self.qa0.Pass + self.qa0.Unset
+        except AttributeError:
+            self.qa0['observed'] = self.qa0.Pass + 0
         self.summary_sb = pd.merge(
             self.summary_sb, self.qa0[['observed']],
             left_on='SB_UID', right_index=True, how='left')
