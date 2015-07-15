@@ -92,7 +92,7 @@ class Database(object):
                    'executive_table', 'sbxml_table', 'sbinfo_table',
                    'newar_table', 'fieldsource_table', 'target_table',
                    'spectralconf_table'])
-        self.status = ["Canceled", "Rejected"]
+        self.status = ["Rejected"]
         self.verbose = verbose
 
         self.grades = pd.read_table(self.apa_path + 'conf/c2grade.csv', sep=',')
