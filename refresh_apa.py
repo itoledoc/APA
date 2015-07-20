@@ -8,7 +8,7 @@ import os
 
 import cycle_tools as ct
 
-datas = DaBa.Database(verbose=False, forcenew=True)
+datas = DaBa.Database(verbose=False, forcenew=True, path='/.apa_tabl/')
 datas.process_sbs()
 datas.do_summarize_sb()
 
