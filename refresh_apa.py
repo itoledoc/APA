@@ -32,7 +32,7 @@ date_df['available_time'] = date_df.apply(
     lambda r: (r['end'] - r['start']).total_seconds() / 3600.,
     axis=1)
 
-date_df = date_df.ix[45:].copy()
+date_df = date_df.ix[49:].copy()
 conx_string = os.environ['CON_STR']
 connection = cx_Oracle.connect(conx_string)
 cursor = connection.cursor()
@@ -102,7 +102,10 @@ summary = pd.merge(datas.summary_sb, inttimes, on='SB_UID')
 summary['SB_ETC2_exec'] = summary.intTime * 1.0972 + 0.4712
 
 aqua = aqua_execblock.query('QA0STATUS == "Pass"').copy()
-aqua.dropna(inplace=True)
+aqua.ix[aqua.ENDTIME.isnull(),
+        'ENDTIME'] = aqua[aqua.ENDTIME.isnull()]['STARTTIME'] + \
+    pd.datetools.timedelta(1 / 24.)
+#aqua.dropna(inplace=True)
 aqua['totExecTime'] = aqua.apply(
     lambda r: (r['ENDTIME'] - r['STARTTIME']).total_seconds() / 3600., axis=1)
 aqua_times = aqua.groupby('SB_UID').sum().reset_index(drop=False)
