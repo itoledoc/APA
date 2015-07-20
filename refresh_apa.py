@@ -52,6 +52,7 @@ sql = str(
     'SE_PROJECT_CODE, SE_SB_CODE, SE_SB_ID, SE_EB_UID, SE_LOCATION, SE_STATUS, '
     'SE_CALIBRATION, SE_QA0FLAG, SE_ARCHIVING_STATUS, SE_TEST_ACTIVITY, '
     'SE_ISPOWERCUT, SE_PCRECOVERYEND, SE_PCRECOVERYSTART, SE_WRECOVERYEND12M, '
+    'SE_ISPOWERCUT, SE_PCRECOVERYEND, SE_PCRECOVERYSTART, SE_WRECOVERYEND12M, '
     'SE_WRECOVERYEND7M, SE_WRECOVERYENDTP, SE_WRECOVERYSTART12M, '
     'SE_WRECOVERYSTART7M, SE_WRECOVERYSTARTTP, SE_ARRAYENTRY_ID, '
     'SE_ARRAYNAME, SE_ARRAYTYPE, SE_ARRAYFAMILY, SE_CORRELATORTYPE, '
@@ -75,7 +76,7 @@ cursor.execute(sql)
 shiftlog = pd.DataFrame(
     cursor.fetchall(), columns=[rec[0] for rec in cursor.description]
 )
-shiftlog.to_csv('/users/aod/data/shiftlog.csv')
+shiftlog.to_csv('/users/aod/data/shiftlog.csv', index=False, encoding='utf-8')
 # Stales
 sept_obs = aqua_execblock.query(
     'QA0STATUS == "Pass" and STARTTIME < "2014-10-30"').groupby('SB_UID').agg(
@@ -423,8 +424,8 @@ d = pd.DataFrame(
     columns=['time', 'lst', 'day', 'bands', 'array', 'SB_UID', 'SBremExec',
              'RA', 'Grade', 'dur'])
 
-d.to_csv('/users/aod/data/sim.csv')
-date_df.to_csv('/users/aod/data/dates.csv')
+d.to_csv('/users/aod/data/sim.csv', index=False, encoding='utf-8')
+date_df.to_csv('/users/aod/data/dates.csv', index=False, encoding='utf-8')
 
 simulres = d.groupby('SB_UID').agg(
     {'Grade': pd.np.count_nonzero, 'dur': sum}).reset_index()
