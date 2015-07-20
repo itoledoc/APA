@@ -47,12 +47,35 @@ sqlqa0 = str("SELECT SCHEDBLOCKUID AS SB_UID, QA0STATUS, STARTTIME, ENDTIME,"
              "FROM ALMA.AQUA_EXECBLOCK "
              "WHERE regexp_like (OBSPROJECTCODE, '^201[23].*\.[AST]')")
 
+sql = str(
+    'SELECT SE_ID, SE_TYPE, SE_SUBJECT, SE_TIMESTAMP, SE_AUTHOR, SE_START, '
+    'SE_PROJECT_CODE, SE_SB_CODE, SE_SB_ID, SE_EB_UID, SE_LOCATION, SE_STATUS, '
+    'SE_CALIBRATION, SE_QA0FLAG, SE_ARCHIVING_STATUS, SE_TEST_ACTIVITY, '
+    'SE_ISPOWERCUT, SE_PCRECOVERYEND, SE_PCRECOVERYSTART, SE_WRECOVERYEND12M, '
+    'SE_WRECOVERYEND7M, SE_WRECOVERYENDTP, SE_WRECOVERYSTART12M, '
+    'SE_WRECOVERYSTART7M, SE_WRECOVERYSTARTTP, SE_ARRAYENTRY_ID, '
+    'SE_ARRAYNAME, SE_ARRAYTYPE, SE_ARRAYFAMILY, SE_CORRELATORTYPE, '
+    'SE_PHOTONICREFERENCENAME, SE_ALMABUILD, SE_DOWNTIMETYPE, SE_MAINACTIVITY, '
+    'SE_BANDNAME, SE_EXECUTIVE, SE_OBSPROJECTNAME, SE_OBSPROJECTPI, '
+    'SE_OBSPROJECTVERSION, SE_SHIFTACTIVITY, SE_PWV, SE_REPRFREQUENCY '
+    'FROM ALMA.SHIFTLOG_ENTRIES WHERE '
+    'SE_TIMESTAMP > '
+    'to_date(\'2014-04-27 00:00:00\', \'YYYY-MM-DD HH24:MI:SS\') '
+    'AND SE_LOCATION = \'OSF-AOS\'')
+
 cursor.execute(sqlqa0)
 
 aqua_execblock = pd.DataFrame(
     cursor.fetchall(), columns=[rec[0] for rec in cursor.description]
 ).set_index('SB_UID', drop=False)
 
+
+cursor.execute(sql)
+
+shiftlog = pd.DataFrame(
+    cursor.fetchall(), columns=[rec[0] for rec in cursor.description]
+)
+shiftlog.to_csv('/users/aod/data/shiftlog.csv')
 # Stales
 sept_obs = aqua_execblock.query(
     'QA0STATUS == "Pass" and STARTTIME < "2014-10-30"').groupby('SB_UID').agg(
