@@ -915,45 +915,47 @@ class Database(object):
                         oucontrol = mous.ObsUnitControl
                         execount = oucontrol.aggregatedExecutionCount.pyval
                         array = mous.ObsUnitControl.attrib['arrayRequested']
-                        sql = str(
-                            "SELECT TIMESTAMP, XMLTYPE.getClobVal(xml) "
-                            "FROM ALMA.xml_schedblock_entities "
-                            "WHERE archive_uid = '%s'" % SB_UID)
-                        self.cursor.execute(sql)
-                        data = self.cursor.fetchall()
-                        xml_content = data[0][1].read()
-                        filename = SB_UID.replace(':', '_').replace('/', '_') +\
-                            '.xml'
-                        io_file = open(self.sbxml + filename, 'w')
-                        io_file.write(xml_content)
-                        io_file.close()
-                        xml = filename
+                        for sbs in mous.SchedBlockRef:
+                            SB_UID = sbs.attrib['entityId']
+                            sql = str(
+                                "SELECT TIMESTAMP, XMLTYPE.getClobVal(xml) "
+                                "FROM ALMA.xml_schedblock_entities "
+                                "WHERE archive_uid = '%s'" % SB_UID)
+                            self.cursor.execute(sql)
+                            data = self.cursor.fetchall()
+                            xml_content = data[0][1].read()
+                            filename = SB_UID.replace(':', '_').replace('/', '_') +\
+                                '.xml'
+                            io_file = open(self.sbxml + filename, 'w')
+                            io_file.write(xml_content)
+                            io_file.close()
+                            xml = filename
 
-                        if array == 'ACA':
-                            array = 'SEVEN-M'
+                            if array == 'ACA':
+                                array = 'SEVEN-M'
 
-                        # For the SchedBlock identified as child of the
-                        # currently read SG, whe paste this information in a
-                        # table that relates SB_UID with SG_ID.
-                        try:
-                            self.sb_sg_p2.ix[SB_UID] = (
-                                SB_UID, OBSPROJECT_UID, sg_id,
-                                ous_id, ous_name, gous_id,
-                                gous_name, mous_id, mous_name,
-                                array, execount, xml)
-                        except AttributeError:
-                            self.sb_sg_p2 = pd.DataFrame(
-                                [(SB_UID, OBSPROJECT_UID, sg_id,
-                                  ous_id, ous_name, gous_id,
-                                  gous_name, mous_id, mous_name,
-                                  array, execount, xml)],
-                                columns=[
-                                    'SB_UID', 'OBSPROJECT_UID', 'SG_ID',
-                                    'OUS_ID', 'ous_name', 'GOUS_ID',
-                                    'gous_name', 'MOUS_ID', 'mous_name',
-                                    'array', 'execount', 'xmlfile'],
-                                index=[SB_UID]
-                            )
+                            # For the SchedBlock identified as child of the
+                            # currently read SG, whe paste this information in a
+                            # table that relates SB_UID with SG_ID.
+                            try:
+                                self.sb_sg_p2.ix[SB_UID] = (
+                                    SB_UID, OBSPROJECT_UID, sg_id,
+                                    ous_id, ous_name, gous_id,
+                                    gous_name, mous_id, mous_name,
+                                    array, execount, xml)
+                            except AttributeError:
+                                self.sb_sg_p2 = pd.DataFrame(
+                                    [(SB_UID, OBSPROJECT_UID, sg_id,
+                                      ous_id, ous_name, gous_id,
+                                      gous_name, mous_id, mous_name,
+                                      array, execount, xml)],
+                                    columns=[
+                                        'SB_UID', 'OBSPROJECT_UID', 'SG_ID',
+                                        'OUS_ID', 'ous_name', 'GOUS_ID',
+                                        'gous_name', 'MOUS_ID', 'mous_name',
+                                        'array', 'execount', 'xmlfile'],
+                                    index=[SB_UID]
+                                )
 
     def read_pro_targets(self, target, sgid, obsp_uid, c):
 
