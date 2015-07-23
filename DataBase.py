@@ -264,7 +264,7 @@ class Database(object):
         print(len(df1.query('PRJ_STATUS not in @status')))
         self.projects = pd.merge(
             df1.query('PRJ_STATUS not in @status'), self.executive,
-            on='OBSPROJECT_UID'
+            on='OBSPROJECT_UID', how='left'
         ).set_index('CODE', drop=False)
 
         timestamp = pd.Series(

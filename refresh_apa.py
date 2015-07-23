@@ -70,7 +70,6 @@ aqua_execblock = pd.DataFrame(
     cursor.fetchall(), columns=[rec[0] for rec in cursor.description]
 ).set_index('SB_UID', drop=False)
 
-
 cursor.execute(sql)
 
 shiftlog = pd.DataFrame(
@@ -95,7 +94,7 @@ aqua_execblock['delta'] = aqua_execblock.ENDTIME - aqua_execblock.STARTTIME
 d1 = pd.merge(datas.target, datas.scienceparam, on=['SB_UID', 'paramRef'])
 d1 = pd.merge(d1, datas.fieldsource, on=['SB_UID', 'fieldRef'])
 remnam = ['calibrator_J1256', 'Amplitude', '3c454.3']
-d1 = d1.query('intendedUse != "phase" and name not in @remnam')
+d1 = d1.query('intendedUse != "phase"')
 inttimes = d1.groupby('SB_UID').intTime.sum().reset_index()
 inttimes['intTime'] = inttimes.intTime / 3600.
 summary = pd.merge(datas.summary_sb, inttimes, on='SB_UID')
