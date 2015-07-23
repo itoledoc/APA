@@ -105,7 +105,7 @@ aqua = aqua_execblock.query('QA0STATUS == "Pass"').copy()
 aqua.ix[aqua.ENDTIME.isnull(),
         'ENDTIME'] = aqua[aqua.ENDTIME.isnull()]['STARTTIME'] + \
     pd.datetools.timedelta(1 / 24.)
-#aqua.dropna(inplace=True)
+
 aqua['totExecTime'] = aqua.apply(
     lambda r: (r['ENDTIME'] - r['STARTTIME']).total_seconds() / 3600., axis=1)
 aqua_times = aqua.groupby('SB_UID').sum().reset_index(drop=False)

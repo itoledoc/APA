@@ -1599,10 +1599,13 @@ class Database(object):
             self.qa0['observed'] = self.qa0.Pass + self.qa0.Unset
         except AttributeError:
             self.qa0['observed'] = self.qa0.Pass + 0
+
+        self.qa0['passed'] = self.qa0.Pass
         self.summary_sb = pd.merge(
-            self.summary_sb, self.qa0[['observed']],
+            self.summary_sb, self.qa0[['observed', 'passed']],
             left_on='SB_UID', right_index=True, how='left')
         self.summary_sb.observed.fillna(0, inplace=True)
+        self.summary_sb.passed.fillna(0, inplace=True)
         self.summary_sb = pd.merge(
             self.projects[['OBSPROJECT_UID', 'CODE', 'PRJ_LETTER_GRADE',
                            'PRJ_STATUS', 'isCycle2']],
