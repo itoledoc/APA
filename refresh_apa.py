@@ -188,7 +188,7 @@ summary['execount'] = summary.apply(
 
 c1toc2 = datas.toc2.CODE.unique()
 c2 = datas.summary_sb[
-    datas.summary_sb.CODE.str.startswith('2013.1')].CODE.unique()
+    datas.summary_sb.CODE.str.startswith('2013.')].CODE.unique()
 codes = np.concatenate([c1toc2, c2])
 
 remaining_all = summary.query(
