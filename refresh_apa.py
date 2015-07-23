@@ -462,7 +462,7 @@ tc2['alltime_c2'] = tc2.apply(
     lambda x: x['time_c2'].total_seconds() / 3600., axis=1)
 
 tc2p = aqua_execblock.query(
-    'STARTTIME >= "2014-04-28"'
+    'STARTTIME >= "2014-04-28" and QA0STATUS == "Pass"'
 ).groupby('SB_UID').agg(
     {'QA0STATUS': pd.np.count_nonzero, 'delta': pd.np.sum}).reset_index()
 tc2p.columns = pd.Index([u'SB_UID', u'obs_c2', u'time_c2'], dtype='object')
