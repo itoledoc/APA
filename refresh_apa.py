@@ -485,7 +485,8 @@ summary2['unfinishable'] = summary2.apply(
 
 summary2 = pd.merge(
     summary2,
-    datas.projects[['OBSPROJECT_UID', 'PI', 'EXEC']], on='OBSPROJECT_UID')
+    datas.projects[['OBSPROJECT_UID', 'PI', 'EXEC']], on='OBSPROJECT_UID',
+    how='left')
 summary2.obs_c1.fillna(0, inplace=True)
 summary2.obs_c2.fillna(0, inplace=True)
 summary2.time_c1.fillna(0, inplace=True)

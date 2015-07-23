@@ -1024,7 +1024,9 @@ class Database(object):
         #     self.toc2, on='CODE', how='right').set_index(
         #         'CODE', drop=False)[['CODE']]
 
-        check_c1 = self.projects[self.projects.CODE.str.startswith('2012')].query('PRJ_LETTER_GRADE != "C"')[['CODE']]
+        check_c1 = self.projects[
+            self.projects.CODE.str.startswith('2012')].query(
+            'PRJ_LETTER_GRADE != "C"')[['CODE']]
 
         check_c2 = self.projects[
             self.projects.CODE.str.startswith('2013')][['CODE']]
