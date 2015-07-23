@@ -462,11 +462,23 @@ tc2.time_c2.fillna(0, inplace=True)
 tc2['alltime_c2'] = tc2.apply(
     lambda x: x['time_c2'].total_seconds() / 3600., axis=1)
 
+tc2p = aqua_execblock.query(
+    'STARTTIME >= "2014-04-28"'
+).groupby('SB_UID').agg(
+    {'QA0STATUS': pd.np.count_nonzero, 'delta': pd.np.sum}).reset_index()
+tc2p.columns = pd.Index([u'SB_UID', u'obs_c2', u'time_c2'], dtype='object')
+tc2p.time_c2.fillna(0, inplace=True)
+tc2p['passtime_c2'] = tc2p.apply(
+    lambda x: x['time_c2'].total_seconds() / 3600., axis=1)
+
 summary2 = pd.merge(summary, temp_c1, on='SB_UID', how='left').copy()
 summary2 = pd.merge(summary2, temp_c2, on='SB_UID', how='left').copy()
 summary2 = pd.merge(
     summary2,
     tc2[['SB_UID', 'alltime_c2']], on='SB_UID', how='left').copy()
+summary2 = pd.merge(
+    summary2,
+    tc2p[['SB_UID', 'passtime_c2']], on='SB_UID', how='left').copy()
 summary2['unfinishable_sg'] = summary2.apply(
     lambda x: True if x['SG_ID'] in sg_notobs else False, axis=1)
 summary2['unfinishable'] = summary2.apply(
