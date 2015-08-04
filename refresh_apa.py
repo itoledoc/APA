@@ -32,7 +32,7 @@ date_df['available_time'] = date_df.apply(
     lambda r: (r['end'] - r['start']).total_seconds() / 3600.,
     axis=1)
 
-date_df = date_df.ix[49:].copy()
+date_df = date_df.ix[56:].copy()
 conx_string = os.environ['CON_STR']
 connection = cx_Oracle.connect(conx_string)
 cursor = connection.cursor()
