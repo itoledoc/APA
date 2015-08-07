@@ -159,13 +159,6 @@ def avail_calc(orise, oset, conf1, conf2, conf3, conf4, conf5, conf6, conf7, up,
             dstart = l.lst_dusk
             dend = l.lst_dawn
             check_not24 = True
-        elif band == 'ALMA_RB_07':
-            dstart = l.lst_dusk
-            dend = l.lst_dawn + 3.
-            check_not24 = False
-            if dend > 24:
-                dend -= 24
-                check_not24 = True
 
         else:
             dstart = l.lst_start
