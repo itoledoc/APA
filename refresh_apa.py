@@ -97,8 +97,14 @@ remnam = ['calibrator_J1256', 'Amplitude', '3c454.3']
 d1 = d1.query('intendedUse != "phase"')
 inttimes = d1.groupby('SB_UID').intTime.sum().reset_index()
 inttimes['intTime'] = inttimes.intTime / 3600.
+time_out_man = pd.read_csv(datas.apa_path + 'conf/manual_remove.csv', sep=' ')
+sbout = time_out_man.sbName.unique()
+codeout = time_out_man.CODE.unique()
 summary = pd.merge(datas.summary_sb, inttimes, on='SB_UID')
 summary['SB_ETC2_exec'] = summary.intTime * 1.0972 + 0.4712
+summary['SB_STATE'] = summary.apply(
+    lambda x: 'TimedOut' if (x['sbName'] in sbout and x['CODE'] in codeout)
+    else x['SB_STATE'], axis=1)
 
 aqua = aqua_execblock.query('QA0STATUS == "Pass"').copy()
 aqua.ix[aqua.ENDTIME.isnull(),
@@ -162,6 +168,8 @@ summary = pd.merge(
     summary,
     check[['SB_UID', 'totExecTime']], on='SB_UID', how='left')
 
+
+
 summary['totExecTime'] = summary.totExecTime.fillna(0)
 summary['SB_ETC2org_exec'] = summary.SB_ETC2_exec
 summary['SB_ETC2_exec'] = summary.apply(
@@ -193,7 +201,7 @@ codes = np.concatenate([c1toc2, c2])
 
 remaining_all = summary.query(
     'array == "TWELVE-M" and phase == "II" and '
-    'SB_STATE not in ["FullyObserved", "Canceled"] and '
+    'SB_STATE not in ["FullyObserved", "Canceled", "TimedOut"] and '
     'PRJ_LETTER_GRADE in ["A", "B", "C"] and CODE in @codes')
 remaining_all = pd.merge(
     remaining_all,
