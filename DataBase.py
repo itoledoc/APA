@@ -141,10 +141,10 @@ class Database(object):
                     self.path + 'obsprojects.pandas')
                 self.obsproposals = pd.read_pickle(
                     self.path + 'obsproposals.pandas')
-                self.saos_obsproject = pd.read_pickle(
-                    self.path + 'saos_obsproject.pands')
-                self.saos_schedblock = pd.read_pickle(
-                    self.path + 'saos_schedblock.pandas')
+                # self.saos_obsproject = pd.read_pickle(
+                #     self.path + 'saos_obsproject.pands')
+                # self.saos_schedblock = pd.read_pickle(
+                #     self.path + 'saos_schedblock.pandas')
                 self.sg_targets = pd.read_pickle(
                     self.path + 'sg_targets')
             except IOError, e:
@@ -165,31 +165,31 @@ class Database(object):
             # Populate different dataframes related to projects and SBs statuses
             # self.scheduling_proj: data frame with projects at SCHEDULING_AOS
             # Query Projects currently on SCHEDULING_AOS
-            self.sqlsched_proj = str(
-                "SELECT CODE,OBSPROJECT_UID as OBSPROJECT_UID,"
-                "VERSION as PRJ_SAOS_VERSION, STATUS as PRJ_SAOS_STATUS "
-                "FROM SCHEDULING_AOS.OBSPROJECT "
-                "WHERE regexp_like (CODE, '^201[23].*\.[AST]')")
-            self.cursor.execute(self.sqlsched_proj)
-            self.saos_obsproject = pd.DataFrame(
-                self.cursor.fetchall(),
-                columns=[rec[0] for rec in self.cursor.description]
-            ).set_index('CODE', drop=False)
+            # self.sqlsched_proj = str(
+            #     "SELECT CODE,OBSPROJECT_UID as OBSPROJECT_UID,"
+            #     "VERSION as PRJ_SAOS_VERSION, STATUS as PRJ_SAOS_STATUS "
+            #     "FROM SCHEDULING_AOS.OBSPROJECT "
+            #     "WHERE regexp_like (CODE, '^201[23].*\.[AST]')")
+            # self.cursor.execute(self.sqlsched_proj)
+            # self.saos_obsproject = pd.DataFrame(
+            #     self.cursor.fetchall(),
+            #     columns=[rec[0] for rec in self.cursor.description]
+            # ).set_index('CODE', drop=False)
 
             # self.scheduling_sb: SBs at SCHEDULING_AOS
             # Query SBs in the SCHEDULING_AOS tables
-            self.sqlsched_sb = str(
-                "SELECT ou.OBSUNIT_UID as OUS_ID, sb.NAME as SB_NAME,"
-                "sb.SCHEDBLOCK_CTRL_EXEC_COUNT,"
-                "sb.SCHEDBLOCK_CTRL_STATE as SB_SAOS_STATUS,"
-                "ou.OBSUNIT_PROJECT_UID as OBSPROJECT_UID "
-                "FROM SCHEDULING_AOS.SCHEDBLOCK sb, SCHEDULING_AOS.OBSUNIT ou "
-                "WHERE sb.SCHEDBLOCKID = ou.OBSUNITID AND sb.CSV = 0")
-            self.cursor.execute(self.sqlsched_sb)
-            self.saos_schedblock = pd.DataFrame(
-                self.cursor.fetchall(),
-                columns=[rec[0] for rec in self.cursor.description]
-            ).set_index('OUS_ID', drop=False)
+            # self.sqlsched_sb = str(
+            #     "SELECT ou.OBSUNIT_UID as OUS_ID, sb.NAME as SB_NAME,"
+            #     "sb.SCHEDBLOCK_CTRL_EXEC_COUNT,"
+            #     "sb.SCHEDBLOCK_CTRL_STATE as SB_SAOS_STATUS,"
+            #     "ou.OBSUNIT_PROJECT_UID as OBSPROJECT_UID "
+            #     "FROM SCHEDULING_AOS.SCHEDBLOCK sb, SCHEDULING_AOS.OBSUNIT ou "
+            #     "WHERE sb.SCHEDBLOCKID = ou.OBSUNITID AND sb.CSV = 0")
+            # self.cursor.execute(self.sqlsched_sb)
+            # self.saos_schedblock = pd.DataFrame(
+            #     self.cursor.fetchall(),
+            #     columns=[rec[0] for rec in self.cursor.description]
+            # ).set_index('OUS_ID', drop=False)
 
             # self.sbstates: SBs status (PT?)
             # Query SBs status
@@ -306,10 +306,10 @@ class Database(object):
             self.path + 'obsprojects.pandas')
         self.obsproposals.to_pickle(
             self.path + 'obsproposals.pandas')
-        self.saos_obsproject.to_pickle(
-            self.path + 'saos_obsproject.pands')
-        self.saos_schedblock.to_pickle(
-            self.path + 'saos_schedblock.pandas')
+        # self.saos_obsproject.to_pickle(
+        #     self.path + 'saos_obsproject.pands')
+        # self.saos_schedblock.to_pickle(
+        #     self.path + 'saos_schedblock.pandas')
         self.sg_targets.to_pickle(
             self.path + 'sg_targets')
 
