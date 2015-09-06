@@ -16,8 +16,9 @@ export ORACLE_HOME=/opt/oracle/instantclient_11_2
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/oracle/instantclient_11_2/lib
 
 python /users/aod/bin/refresh_apa.py
-scp /users/aod/data/summary_table.csv Ignacio@10.200.113.105:tabdata/.
-scp /users/aod/data/aquaexe.csv Ignacio@10.200.113.105:tabdata/.
-scp /users/aod/data/dates.csv Ignacio@10.200.113.105:tabdata/.
-scp /users/aod/data/sim.csv Ignacio@10.200.113.105:tabdata/.
-scp /users/aod/data/shiftlog.csv Ignacio@10.200.113.105:tabdata/.
+scp /users/aod/data/summary_table.csv Ignacio1@10.200.113.78:Documents/tabdata/.
+scp /users/aod/data/summary_table.csv Ignacio1@10.200.113.78:Downloads/.
+scp /users/aod/data/aquaexe.csv Ignacio1@10.200.113.78:Documents/tabdata/.
+scp /users/aod/data/dates.csv Ignacio1@10.200.113.78:Documents/tabdata/.
+scp /users/aod/data/sim.csv Ignacio1@10.200.113.78:Documents/tabdata/.
+scp /users/aod/data/shiftlog.csv Ignacio1@10.200.113.78:Documents/tabdata/.
