@@ -76,7 +76,7 @@ cursor.execute(sql)
 shiftlog = pd.DataFrame(
     cursor.fetchall(), columns=[rec[0] for rec in cursor.description]
 )
-shiftlog.to_csv('/home/itoledo/Documents/shiftlog.csv', index=False,
+shiftlog.to_csv('/users/aod/data/shiftlog.csv', index=False,
                 encoding='utf-8')
 # Stales
 sept_obs = aqua_execblock.query(
@@ -238,7 +238,7 @@ sbinrem = remaining.SB_UID.unique()
 
 sbnota = remaining_all.SB_UID.unique()
 aqua_execblock.to_csv(
-    '/home/itoledo/Documents/aquaexe.csv', index=False, encoding='utf-8')
+    '/users/aod/data/aquaexe.csv', index=False, encoding='utf-8')
 i1 = remaining.query(
     'C34_1 == 0 and C34_2 == 0 and C34_3 == 0 and C34_4 == 0 and '
     'C34_5 == 0 and C34_6 == 0 and C34_7 == 0 and '
@@ -434,8 +434,8 @@ d = pd.DataFrame(
     columns=['time', 'lst', 'day', 'bands', 'array', 'SB_UID', 'SBremExec',
              'RA', 'Grade', 'dur'])
 
-d.to_csv('/home/itoledo/Documents/sim.csv', index=False, encoding='utf-8')
-date_df.to_csv('/home/itoledo/Documents/dates.csv', index=False, encoding='utf-8')
+d.to_csv('/users/aod/data/sim.csv', index=False, encoding='utf-8')
+date_df.to_csv('/users/aod/data/dates.csv', index=False, encoding='utf-8')
 
 simulres = d.groupby('SB_UID').agg(
     {'Grade': pd.np.count_nonzero, 'dur': sum}).reset_index()
@@ -521,7 +521,7 @@ codes = np.concatenate([codes1, codes2])
 summary2['selected_code'] = summary2.apply(
     lambda x: True if x['CODE'] in codes else False, axis=1)
 # summary2.to_csv(
-#     '/home/itoledo/Documents/summary_table.csv', index=False, encoding='utf-8')
+#     '/users/aod/data/summary_table.csv', index=False, encoding='utf-8')
 
 sql = str('SELECT * FROM ALMA.OBS_UNIT_SET_STATUS')
 datas.cursor.execute(sql)
@@ -551,7 +551,7 @@ summary4['SB_Estimated_ori'] = summary4.apply(
     axis=1)
 
 summary4.to_csv(
-    '/home/itoledo/Documents/summary_table.csv', index=False, encoding='utf-8')
+    '/users/aod/data/summary_table.csv', index=False, encoding='utf-8')
 
 # summary4['validc2'] = summary4.apply(
 #     lambda r: True
@@ -774,4 +774,4 @@ summary4.to_csv(
 #     py.plot(np.arange(0, 24, 24. / (24 * 60.)), tot_t * 0.6, 'k-.',
 #             label='Hours available (Expected Efficiency)')
 #     py.legend(framealpha=0.7, fontsize='x-small')
-#     py.savefig('/home/itoledo/Documents/' + filename, dpi=300)
+#     py.savefig('/users/aod/data/' + filename, dpi=300)
