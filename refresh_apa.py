@@ -7,6 +7,7 @@ import cx_Oracle
 import os
 
 import cycle_tools as ct
+import pylab as py
 
 datas = DaBa.Database(verbose=False, forcenew=True, path='/.apa_tabl/')
 datas.process_sbs()
@@ -32,7 +33,7 @@ date_df['available_time'] = date_df.apply(
     lambda r: (r['end'] - r['start']).total_seconds() / 3600.,
     axis=1)
 
-date_df = date_df.ix[70:].copy()
+date_df = date_df.ix[84:].copy()
 conx_string = os.environ['CON_STR']
 connection = cx_Oracle.connect(conx_string)
 cursor = connection.cursor()
@@ -61,7 +62,7 @@ sql = str(
     "SE_OBSPROJECTVERSION, SE_SHIFTACTIVITY, SE_PWV, SE_REPRFREQUENCY "
     "FROM ALMA.SHIFTLOG_ENTRIES WHERE "
     "SE_TIMESTAMP > "
-    "to_date('2014-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS') "
+    "to_date('2013-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS') "
     "AND regexp_like(SE_LOCATION, '.*AOS.*')")
 
 cursor.execute(sqlqa0)
@@ -75,7 +76,8 @@ cursor.execute(sql)
 shiftlog = pd.DataFrame(
     cursor.fetchall(), columns=[rec[0] for rec in cursor.description]
 )
-shiftlog.to_csv('/users/aod/data/shiftlog.csv', index=False, encoding='utf-8')
+shiftlog.to_csv('/home/itoledo/Documents/shiftlog.csv', index=False,
+                encoding='utf-8')
 # Stales
 sept_obs = aqua_execblock.query(
     'QA0STATUS == "Pass" and STARTTIME < "2014-10-30"').groupby('SB_UID').agg(
@@ -189,20 +191,18 @@ remaining_fullyobs_exe_codes = summary.query(
 print(summary.query('SB_UID in @remaining_fullyobs_exe_codes')[[
     'CODE', 'SB_UID', 'sbName', 'execount', 'observed', 'SB_STATE']])
 
-summary['execount'] = summary.apply(
+summary['execount_cor'] = summary.apply(
     lambda r:
     r['observed'] if r['SB_STATE'] == "FullyObserved" else r['execount'],
     axis=1)
 
-c1toc2 = datas.toc2.CODE.unique()
-c2 = datas.summary_sb[
-    datas.summary_sb.CODE.str.startswith('2013.')].CODE.unique()
-codes = np.concatenate([c1toc2, c2])
-
 remaining_all = summary.query(
     'array == "TWELVE-M" and phase == "II" and '
     'SB_STATE not in ["FullyObserved", "Canceled", "TimedOut"] and '
-    'PRJ_LETTER_GRADE in ["A", "B", "C"] and CODE in @codes')
+    'PRJ_LETTER_GRADE in ["A", "B", "C"] and '
+    'PRJ_STATUS not in ["Phase2Submitted", "Canceled", "ObservingTimedOut", '
+    '"Completed"]')
+
 remaining_all = pd.merge(
     remaining_all,
     datas.projects[['OBSPROJECT_UID', 'PI', 'EXEC']], on='OBSPROJECT_UID')
@@ -238,7 +238,7 @@ sbinrem = remaining.SB_UID.unique()
 
 sbnota = remaining_all.SB_UID.unique()
 aqua_execblock.to_csv(
-    '/users/aod/data/aquaexe.csv', index=False, encoding='utf-8')
+    '/home/itoledo/Documents/aquaexe.csv', index=False, encoding='utf-8')
 i1 = remaining.query(
     'C34_1 == 0 and C34_2 == 0 and C34_3 == 0 and C34_4 == 0 and '
     'C34_5 == 0 and C34_6 == 0 and C34_7 == 0 and '
@@ -424,7 +424,7 @@ sg_notobs.extend(c5sg)
 sb_notobs.extend(c12)
 sb_notobs.extend(c34)
 sb_notobs.extend(c5)
-sb_notobs.extend(not_obs_sg_sb)
+# sb_notobs.extend(not_obs_sg_sb)
 
 res3, res4 = ct.runsim(
     date_df,
@@ -434,8 +434,8 @@ d = pd.DataFrame(
     columns=['time', 'lst', 'day', 'bands', 'array', 'SB_UID', 'SBremExec',
              'RA', 'Grade', 'dur'])
 
-d.to_csv('/users/aod/data/sim.csv', index=False, encoding='utf-8')
-date_df.to_csv('/users/aod/data/dates.csv', index=False, encoding='utf-8')
+d.to_csv('/home/itoledo/Documents/sim.csv', index=False, encoding='utf-8')
+date_df.to_csv('/home/itoledo/Documents/dates.csv', index=False, encoding='utf-8')
 
 simulres = d.groupby('SB_UID').agg(
     {'Grade': pd.np.count_nonzero, 'dur': sum}).reset_index()
@@ -443,11 +443,11 @@ simulres.columns = pd.Index(
     [u'SB_UID', u'SimExecutions', u'SimObserved'], dtype='object')
 
 temp_c1 = aqua_execblock.query(
-    'QA0STATUS == "Pass" and STARTTIME < "2014-04-28"'
+    'QA0STATUS == "Pass" and STARTTIME < "2014-04-20"'
 ).groupby('SB_UID').agg(
     {'QA0STATUS': pd.np.count_nonzero, 'delta': pd.np.sum}).reset_index()
 temp_c2 = aqua_execblock.query(
-    'QA0STATUS in ["Pass", "Unset"] and STARTTIME >= "2014-04-28"'
+    'QA0STATUS in ["Pass", "Unset"] and STARTTIME >= "2014-04-20"'
 ).groupby('SB_UID').agg(
     {'QA0STATUS': pd.np.count_nonzero, 'delta': pd.np.sum}).reset_index()
 temp_c1.columns = pd.Index([u'SB_UID', u'obs_c1', u'time_c1'], dtype='object')
@@ -461,7 +461,7 @@ temp_c2['time_c2'] = temp_c2.apply(
     lambda x: x['time_c2'].total_seconds() / 3600., axis=1)
 
 tc2 = aqua_execblock.query(
-    'STARTTIME >= "2014-04-28"'
+    'STARTTIME >= "2014-04-20"'
 ).groupby('SB_UID').agg(
     {'QA0STATUS': pd.np.count_nonzero, 'delta': pd.np.sum}).reset_index()
 tc2.columns = pd.Index([u'SB_UID', u'obs_c2', u'time_c2'], dtype='object')
@@ -470,13 +470,14 @@ tc2['alltime_c2'] = tc2.apply(
     lambda x: x['time_c2'].total_seconds() / 3600., axis=1)
 
 tc2p = aqua_execblock.query(
-    'STARTTIME >= "2014-04-28" and QA0STATUS == "Pass"'
+    'STARTTIME >= "2014-04-20" and QA0STATUS == "Pass"'
 ).groupby('SB_UID').agg(
     {'QA0STATUS': pd.np.count_nonzero, 'delta': pd.np.sum}).reset_index()
 tc2p.columns = pd.Index([u'SB_UID', u'obs_c2', u'time_c2'], dtype='object')
 tc2p.time_c2.fillna(0, inplace=True)
 tc2p['passtime_c2'] = tc2p.apply(
     lambda x: x['time_c2'].total_seconds() / 3600., axis=1)
+tc2p.passtime_c2.fillna(0, inplace=True)
 
 summary2 = pd.merge(summary, temp_c1, on='SB_UID', how='left').copy()
 summary2 = pd.merge(summary2, temp_c2, on='SB_UID', how='left').copy()
@@ -499,6 +500,7 @@ summary2.obs_c1.fillna(0, inplace=True)
 summary2.obs_c2.fillna(0, inplace=True)
 summary2.time_c1.fillna(0, inplace=True)
 summary2.time_c2.fillna(0, inplace=True)
+summary2.passtime_c2.fillna(0, inplace=True)
 
 summary2 = pd.merge(summary2, simulres, on='SB_UID', how='left')
 summary2.SimExecutions.fillna(0, inplace=True)
@@ -506,7 +508,270 @@ summary2.SimObserved.fillna(0, inplace=True)
 summary2 = pd.merge(
     summary2, remaining[['SB_UID', 'Problem', 'Null SBEL Description']],
     on='SB_UID', how='left')
+
+codes1 = summary2.query(
+    'isCycle2 == False and PRJ_LETTER_GRADE == "B"').groupby(
+    'CODE').agg({'obs_c1': np.sum, 'execount': np.sum,
+                 'obs_c2': np.sum}).query('obs_c1 < execount'
+                                          ).reset_index().CODE.unique()
+codes2 = summary2.query('isCycle2 == True').CODE.unique()
+
+codes = np.concatenate([codes1, codes2])
+
 summary2['selected_code'] = summary2.apply(
     lambda x: True if x['CODE'] in codes else False, axis=1)
-summary2.to_csv(
-    '/users/aod/data/summary_table.csv', index=False, encoding='utf-8')
+# summary2.to_csv(
+#     '/home/itoledo/Documents/summary_table.csv', index=False, encoding='utf-8')
+
+sql = str('SELECT * FROM ALMA.OBS_UNIT_SET_STATUS')
+datas.cursor.execute(sql)
+ous = pd.DataFrame(
+    datas.cursor.fetchall(),
+    columns=[rec[0] for rec in datas.cursor.description])
+
+summary3 = pd.merge(
+    summary2,
+    datas.sb_sg_p2[
+        ['SB_UID', 'MOUS_ID', 'ous_name', 'gous_name', 'mous_name',
+         'mous_status_id']],
+    on=['SB_UID', 'MOUS_ID'], how='left')
+summary4 = pd.merge(
+    summary3,
+    ous[
+        ['STATUS_ENTITY_ID', 'DOMAIN_ENTITY_STATE',
+         'PARENT_OBS_UNIT_SET_STATUS_ID']],
+    left_on='mous_status_id', right_on='STATUS_ENTITY_ID')
+summary4['SB_Estimated_c2'] = summary4.apply(
+    lambda r: (r['execount'] - r['obs_c1']) * r['SB_ETC2_exec'] if
+    r['isCycle2'] == False else r['SB_ETC2_total'], axis=1)
+
+summary4['SB_Estimated_ori'] = summary4.apply(
+    lambda r: (r['execount'] - r['obs_c1']) * r['SB_ETC2org_exec']
+    if r['isCycle2'] == False else r['SB_ETC2org_exec'] * r['execount'],
+    axis=1)
+
+summary4.to_csv(
+    '/home/itoledo/Documents/summary_table.csv', index=False, encoding='utf-8')
+
+# summary4['validc2'] = summary4.apply(
+#     lambda r: True
+#     if r['CODE'] in codes and r['obs_c1'] < r['execount'] else False,
+#     axis=1)
+
+
+# c34_67 = summary4.query(
+#     'PRJ_LETTER_GRADE in ["A", "B"] and array == "TWELVE-M" and '
+#     '(C34_6 == 1 or C34_7 == 1) and unfinishable == False and '
+#     'SB_STATE not in ["Deleted", "Canceled", "TimedOut", "FullyObserved", '
+#     '"Phase2Submitted"] and DOMAIN_ENTITY_STATE not in ["ObservingTimedOut"] '
+#     'and PRJ_STATUS != "Canceled"')
+#
+#
+# def av_arrays_opt(sel):
+#
+#     map_ra = np.arange(0, 24, 24. / (24 * 60.))
+#     use_ra = np.zeros(1440)
+#
+#     for r in sel.iterrows():
+#         data = r[1]
+#         if data.RA == 0 or data.up == 24:
+#             use_ra += (data.SBtimeNeedComp / 24.) / data.twelve_good
+#         elif data.rise > data.set:
+#             use_ra[map_ra < data.set] += \
+#                 (data.SBtimeNeedComp / data.up) / data.twelve_good
+#             use_ra[map_ra > data.rise] += \
+#                 (data.SBtimeNeedComp / data.up) / data.twelve_good
+#         else:
+#             use_ra[(map_ra > data.rise) & (map_ra < data.set)] += \
+#                 (data.SBtimeNeedComp / data.up) / data.twelve_good
+#
+#     return map_ra, use_ra
+#
+#
+# def av_arrays(sel, minlst=-2., maxlst=2.):
+#
+#     map_ra = np.arange(0, 24, 24. / (24 * 60.))
+#     use_ra_b3 = np.zeros(1440)
+#     use_ra_b4 = np.zeros(1440)
+#     use_ra_b6 = np.zeros(1440)
+#     use_ra_b7 = np.zeros(1440)
+#     use_ra_b8 = np.zeros(1440)
+#     use_ra_b9 = np.zeros(1440)
+#
+#     for r in sel.iterrows():
+#         data = r[1]
+#
+#         if data.RA == 0 or data.up == 24:
+#             use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, use_ra_b9 = \
+#                 add_band(
+#                     'all', data.SBtimeNeedComp / 24., data.band, use_ra_b3,
+#                     use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, use_ra_b9)
+#             continue
+#
+#         if data.up > maxlst - minlst:
+#             if maxlst < (data.RA) < 24 + minlst:
+#                 rise = (data.RA) + minlst
+#                 set_lst = (data.RA) + maxlst
+#                 up = maxlst - minlst
+#                 use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#                     use_ra_b9 = add_band(
+#                         (map_ra > rise) & (map_ra < set_lst),
+#                         data.SBtimeNeedComp / up, data.band, use_ra_b3,
+#                         use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, use_ra_b9)
+#             else:
+#                 if data.RA < maxlst:
+#                     rise = 24 + minlst + (data.RA)
+#                     set_lst = data.RA + maxlst
+#                     up = maxlst - minlst
+#                 else:
+#                     rise = data.RA + minlst
+#                     set_lst = maxlst - (24 - (data.RA))
+#                     up = maxlst - minlst
+#                 use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#                     use_ra_b9 = add_band(
+#                         map_ra < set_lst, data.SBtimeNeedComp / up,
+#                         data.band,
+#                         use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8,
+#                         use_ra_b9)
+#                 use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#                     use_ra_b9 = add_band(
+#                         map_ra > rise, data.SBtimeNeedComp / up, data.band,
+#                         use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8,
+#                         use_ra_b9)
+#             continue
+#
+#         if data.rise > data.set:
+#             rise = data.rise
+#             set_lst = data.set
+#             up = data.up
+#             if data.up > maxlst - minlst:
+#                 if set_lst > maxlst:
+#                     set_lst = maxlst
+#                 if rise < 24 + minlst:
+#                     rise = 24 + minlst
+#                 up = maxlst - minlst
+#             use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, use_ra_b9 = \
+#                 add_band(
+#                     map_ra < set_lst, data.SBtimeNeedComp / up, data.band,
+#                     use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8,
+#                     use_ra_b9)
+#             use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, use_ra_b9 = \
+#                 add_band(
+#                     map_ra > rise, data.SBtimeNeedComp / up, data.band,
+#                     use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8,
+#                     use_ra_b9)
+#         else:
+#             rise = data.rise
+#             set_lst = data.set
+#             up = data.up
+#             if up > maxlst - minlst and data.ephem is False:
+#                 if rise < data.RA + minlst:
+#                     rise = data.RA + minlst
+#                 if set_lst > data.RA + maxlst:
+#                     set_lst = data.RA + maxlst
+#                 up = maxlst - minlst
+#                 use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#                     use_ra_b9 = add_band(
+#                         (map_ra > rise) & (map_ra < set_lst),
+#                         data.SBtimeNeedComp / up, data.band, use_ra_b3,
+#                         use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, use_ra_b9)
+#
+#     return map_ra, [use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8,
+#                     use_ra_b9]
+#
+#
+# def add_band(
+#         ind, timet, band, use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8,
+#         use_ra_b9):
+#
+#     if band == "ALMA_RB_03":
+#         if ind == "all":
+#             use_ra_b3 += timet
+#         else:
+#             use_ra_b3[ind] += timet
+#         return use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#             use_ra_b9
+#     if band == "ALMA_RB_04":
+#         if ind == "all":
+#             use_ra_b4 += timet
+#         else:
+#             use_ra_b4[ind] += timet
+#         return use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#             use_ra_b9
+#     if band == "ALMA_RB_06":
+#         if ind == "all":
+#             use_ra_b6 += timet
+#         else:
+#             use_ra_b6[ind] += timet
+#         return use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#             use_ra_b9
+#     if band == "ALMA_RB_07":
+#         if ind == "all":
+#             use_ra_b7 += timet
+#         else:
+#             use_ra_b7[ind] += timet
+#         return use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#             use_ra_b9
+#     if band == "ALMA_RB_08":
+#         if ind == "all":
+#             use_ra_b8 += timet
+#         else:
+#             use_ra_b8[ind] += timet
+#         return use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#             use_ra_b9
+#     if band == "ALMA_RB_09":
+#         if ind == "all":
+#             use_ra_b9 += timet
+#         else:
+#             use_ra_b9[ind] += timet
+#         return use_ra_b3, use_ra_b4, use_ra_b6, use_ra_b7, use_ra_b8, \
+#             use_ra_b9
+#
+#
+# def conf_time(datedf):
+#     tot_t = np.zeros(1440)
+#     lst = np.arange(0, 24, 24. / (24 * 60.))
+#     for i in datedf.iterrows():
+#
+#         if i[1].available_time == 24:
+#             t = np.ones(1440)
+#
+#         elif i[1].lst_start > i[1].lst_end:
+#             t = np.zeros(1440)
+#             t[lst > i[1].lst_start] += 1.
+#             t[lst < i[1].lst_end] += 1.
+#
+#         else:
+#             t = np.zeros(1440)
+#             t[(lst > i[1].lst_start) & (lst < i[1].lst_end)] += 1.
+#
+#         tot_t += t
+#
+#     return tot_t
+#
+#
+# def do_pre_plots(ra, used, tot_t, filename, title):
+#     py.close()
+#     py.figure(figsize=(11.69, 8.27))
+#     py.bar(ra, used[0] + used[1] + used[2] + used[3] + used[4] + used[5],
+#            width=1.66666667e-02, ec='#91bfdb', fc='#91bfdb', label='Band 9')
+#     py.bar(ra, used[0] + used[1] + used[2] + used[3] + used[4],
+#            width=1.66666667e-02, ec='#e0f3f8', fc='#e0f3f8', label='Band 8')
+#     py.bar(ra, used[0] + used[1] + used[2] + used[3],
+#            width=1.66666667e-02, ec='#ffffbf', fc='#ffffbf', label='Band 7')
+#     py.bar(ra, used[0] + used[1] + used[2],
+#            width=1.66666667e-02, ec='#fee090', fc='#fee090', label='Band 6')
+#     py.bar(ra, used[0] + used[1],
+#            width=1.66666667e-02, ec='#fc8d59', fc='#fc8d59', label='Band 4')
+#     py.bar(ra, used[0],
+#            width=1.66666667e-02, ec='#d73027', fc='#d73027', label='Band 3')
+#     py.xlim(0, 24)
+#     py.xlabel('RA [hours]')
+#     py.ylabel('Time Needed [hours]')
+#     py.title(title)
+#     py.plot(np.arange(0, 24, 24. / (24 * 60.)), tot_t, 'k--',
+#             label='100% efficiency')
+#     py.plot(np.arange(0, 24, 24. / (24 * 60.)), tot_t * 0.6, 'k-.',
+#             label='Hours available (Expected Efficiency)')
+#     py.legend(framealpha=0.7, fontsize='x-small')
+#     py.savefig('/home/itoledo/Documents/' + filename, dpi=300)

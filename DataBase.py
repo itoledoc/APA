@@ -1,5 +1,6 @@
 __author__ = 'itoledo'
 __metaclass__ = type
+
 # priv
 
 import os
@@ -45,7 +46,6 @@ conflim = pd.Series({'C34-1': 2.8849999999999998,
 
 # noinspection PyPep8Naming,PyAttributeOutsideInit
 class Database(object):
-
     """
     Database is the class that stores the Projects and SB information in
     dataframes, and it also has the methods to connect and query the OSF
@@ -100,18 +100,40 @@ class Database(object):
 
         # Global SQL search expressions
         # Search Project's PT information and match with PT Status
+        # self.sql1 = str(
+        #     "SELECT PRJ_ARCHIVE_UID as OBSPROJECT_UID,PI,PRJ_NAME,"
+        #     "CODE,PRJ_SCIENTIFIC_RANK,PRJ_VERSION,"
+        #     "PRJ_LETTER_GRADE,DOMAIN_ENTITY_STATE as PRJ_STATUS,"
+        #     "ARCHIVE_UID as OBSPROPOSAL_UID "
+        #     "FROM ALMA.BMMV_OBSPROJECT obs1, ALMA.OBS_PROJECT_STATUS obs2,"
+        #     " ALMA.BMMV_OBSPROPOSAL obs3 "
+        #     "WHERE regexp_like (CODE, '^201[23].*\.[AST]') "
+        #     "AND (PRJ_LETTER_GRADE='A' OR PRJ_LETTER_GRADE='B' "
+        #     "OR PRJ_LETTER_GRADE='C') AND PRJ_SCIENTIFIC_RANK < 9999 "
+        #     "AND obs2.OBS_PROJECT_ID = obs1.PRJ_ARCHIVE_UID AND "
+        #     "obs1.PRJ_ARCHIVE_UID = obs3.PROJECTUID")
+
         self.sql1 = str(
-            "SELECT PRJ_ARCHIVE_UID as OBSPROJECT_UID,PI,PRJ_NAME,"
-            "CODE,PRJ_SCIENTIFIC_RANK,PRJ_VERSION,"
-            "PRJ_LETTER_GRADE,DOMAIN_ENTITY_STATE as PRJ_STATUS,"
-            "ARCHIVE_UID as OBSPROPOSAL_UID "
-            "FROM ALMA.BMMV_OBSPROJECT obs1, ALMA.OBS_PROJECT_STATUS obs2,"
-            " ALMA.BMMV_OBSPROPOSAL obs3 "
-            "WHERE regexp_like (CODE, '^201[23].*\.[AST]') "
-            "AND (PRJ_LETTER_GRADE='A' OR PRJ_LETTER_GRADE='B' "
-            "OR PRJ_LETTER_GRADE='C') AND PRJ_SCIENTIFIC_RANK < 9999 "
-            "AND obs2.OBS_PROJECT_ID = obs1.PRJ_ARCHIVE_UID AND "
-            "obs1.PRJ_ARCHIVE_UID = obs3.PROJECTUID")
+            "SELECT BMMV_OBSPROJECT.PRJ_NAME, BMMV_OBSPROJECT.PI, "
+            "BMMV_OBSPROJECT.PRJ_VERSION, BMMV_OBSPROJECT.TITLE, "
+            "BMMV_OBSPROJECT.PRJ_ARCHIVE_UID AS OBSPROJECT_UID,"
+            "BMMV_OBSPROJECT.CODE, "
+            "BMMV_OBSPROJECT.PRJ_SCIENTIFIC_RANK, "
+            "OBS_PROJECT_STATUS.DOMAIN_ENTITY_STATE AS PRJ_STATUS, "
+            "PROPOSAL.ARCHIVE_UID AS OBSPROPOSAL_UID, "
+            "PROPOSAL.APRC_LETTER_GRADE AS PRJ_LETTER_GRADE "
+            "FROM ALMA.BMMV_OBSPROPOSAL "
+            "INNER JOIN ALMA.PROPOSAL ON ("
+            "    ALMA.BMMV_OBSPROPOSAL.ARCHIVE_UID = "
+            "        ALMA.PROPOSAL.ARCHIVE_UID) AND "
+            "    (APRC_LETTER_GRADE IN ('A', 'B', 'C') OR APRC_RANK = 1)"
+            "INNER JOIN ALMA.BMMV_OBSPROJECT ON ("
+            "    BMMV_OBSPROJECT.PRJ_ARCHIVE_UID = "
+            "        BMMV_OBSPROPOSAL.PROJECTUID) AND "
+            "    (regexp_like (BMMV_OBSPROJECT.CODE, '^201[23].*\.[AST]')) "
+            "INNER JOIN ALMA.OBS_PROJECT_STATUS ON ("
+            "    ALMA.BMMV_OBSPROJECT.PRJ_ARCHIVE_UID = "
+            "        OBS_PROJECT_STATUS.OBS_PROJECT_ID)")
 
         conx_string = os.environ['CON_STR']
         self.connection = cx_Oracle.connect(conx_string)
@@ -123,7 +145,7 @@ class Database(object):
         c1c2.columns = pd.Index([u'CODE', u'Region', u'ARC', u'C2', u'P2G'],
                                 dtype='object')
         self.toc2 = c1c2[c1c2.fillna('no').C2.str.startswith('Yes')]
-        
+
         # Initialize with saved data and update, Default behavior.
         if not self.new:
             try:
@@ -183,7 +205,8 @@ class Database(object):
             #     "sb.SCHEDBLOCK_CTRL_EXEC_COUNT,"
             #     "sb.SCHEDBLOCK_CTRL_STATE as SB_SAOS_STATUS,"
             #     "ou.OBSUNIT_PROJECT_UID as OBSPROJECT_UID "
-            #     "FROM SCHEDULING_AOS.SCHEDBLOCK sb, SCHEDULING_AOS.OBSUNIT ou "
+            #     "FROM SCHEDULING_AOS.SCHEDBLOCK sb, SCHEDULING_AOS.OBSUNIT
+            # ou "
             #     "WHERE sb.SCHEDBLOCKID = ou.OBSUNITID AND sb.CSV = 0")
             # self.cursor.execute(self.sqlsched_sb)
             # self.saos_schedblock = pd.DataFrame(
@@ -194,8 +217,8 @@ class Database(object):
             # self.sbstates: SBs status (PT?)
             # Query SBs status
             self.sqlstates = str(
-                "SELECT DOMAIN_ENTITY_STATE as SB_STATE,"
-                "DOMAIN_ENTITY_ID as SB_UID,OBS_PROJECT_ID as OBSPROJECT_UID "
+                "SELECT DOMAIN_ENTITY_STATE AS SB_STATE,"
+                "DOMAIN_ENTITY_ID AS SB_UID,OBS_PROJECT_ID AS OBSPROJECT_UID "
                 "FROM ALMA.SCHED_BLOCK_STATUS")
             self.cursor.execute(self.sqlstates)
             self.sb_status = pd.DataFrame(
@@ -206,7 +229,7 @@ class Database(object):
             # self.qa0: QAO flags for observed SBs
             # Query QA0 flags from AQUA tables
             self.sqlqa0 = str(
-                "SELECT SCHEDBLOCKUID as SB_UID,QA0STATUS,STARTTIME,ENDTIME,"
+                "SELECT SCHEDBLOCKUID AS SB_UID,QA0STATUS,STARTTIME,ENDTIME,"
                 "EXECBLOCKUID,EXECFRACTION "
                 "FROM ALMA.AQUA_EXECBLOCK "
                 "WHERE regexp_like (OBSPROJECTCODE, '^201[23].*\.[AST]')")
@@ -219,18 +242,18 @@ class Database(object):
 
             # Query for Executives
             sql2 = str(
-                "SELECT PROJECTUID as OBSPROJECT_UID, ASSOCIATEDEXEC "
+                "SELECT PROJECTUID AS OBSPROJECT_UID, ASSOCIATEDEXEC "
                 "FROM ALMA.BMMV_OBSPROPOSAL "
                 "WHERE regexp_like (CYCLE, '^201[23].[1A]')")
             self.cursor.execute(sql2)
             self.executive = pd.DataFrame(
                 self.cursor.fetchall(), columns=['OBSPROJECT_UID', 'EXEC'])
 
-            self.start_wto()
+            self.start_db()
 
         self.sqlstates = str(
-            "SELECT DOMAIN_ENTITY_STATE as SB_STATE,"
-            "DOMAIN_ENTITY_ID as SB_UID,OBS_PROJECT_ID as OBSPROJECT_UID "
+            "SELECT DOMAIN_ENTITY_STATE AS SB_STATE,"
+            "DOMAIN_ENTITY_ID AS SB_UID,OBS_PROJECT_ID AS OBSPROJECT_UID "
             "FROM ALMA.SCHED_BLOCK_STATUS")
         self.cursor.execute(self.sqlstates)
         self.sb_status = pd.DataFrame(
@@ -238,7 +261,7 @@ class Database(object):
             columns=[rec[0] for rec in self.cursor.description]
         ).set_index('SB_UID', drop=False)
 
-    def start_wto(self):
+    def start_db(self):
 
         """
         Initializes the wtoDatabase dataframes.
@@ -267,6 +290,14 @@ class Database(object):
             on='OBSPROJECT_UID', how='left'
         ).set_index('CODE', drop=False)
 
+        self.projects['PRJ_LETTER_GRADE'] = self.projects.apply(
+            lambda rows: 'A' if (rows['PRJ_LETTER_GRADE'] is None and
+                                 rows['PRJ_SCIENTIFIC_RANK'] == 1 and
+                                 rows['PRJ_STATUS'] != "Approved") else
+            rows['PRJ_LETTER_GRADE'],
+            axis=1
+        )
+
         timestamp = pd.Series(
             np.zeros(len(self.projects), dtype=object),
             index=self.projects.index)
@@ -274,6 +305,7 @@ class Database(object):
         self.projects['xmlfile'] = pd.Series(
             np.zeros(len(self.projects), dtype=object),
             index=self.projects.index)
+
         self.filter_c1()
 
         # Download and read obsprojects and obsprosal
@@ -410,10 +442,11 @@ class Database(object):
                     sys.stdout.flush()
                     c += 10
 
-                rs, rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar, ordtar = \
+                rs, rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar, \
+                ordtar = \
                     self.read_schedblocks_p2(
                         sg_sb[1].SB_UID, sg_sb[1].OBSPROJECT_UID,
-                        sg_sb[1].OUS_ID, new=new)
+                        sg_sb[1].MOUS_ID, new=new)
                 rst.append(rs)
                 rft.extend(rf)
                 tart.extend(tar)
@@ -461,7 +494,7 @@ class Database(object):
 
             self.schedblocks_p2 = pd.DataFrame(
                 rst_arr,
-                columns=['SB_UID', 'OBSPROJECT_UID', 'SG_ID', 'OUS_ID',
+                columns=['SB_UID', 'OBSPROJECT_UID', 'SG_ID', 'MOUS_ID',
                          'sbName', 'sbStatusXml', 'repfreq', 'band', 'array',
                          'RA', 'DEC', 'minAR_ot', 'maxAR_ot', 'execount',
                          'isPolarization', 'maxPWVC', 'array12mType'],
@@ -606,16 +639,16 @@ class Database(object):
         self.newAR_p2_input = pd.merge(
             self.schedblocks_p2.query('array == "TWELVE-M"'),
             self.sciencegoals, on='SG_ID')[
-                ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
-                 'useACA', 'two_12m', 'array12mType', 'minAR_ot',
-                 'maxAR_ot']].set_index('SB_UID', drop=False)
+            ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
+             'useACA', 'two_12m', 'array12mType', 'minAR_ot',
+             'maxAR_ot']].set_index('SB_UID', drop=False)
 
         self.newAR_p1_input = pd.merge(
             self.schedblocks_p1.query('array == "TWELVE-M"'),
             self.sciencegoals, on='SG_ID')[
-                ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
-                 'useACA', 'two_12m', 'array12mType', 'minAR_ot',
-                 'maxAR_ot']].set_index('SB_UID', drop=False)
+            ['SB_UID', 'sbName', 'AR', 'LAS', 'repfreq', 'repFreq',
+             'useACA', 'two_12m', 'array12mType', 'minAR_ot',
+             'maxAR_ot']].set_index('SB_UID', drop=False)
 
         ars2 = self.newAR_p2_input.apply(
             lambda r: new_array_ar(
@@ -726,6 +759,9 @@ class Database(object):
         try:
             obsparse = ObsProject(xml, self.obsxml)
         except KeyError:
+            print("Something went wrong while trying to parse %s" % xml)
+            return 0
+        except IOError:
             print("Something went wrong while trying to parse %s" % xml)
             return 0
 
@@ -915,6 +951,10 @@ class Database(object):
                         oucontrol = mous.ObsUnitControl
                         execount = oucontrol.aggregatedExecutionCount.pyval
                         array = mous.ObsUnitControl.attrib['arrayRequested']
+                        try:
+                            statusid = mous.OUSStatusRef.attrib['entityId']
+                        except:
+                            statusid = None
                         for sbs in mous.SchedBlockRef:
                             SB_UID = sbs.attrib['entityId']
                             sql = str(
@@ -924,8 +964,9 @@ class Database(object):
                             self.cursor.execute(sql)
                             data = self.cursor.fetchall()
                             xml_content = data[0][1].read()
-                            filename = SB_UID.replace(':', '_').replace('/', '_') +\
-                                '.xml'
+                            filename = SB_UID.replace(':', '_').replace('/',
+                                                                        '_') + \
+                                       '.xml'
                             io_file = open(self.sbxml + filename, 'w')
                             io_file.write(xml_content)
                             io_file.close()
@@ -942,18 +983,19 @@ class Database(object):
                                     SB_UID, OBSPROJECT_UID, sg_id,
                                     ous_id, ous_name, gous_id,
                                     gous_name, mous_id, mous_name,
-                                    array, execount, xml)
+                                    array, execount, statusid, xml)
                             except AttributeError:
                                 self.sb_sg_p2 = pd.DataFrame(
                                     [(SB_UID, OBSPROJECT_UID, sg_id,
                                       ous_id, ous_name, gous_id,
                                       gous_name, mous_id, mous_name,
-                                      array, execount, xml)],
+                                      array, execount, statusid, xml)],
                                     columns=[
                                         'SB_UID', 'OBSPROJECT_UID', 'SG_ID',
                                         'OUS_ID', 'ous_name', 'GOUS_ID',
                                         'gous_name', 'MOUS_ID', 'mous_name',
-                                        'array', 'execount', 'xmlfile'],
+                                        'array', 'execount', 'mous_status_id',
+                                        'xmlfile'],
                                     index=[SB_UID]
                                 )
 
@@ -1011,13 +1053,13 @@ class Database(object):
 
 
         """
-        c1c2 = pd.read_csv(
-            self.apa_path + 'conf/c1c2.csv', sep=',', header=0,
-            usecols=range(5))
-        c1c2.columns = pd.Index([u'CODE', u'Region', u'ARC', u'C2', u'P2G'],
-                                dtype='object')
+        # c1c2 = pd.read_csv(
+        #     self.apa_path + 'conf/c1c2.csv', sep=',', header=0,
+        #     usecols=range(5))
+        # c1c2.columns = pd.Index([u'CODE', u'Region', u'ARC', u'C2', u'P2G'],
+        #                         dtype='object')
 
-        self.toc2 = c1c2[c1c2.fillna('no').C2.str.startswith('Yes')]
+        # self.toc2 = c1c2[c1c2.fillna('no').C2.str.startswith('Yes')]
 
         # check_c1 = pd.merge(
         #     self.projects[self.projects.CODE.str.startswith('2012')],
@@ -1026,22 +1068,23 @@ class Database(object):
 
         check_c1 = self.projects[
             self.projects.CODE.str.startswith('2012')].query(
-            'PRJ_LETTER_GRADE != "C"')[['CODE']]
+            'PRJ_LETTER_GRADE != "C" or '
+            'PRJ_STATUS not in ["Canceled", "Approved"]')[['CODE']]
 
         check_c2 = self.projects[
             self.projects.CODE.str.startswith('2013')][['CODE']]
-        grades = self.grades[
-            (self.grades.aprcflag == 'A') | (self.grades.aprcflag == 'B') |
-            (self.grades.aprcflag == 'C')]
         check_c2_g = pd.merge(
-            grades, check_c2, on='CODE', how='left').set_index(
-                'CODE', drop=False)[['CODE']]
-        checked = pd.concat([check_c1, check_c2_g])
+            self.projects.query('PRJ_LETTER_GRADE in ["A", "B", "C"]'),
+            check_c2, on='CODE', how='right').set_index(
+            'CODE', drop=False)[['CODE']]
+
+        checked = pd.concat([check_c1, check_c2_g]).CODE.unique()
+
         # noinspection PyArgumentEqualDefault
-        temp = pd.merge(
-            self.projects, checked, on='CODE',
-            copy=False, how='inner').set_index('CODE', drop=False)
-        self.projects = temp
+        # temp = pd.merge(
+        #     self.projects, checked, on='CODE',
+        #     copy=False, how='inner').set_index('CODE', drop=False)
+        self.projects = self.projects.query('CODE in @checked')
 
     def read_schedblocks_p2(self, sb_uid, obs_uid, ous_id, new=False):
 
@@ -1233,7 +1276,8 @@ class Database(object):
                 name, status, float(repfreq), band, array,
                 float(ra), float(dec), float(minar_old), float(maxar_old),
                 int(execount), ispolarization, float(maxpwv),
-                type12m), rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar, ordtar
+                type12m), rf, tar, spc, bb, spw, scpar, acpar, bcpar, pcpar, \
+               ordtar
 
     def read_schedblocks_p1(self, sb_uid, obs_uid, xml):
 
@@ -1363,7 +1407,7 @@ class Database(object):
         else:
             ephemeris = None
 
-        return(
+        return (
             partid, sbuid, solarsystem, sourcename, name, ra, dec, isquery,
             qc_intendeduse, qc_ra, qc_dec, qc_use, qc_radius, qc_radius_unit,
             ephemeris, pointings, ismosaic, array)
@@ -1455,7 +1499,7 @@ class Database(object):
                     poln_prod = spw.attrib['polnProducts']
                     sideBand = spw.attrib['sideBand']
                     windowsFunction = spw.attrib['windowFunction']
-                    name = spw.name.pyval                    
+                    name = spw.name.pyval
                     centerFreq_unit = spw.centerFrequency.attrib['unit']
                     centerFreq = convert_ghz(
                         spw.centerFrequency.pyval, centerFreq_unit)
@@ -1516,7 +1560,7 @@ class Database(object):
                 axis=1)
 
         sum2['allowed12m'] = sum2.iloc[
-            :, [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
+                             :, [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
         sum2.loc[:, ['minArrayAR100GHz', 'maxArrayAR100GHz']] = sum2.apply(
             lambda r: fix_allowedconf(r['minArrayAR100GHz'],
                                       r['maxArrayAR100GHz'],
@@ -1530,7 +1574,7 @@ class Database(object):
                     r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
         sum2['corr_allowed12m'] = sum2.iloc[
-            :, [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
+                                  :, [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
         sum2['phase'] = 'II'
 
         sum1 = pd.merge(
@@ -1551,7 +1595,7 @@ class Database(object):
                 axis=1)
 
         sum1['allowed12m'] = sum1.iloc[
-            :, [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
+                             :, [-7, -6, -5, -4, -3, -2, -1]].sum(axis=1)
         sum1.loc[:, ['minArrayAR100GHz', 'maxArrayAR100GHz']] = sum1.apply(
             lambda r: fix_allowedconf(r['minArrayAR100GHz'],
                                       r['maxArrayAR100GHz'],
@@ -1565,7 +1609,7 @@ class Database(object):
                     r['minArrayAR100GHz'], r['maxArrayAR100GHz'], col),
                 axis=1)
         sum1['corr_allowed12m'] = sum1.iloc[
-            :, [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
+                                  :, [-8, -7, -6, -5, -4, -3, -2]].sum(axis=1)
         sum1['phase'] = 'I'
 
         sum_schedblock = pd.concat([sum2, sum1])
@@ -1613,8 +1657,8 @@ class Database(object):
                            'PRJ_STATUS', 'isCycle2']],
             self.summary_sb, on='OBSPROJECT_UID', how='right')
 
-        self.summary_sb['SB_ETC_total'] = self.summary_sb['SB_ETC_exec'] *\
-            self.summary_sb['execount']
+        self.summary_sb['SB_ETC_total'] = self.summary_sb['SB_ETC_exec'] * \
+                                          self.summary_sb['execount']
         self.summary_sb['SB_ETC_remain'] = self.summary_sb['SB_ETC_total'] * (
             self.summary_sb['execount'] - self.summary_sb['observed']
         ) / self.summary_sb['execount']
@@ -1652,9 +1696,7 @@ class Database(object):
         return time_sg / sb_sg.execount.sum()
 
 
-
 def distribute_time(tiempo, doce, siete, single):
-
     if doce and siete and single:
         time_u = tiempo / (1 + 0.5 + 2 + 4)
         return pd.Series([time_u, 0.5 * time_u, 2 * time_u, 4 * time_u],
@@ -1692,7 +1734,6 @@ def distribute_time(tiempo, doce, siete, single):
 
 
 def new_array_ar(path, ar, las, repfreq, useaca, sbnum, type12):
-
     if sbnum:
         sbnum = 2
     else:
